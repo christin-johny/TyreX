@@ -1,0 +1,59 @@
+<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/topNav") %>
+<div class="container-fluid px-4 py-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
+                <h2 class="mb-0 flex-grow-1 text-dark">Products</h2>
+                <button class="btn btn-primary d-flex align-items-center justify-content-center">
+                    <i class="fas fa-plus me-2"></i>
+                    <span class="d-none d-md-inline">Add Product</span>
+                    <span class="d-md-none">Add</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body d-flex align-items-center product-card">
+                    <img src="/img/favicon.svg" class="rounded me-3 product-image" alt="Product Image" style="width: 80px; height: 80px; object-fit: cover;">
+                    
+                    <div class="flex-grow-1 product-details">
+                        <h5 class="card-title mb-1 d-flex justify-content-between align-items-center">
+                            <span>Assurance All Season</span>
+                            <span class="d-md-none badge bg-primary ms-2">Rs.2000</span>
+                        </h5>
+                        <p class="card-text text-muted mb-1 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                            <span>
+                                <span class="me-2">Goodyear</span><br>
+                                <span><small class="text-muted">SKU: GY8036</small></span><br>
+                                <span class="d-none d-md-inline fw-bold text-drk">Rs.2000</span>
+                            </span>
+                            
+                        </p>
+                    </div>
+                    
+                    <div class="d-flex align-items-center justify-content-end gap-3">
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-info btn-sm rounded d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-success btn-sm rounded d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm rounded d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+<%- include("../partials/admin/footer") %>

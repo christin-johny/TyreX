@@ -1,23 +1,31 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const env=require('dotenv').config();
+const nocache = require('nocache');
+const flash = require("connect-flash");
+const env = require('dotenv').config();
 const db = require('./config/db');
-const port = process.env.PORT || 3000;  // Default to 3000 if PORT is not set
+const adminRouter = require("./routes/adminRouter");
+const middleware = require("./middlewares/middleware");
+const mongoose = require("mongoose");
+const User = require("./models/userSchema");
 
-// Set EJS and correct views path
+db();
 
-db()
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));  // Fixing the views path
-app.use(express.static('public'));
+app.use(nocache()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
+app.set('views', [path.join(__dirname, 'views/user'), path.join(__dirname, 'views/admin')]);
 
-app.get('/', (req, res) => {
-   res.render('admin/home_admin');  // Ensure the file exists in views/admin/
-});
+app.use(express.static('public'));
 
-console.log("Database URI:", process.env.DB_URL);
+app.use(middleware.sessionMiddleware);
 
+app.use(flash());
+app.use(middleware.flashMiddleware);
+
+app.use('/admin', adminRouter);
+
+const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('> Server is up and running on port : ' + port));

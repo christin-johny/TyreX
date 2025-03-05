@@ -8,5 +8,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.4.7",
+    "express-session": "^1.18.1",
+    "sweetalert2": "^11.17.2"
+  }
 }

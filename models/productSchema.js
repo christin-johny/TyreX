@@ -1,12 +1,6 @@
 const mongoose = require("mongoose");
-const { Schema } = mongoose;
 
-const productSchema = new Schema({
-  productId: {
-    type: String,
-    required: true,
-    unique: true, // Ensures each product has a unique ID
-  },
+const productSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -17,15 +11,12 @@ const productSchema = new Schema({
   },
   material: {
     type: String,
-    required: true,
   },
   warranty: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
   },
   price: {
     type: Number,
@@ -33,21 +24,26 @@ const productSchema = new Schema({
   },
   sku: {
     type: String,
-    required: true,
     unique: true,
+    required: true,
   },
-  productImage: {
-    type: [String],
-    required: false,
+  isBlocked:{
+    type:Boolean,
+    default:false
   },
+  productimage: [
+    {
+      type: String,
+    },
+  ],
   brandId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Brand",
     required: true,
   },
   categoryId: {
-    type: Schema.Types.ObjectId,
-    ref: "Category", 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
     required: true,
   },
   stockStatus: {
@@ -55,7 +51,14 @@ const productSchema = new Schema({
     enum: ["in_stock", "out_of_stock", "low_stock"],
     required: true,
   },
-}, { timestamps: true });
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-const Product = mongoose.model("Product", productSchema);
-module.exports = Product;
+module.exports = mongoose.model("Product", productSchema);

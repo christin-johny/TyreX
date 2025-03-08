@@ -14,45 +14,150 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card mb-3 shadow-sm">
-                <div class="card-body d-flex align-items-center product-card">
-                    <img src="/img/favicon.svg" class="rounded me-3 product-image" alt="Product Image" style="width: 80px; height: 80px; object-fit: cover;">
-                    
-                    <div class="flex-grow-1 product-details">
-                        <h5 class="card-title mb-1 d-flex justify-content-between align-items-center">
-                            <span>Assurance All Season</span>
-                            <span class="d-md-none badge bg-primary ms-2">Rs.2000</span>
-                        </h5>
-                        <p class="card-text text-muted mb-1 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                            <span>
-                                <span class="me-2">Goodyear</span><br>
-                                <span><small class="text-muted">SKU: GY8036</small></span><br>
-                                <span class="d-none d-md-inline fw-bold text-drk">Rs.2000</span>
-                            </span>
-                            
-                        </p>
-                    </div>
-                    
-                    <div class="d-flex align-items-center justify-content-end gap-3">
-                        
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-info btn-sm rounded d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" title="View">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-outline-success btn-sm rounded d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-outline-danger btn-sm rounded d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+    <div class="card shadow-sm">
+        <!-- Desktop Header (Hidden on Mobile) -->
+        <div class="card-header bg-dark text-white d-none d-md-flex align-items-center">
+            <div class="col-4">Product</div>
+            <div class="col-2 text-center">SKU</div>
+            <div class="col-2 text-center">Brand</div>
+            <div class="col-2 text-center">Price</div>
+            <div class="col-2 text-center">Action</div>
+        </div>
+    
+        <!-- Product Row -->
+        <div class="card-body">
+            <div class="row align-items-center border-bottom py-3">
+                <!-- Product Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>Product</strong>
+                        <span>Assurance All Season</span>
                     </div>
                 </div>
+                <div class="col-md-4 d-flex align-items-center mb-2 mb-md-0">
+                    <img src="/img/favicon.svg" class="rounded me-3" 
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <span class="d-none d-md-inline">Assurance All Season</span>
+                </div>
+    
+                <!-- SKU Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>SKU</strong>
+                        <span>GY8036</span>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center mb-1 mb-md-0">
+                    <span class="d-none d-md-inline">GY8036</span>
+                </div>
+    
+                <!-- Brand Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>Brand</strong>
+                        <span>Goodyear</span>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center mb-1 mb-md-0">
+                    <span class="d-none d-md-inline">Goodyear</span>
+                </div>
+    
+                <!-- Price Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>Price</strong>
+                        <span>$200</span>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center mb-1 mb-md-0">
+                    <span class="d-none d-md-inline">$200</span>
+                </div>
+    
+                <!-- Actions Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="text-center">
+                        <strong>Actions</strong>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center d-flex justify-content-center align-items-center gap-5">
+                    <button class="btn btn-outline-info btn-sm" title="View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
-
-            
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center border-bottom py-3">
+                <!-- Product Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>Product</strong>
+                        <span>Assurance All Season</span>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center mb-2 mb-md-0">
+                    <img src="/img/favicon.svg" class="rounded me-3" 
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <span class="d-none d-md-inline">Assurance All Season</span>
+                </div>
+    
+                <!-- SKU Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>SKU</strong>
+                        <span>GY8036</span>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center mb-1 mb-md-0">
+                    <span class="d-none d-md-inline">GY8036</span>
+                </div>
+    
+                <!-- Brand Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>Brand</strong>
+                        <span>Goodyear</span>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center mb-1 mb-md-0">
+                    <span class="d-none d-md-inline">Goodyear</span>
+                </div>
+    
+                <!-- Price Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>Price</strong>
+                        <span>$200</span>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center mb-1 mb-md-0">
+                    <span class="d-none d-md-inline">$200</span>
+                </div>
+    
+                <!-- Actions Section -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="text-center">
+                        <strong>Actions</strong>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center d-flex justify-content-center align-items-center gap-5">
+                    <button class="btn btn-outline-info btn-sm" title="View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,66 +1,93 @@
 const User = require("../../models/userSchema");
+const Product = require("../../models/productSchema");
 const bcrypt = require("bcryptjs");
+
+
+const pageError=async(req,res)=>{
+  res.render('pageError')
+}
+
+
 
 const loadHomepage = async (req, res) => {
   try {
     return res.render("home");
   } catch (error) {
     console.log("Home page not found");
-    res.status(500).send("Server error");
+    res.redirect("/admin/pagerror")
   }
 };
-
-
 
 //login
 const loadLogin = async (req, res) => {
   try {
-    return res.render("login");
+    return res.render("adminLogin");
   } catch (error) {
     console.log("Login page not found");
-    res.status(500).send("server error");
+    res.redirect("/admin/pagerror")
   }
 };
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
-  try{
+  try {
+    if (!email || !password) {
+      console.log("email and password are required");
+      req.flash("error", "email and password are required");
+      return res.redirect("/admin/login");
+    }
+    const user = await User.findOne({ email: email, isAdmin: true });
+    if (!user) {
+      console.log("Invalid email or password1");
+      req.flash("error", "Invalid email or password.");
+      return res.redirect("/admin/login");
+    }
 
-  if (!email || !password) {
-    console.log("email and password are required");
-    req.flash("error", "email and password are required");
-    return res.redirect("/admin/login");
-  }
-  const user = await User.findOne({ email: email, isAdmin: true });
-  if (!user) {
-    console.log("Invalid email or password1");
-    req.flash("error", "Invalid email or password.");
-    return res.redirect("/admin/login");
-  }
+    const match = await bcrypt.compare(password, user.password);
 
-  const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      console.log("Invalid email or password2");
+      req.flash("error", "Invalid email or password.");
+      return res.redirect("/admin/login");
+    }
 
-  if (!match) {
-    console.log("Invalid email or password2");
-    req.flash("error", "Invalid email or password.");
-    return res.redirect("/admin/login");
-  }
+    req.session.admin = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    };
 
-  req.session.admin = {
-    id: user._id,
-    name: user.name,
-    email: user.email
-};
-console.log('admin logged in'+req.session.admin );
-
-  return res.redirect("/admin/home");
-}catch (error){
+    return res.redirect("/admin/dashboard");
+  } catch (error) {
     console.log("error during login");
-    req.flash('error', 'An error occurred. Please try again.');
+    req.flash("error", "An error occurred. Please try again.");
     return res.redirect("/admin/login");
-}
+  }
 };
+
+
+
+const logout = async (req, res) => {
+  try {
+    if (!req.session) {
+      return res.redirect("/admin/login");
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Error destroying session", err);
+        return res.redirect("/admin/pageerror");
+      }
+      
+      return res.redirect("/admin/login");
+    });
+  } catch (error) {
+    console.log("Error during logout:", error);
+    res.redirect("/admin/pageerror");
+  }
+};
+
+
 
 
 
@@ -69,49 +96,50 @@ const forgotPassword = async (req, res) => {
     return res.render("forgotPassword");
   } catch (error) {
     console.log("Page not found");
-    res.status(500).send("server error");
+    res.redirect("/admin/pagerror")
   }
 };
 
-
-
-const addProduct = async (req, res) => {
+const loadAddProduct = async (req, res) => {
   try {
     return res.render("addProduct");
   } catch (error) {
     console.log("Page not found");
-    res.status(500).send("server error");
+    res.redirect("/admin/pagerror")
   }
 };
 
-
+//add products
+const addProducts = async (req, res) => {
+  const data=req.body;
+  
+  try {
+    
+  } catch (error) {
+    
+  }
+};
 
 const products = async (req, res) => {
   try {
     return res.render("products");
   } catch (error) {
     console.log("Page not found");
-    res.status(500).send("server error");
+    res.redirect("/admin/pagerror")
   }
 };
 
 
-
-const category = async (req, res) => {
-  try {
-    return res.render("category");
-  } catch (error) {
-    console.log("Page not found");
-    res.status(500).send("server error");
-  }
-};
 
 module.exports = {
   loadHomepage,
   loadLogin,
   login,
   forgotPassword,
-  addProduct,
+  loadAddProduct,
   products,
-  category,
+  addProducts,
+  pageError,
+  logout,
+
 };

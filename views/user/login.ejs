@@ -1,0 +1,101 @@
+<%- include("../partials/user/profileHeader") %>
+              <!-- Nested Row within Card Body -->
+              <div class="row">
+                <div
+                  class="col-lg-6 d-none d-lg-block login-bg-color text-center"
+                >
+                  <img src="/img/logo_white.svg" alt="" />
+                  <h1 class="admin-login-h4"><strong>Welcome Back</strong></h1>
+                </div>
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <div class="text-center">
+                      <h1 class="h4 text-gray-900 mb-4">Login</h1>
+                    </div>
+                    <form class="user" method="post" action="/user/login" id="loginForm">
+                      
+                      
+                      <div class="form-group">
+                        <input
+                          type="email"
+                          class="form-control form-control-user"
+                          id="email"
+                          name="email"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter Email Address..."
+                        />
+                      </div>
+                      <div class="form-group">
+                        <input
+                          type="password"
+                          class="form-control form-control-user"
+                          id="password"
+                          name="password"
+                          placeholder="Password"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <div class="custom-control custom-checkbox small">
+                          <input
+                            type="checkbox"
+                            class="custom-control-input"
+                            id="customCheck"
+                          />
+                          <label class="custom-control-label" for="customCheck"
+                            >Remember Me</label
+                          >
+                        </div>
+                      </div>
+                      <% if (success_msg.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+                           <%= success_msg %>
+                        </div>
+                      <% } %>
+                      
+                      <% if (error_msg.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+                           <%= error_msg %>
+                        </div>
+                      <% } %>
+                      <button type="submit" class="btn btn-primary btn-user btn-block">
+                        Login
+                    </button>
+                      <hr />
+                      <a
+                        href="/user/auth/google"
+                        class="btn btn-google btn-user btn-block"
+                      >
+                        <i class="fab fa-google fa-fw"></i> Login with Google
+                      </a>
+                    </form>
+                    <hr />
+                    <div class="text-center">
+                      <a class="small" href="/user/forgotPassword"
+                        >Forgot Password?</a
+                      >
+                    </div>
+                    <div class="text-center">
+                      <a class="small" href="/user/signup"
+                        >Create an Account!</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+  </body>
+</html>

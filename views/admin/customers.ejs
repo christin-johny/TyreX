@@ -1,0 +1,100 @@
+<%- include("../partials/admin/sidebar") %>
+
+<div class="container-fluid px-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="content-header d-flex justify-content-between align-items-center mt-4">
+                <h2 class="content-title card-title text-dark">Customers</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="row justify-content-center my-3">
+        <div class="col-md-6 col-sm-10">
+            <form action="/admin/users/" method="get" id="searchForm">
+                <div class="input-group input-group-sm border border-1 border-grey rounded-pill">
+                    <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..." name="search" id="searchInput">
+                    <button class="btn border-0" type="submit">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                    <a href="/admin/users" class="btn btn-secondary btn-sm rounded-pill ms-2 d-none" id="clearButton">Clear</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <!-- Customers List (Rows) -->
+    <div class="row">
+        <div class="col-12">
+            <% if (data.length === 0) { %>
+                <div class="text-center">
+                    <h5 class="text-muted">No customers found</h5>
+                </div>
+            <% } else { %>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <% data.forEach(user => { %>
+                            <div class="d-flex align-items-center border-bottom py-3">
+                                <!-- Customer Details -->
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 text-dark"><strong><%= user.name %></strong></h6>
+                                    <p class="mb-0 text-muted"><b>Email:</b> <%= user.email %></p>
+                                    <p class="mb-0 text-muted"><b>Phone:</b> <%= user.phone || 'N/A' %></p>
+                                </div>
+
+                                <!-- Block/Unblock Button -->
+                                <div>
+                                    <% if(user.isBlocked === false) { %>
+                                        <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-danger btn-sm">Block</a>
+                                    <% } else { %>
+                                        <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-success btn-sm">Unblock</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <% for(let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%=(i === currentPage) ? 'active' : ''%>">
+                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const clearButton = document.getElementById("clearButton");
+
+        // Show Clear button only if the input has a value
+        searchInput.addEventListener("input", function () {
+            if (searchInput.value.trim() !== "") {
+                clearButton.classList.remove("d-none");
+            } else {
+                clearButton.classList.add("d-none");
+            }
+        });
+
+        // Keep Clear button visible if the search was submitted
+        if (new URLSearchParams(window.location.search).has("search")) {
+            clearButton.classList.remove("d-none");
+        }
+    });
+</script>
+<%- include("../partials/admin/footer") %>

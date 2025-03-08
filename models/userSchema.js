@@ -9,17 +9,18 @@ const userSchema = new Schema({
   email:{
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   phone:{
     type:String,
     required:false,
     unique:false,
     sparse:true,
-    default:null
   },
   googleId:{
     type:String,
+    sparse:true,
+    unique:true,
   },
   password:{
     type:String,

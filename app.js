@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require("express-session");
 const app = express();
 const path = require('path');
 const nocache = require('nocache');
@@ -6,9 +7,9 @@ const flash = require("connect-flash");
 const env = require('dotenv').config();
 const db = require('./config/db');
 const adminRouter = require("./routes/adminRouter");
+const userRouter = require("./routes/userRouter");
 const middleware = require("./middlewares/middleware");
-const mongoose = require("mongoose");
-const User = require("./models/userSchema");
+const passport=require('./config/passport');
 
 db();
 
@@ -20,12 +21,30 @@ app.set('views', [path.join(__dirname, 'views/user'), path.join(__dirname, 'view
 
 app.use(express.static('public'));
 
-app.use(middleware.sessionMiddleware);
+
+
+
+app.use(session({
+    secret:process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie:{
+        secure:false,
+        httpOnly:true,
+        maxAge:72*60*60*1000
+    }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(flash());
 app.use(middleware.flashMiddleware);
 
+
 app.use('/admin', adminRouter);
+app.use('/user', userRouter);
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('> Server is up and running on port : ' + port));

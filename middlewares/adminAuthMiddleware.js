@@ -9,7 +9,7 @@ const adminAuth= (req, res, next) => {
 
 const redirectAuth=(req, res, next) => {
     if (req.session && req.session.admin) {
-        return res.redirect("/admin/home"); 
+        return res.redirect("/admin/dashboard"); 
     }
     next(); 
 }

@@ -1,0 +1,132 @@
+<%- include("../partials/user/profileHeader") %>
+          <!-- Nested Row within Card Body -->
+          <div class="row">
+            <div class="col-lg-6 d-none d-lg-block login-bg-color text-center">
+              <img src="/img/logo_white.svg" alt="" />
+              <h1 class="admin-login-h4">
+                <strong
+                  >New here<br />
+                  Create your Account</strong
+                >
+              </h1>
+            </div>
+            <div class="col-lg-6">
+              <div class="p-5">
+                <div class="text-center">
+                  <h1 class="h4 text-gray-900 mb-4">SignUp</h1>
+                </div>
+                <form class="user" action="/user/signup" method="post" id="signform">
+                    <% if (success_msg.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+                          <strong>✅</strong> <%= success_msg %>
+                        </div>
+                      <% } %>
+                      
+                      <% if (error_msg.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+                          <strong>❌</strong> <%= error_msg %>
+                        </div>
+                      <% } %>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control form-control-user"
+                      id="name"
+                      name="name"
+                      placeholder="Full name"
+                    />
+                    <div id="error1" class="error-message"></div>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="email"
+                      class="form-control form-control-user"
+                      id="email"
+                      name="email"
+                      placeholder="Email Address"
+                    />
+                    <div id="error2" class="error-message"></div>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="tel"
+                      class="form-control form-control-user"
+                      id="phone"
+                      name="phone"
+                      placeholder="Phone Number"
+                    />
+                    <div id="error3" class="error-message"></div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                      <input
+                        type="password"
+                        class="form-control form-control-user"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                      />
+                      <div id="error4" class="error-message"></div>
+                    </div>
+                    <div class="col-sm-6">
+                      <input
+                        type="password"
+                        class="form-control form-control-user"
+                        id="cpassword"
+                        name="cpassword"
+                        placeholder="Repeat Password"
+                      />
+                      <div id="error5" class="error-message"></div>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-user btn-block">
+                    SignUp
+                </button>
+                  <hr />
+                  <a
+                    href="/user/auth/google"
+                    class="btn btn-google btn-user btn-block"
+                  >
+                    <i class="fab fa-google fa-fw"></i> Register with Google
+                  </a>
+                  
+                </form>
+                <hr />
+                <div class="text-center">
+                  <a class="small" href="/user/forgotPassword"
+                    >Forgot Password?</a
+                  >
+                </div>
+                <div class="text-center">
+                  <a class="small" href="/user/login"
+                    >Already have an account? Login!</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    
+
+  
+    
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+    
+    <script src="/js/script.js"></script>
+    
+  </body>
+</html>

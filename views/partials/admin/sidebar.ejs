@@ -27,6 +27,18 @@
     <!-- Custom styles for this template-->
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
+    <style>
+      #wrapper {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px; /* Adjust if needed */
+    min-height: 100vh; /* Full height */
+    margin-left: 0 !important; /* Ensure no unwanted margin */
+    padding-left: 0 !important;
+}
+    </style>
   </head>
 
   <body id="page-top">
@@ -40,7 +52,7 @@
         <!-- Sidebar - Brand -->
         <a
           class="sidebar-brand d-flex align-items-center justify-content-center"
-          href="/admin/home"
+          href="/admin/dashboard"
         >
         <div class="sidebar-brand-icon">
           <img src="/img/logo_white.svg" class="img-fluid" alt="Logo">
@@ -53,7 +65,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-          <a class="nav-link" href="/admin/home">
+          <a class="nav-link" href="/admin/dashboard">
             <i class="fas  fa-tachometer-alt"></i>
             <span>Dashboard</span></a
           >
@@ -80,7 +92,7 @@
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link" href="/admin/users">
             <i class=" fas fa-solid fa-users"></i>
             <span>Customers</span></a
           >

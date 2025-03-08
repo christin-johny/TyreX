@@ -1,0 +1,81 @@
+<%- include("../partials/user/profileHeader") %>
+              <!-- Nested Row within Card Body -->
+              <div class="row">
+                <div
+                  class="col-lg-6 d-none d-lg-block login-bg-color text-center"
+                >
+                  <img src="/img/logo_white.svg" alt="" />
+                  <h1 class="admin-login-h4"><strong>Email Verification</strong></h1>
+                </div>
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <div class="text-center">
+                    </div>
+                    <form id="otpForm" class="user form-otp" action="/user/verifyOtp" method="post" onsubmit="return validateOTPForm()">
+
+                      
+                      <% if (locals.message && message.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+                          <strong>❌</strong> <%= message %>
+                        </div>
+                      <% } %>
+                      
+                      <div class="text-center mb-4">
+                        <p class="text-gray-700">We've sent a verification code to your email address. Please enter the code below.</p>
+                      </div>
+                      
+                      <div class="text-center">
+                        <div id="otpTimer" class="otp-timer">
+                          <span id="timerValue">60</span>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <input
+                          type="text"
+                          class="form-control form-control-user"
+                          id="otp"
+                          name="otp"
+                          placeholder="• • • • • •"
+                          required
+                          maxlength="6"
+                          pattern="\d*"
+                          autocomplete="one-time-code"
+                        />
+                      </div>
+                      
+                      <button type="submit" class="btn btn-primary btn-user btn-block">
+                        <i class="fas fa-check-circle fa-fw"></i> Verify Email
+                      </button>
+                      
+                      <button type="button" class="btn btn-light btn-user btn-block" onclick="resendOTP()">
+                        <i class="fas fa-sync-alt fa-fw"></i> Resend OTP
+                      </button>
+                      
+                      <hr />
+                    </form>
+                    <div class="text-center">
+                      <a class="small" href="/user/login">Already verified? Login now</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

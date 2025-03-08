@@ -1,11 +1,3 @@
-const session = require("express-session");
-
-
-const sessionMiddleware = session({
-    secret:process.env.SECRET_KEY,
-    resave: false,
-    saveUninitialized: true
-});
 
 const flashMiddleware=(req, res, next) => {
     res.locals.success_msg = req.flash("success");
@@ -13,4 +5,6 @@ const flashMiddleware=(req, res, next) => {
     next();
 }
 
-module.exports = {sessionMiddleware,flashMiddleware}
+
+
+module.exports = {flashMiddleware,}

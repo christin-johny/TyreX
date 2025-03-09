@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const category = require("./categorySchema");
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -67,11 +68,15 @@ const userSchema = new Schema({
         ref:"Cart",
     }
   ],
-  wallet:
+  wallet:[
     {
         type:Schema.Types.ObjectId,
         ref:"Wallet",
-    },
+    }],
+    orderHistory:[{
+      type:Schema.Types.ObjectId,
+      ref:"Order"
+    }],
   coupons:[
     {
         type:Schema.Types.ObjectId,
@@ -83,7 +88,28 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"Review",
     }
-  ]
+  ],
+  referalCode:{
+    type:String
+  },
+  redeemedUsers:[{
+    type:Schema.Types.ObjectId,
+    ref:'User'
+  }],
+  searchHistory:[{
+    category:{
+      type:Schema.Types.ObjectId,
+      ref:'Category'
+    },
+    brand:{
+      type:String
+    },
+    searchOn:{
+      type:Date,
+      default:Date.now
+    }
+  }]
+
 
 },{ timestamps: true });
 

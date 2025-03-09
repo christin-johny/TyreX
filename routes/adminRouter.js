@@ -1,45 +1,44 @@
-const express = require('express')
-const router=express.Router()
-const adminController=require('../controllers/admin/adminController')
-const {adminAuth,redirectAuth} = require("../middlewares/adminAuthMiddleware");
-const customerController=require('../controllers/admin/customerController')
-const categoryController=require('../controllers/admin/categoryController')
+const express = require("express");
+const router = express.Router();
+const adminController = require("../controllers/admin/adminController");
+const {
+  adminAuth,
+  redirectAuth,
+} = require("../middlewares/adminAuthMiddleware");
+const customerController = require("../controllers/admin/customerController");
+const categoryController = require("../controllers/admin/categoryController");
 
+router.get("/pageerror", adminController.pageError);
 
+router.get("/login", redirectAuth, adminController.loadLogin);
 
-router.get('/pageerror',adminController.pageError)
+router.post("/login", redirectAuth, adminController.login);
 
-router.get('/login',redirectAuth,adminController.loadLogin);
+router.get("/logout", adminController.logout);
 
-router.post('/login',redirectAuth,adminController.login)
+router.get("/forgotPassword", adminController.forgotPassword);
 
-router.get('/logout',adminController.logout)
+router.get("/dashboard", adminAuth, adminController.loadHomepage);
 
-router.get('/forgotPassword',adminController.forgotPassword)
+router.get("/products", adminController.products);
 
-router.get('/dashboard',adminAuth,adminController.loadHomepage);
-
-router.get('/products',adminController.products)
-
-router.get('/addProduct',adminController.loadAddProduct)
-router.post('/addProduct',adminController.addProducts)
-router.post('/addCategoryOffer',categoryController.addCategoryOffer);
-
-
+router.get("/addProduct", adminController.loadAddProduct);
+router.post("/addProduct", adminController.addProducts);
+router.post("/addCategoryOffer", categoryController.addCategoryOffer);
 
 
 //Coustomer Management
-router.get('/users',adminAuth,customerController.customerInfo);
-router.get("/blockCustomer",adminAuth,customerController.customerBlocked)
-router.get("/unblockCustomer",adminAuth,customerController.customerUnblocked)
+router.get("/users", adminAuth, customerController.customerInfo);
+router.get("/blockCustomer", adminAuth, customerController.customerBlocked);
+router.get("/unblockCustomer", adminAuth, customerController.customerUnblocked);
 
 
 //category Management
-router.get('/category',categoryController.categoryInfo);
-router.post('/addCategory',categoryController.addCategory)
-
-
-
+router.get("/category", categoryController.categoryInfo);
+router.post("/addCategory", categoryController.addCategory);
+router.delete("/removeCategoryOffer", categoryController.removeCategoryOffer);
+router.get("/listCategory",categoryController.getListCategory);
+router.get("/unlistCategory",categoryController.getUnlistCategory);
 
 
 module.exports = router;

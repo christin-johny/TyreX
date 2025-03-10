@@ -57,11 +57,15 @@ const productSchema = new mongoose.Schema(
       default: "Available",
     },
 
-    // brandId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Brand",
-    //   required: true,
-    // },
+    brandId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Brand",
+      required: true,
+    },
+    sizeId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"Size"
+    }
   },
   { timestamps: true }
 );

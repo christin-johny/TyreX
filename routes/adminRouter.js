@@ -5,6 +5,7 @@ const {adminAuth,redirectAuth,} = require("../middlewares/adminAuthMiddleware");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const brandController=require("../controllers/admin/brandController");
+const productController=require("../controllers/admin/productController")
 const multer = require("multer");
 const storage=require("../helpers/multer")
 const uploads=multer({storage:storage});
@@ -24,9 +25,9 @@ router.get("/dashboard", adminAuth, adminController.loadHomepage);
 
 router.get("/products", adminController.products);
 
-router.get("/addProduct", adminController.loadAddProduct);
-router.post("/addProduct", adminController.addProducts);
-router.post("/addCategoryOffer", categoryController.addCategoryOffer);
+// router.get("/addProduct", adminController.loadAddProduct);
+// router.post("/addProduct", adminController.addProducts);
+// router.post("/addCategoryOffer", categoryController.addCategoryOffer);
 
 
 //Coustomer Management
@@ -51,5 +52,8 @@ router.get("/blockBrand",brandController.blockBrand);
 router.get("/unblockBrand",brandController.unblockBrand);
 router.get("/deleteBrand",brandController.deleteBrand);
 
+
+//product management
+router.get("/addProduct",productController.loadAddProductPage)
 
 module.exports = router;

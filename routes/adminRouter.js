@@ -45,7 +45,8 @@ router.get("/editCategory", categoryController.loadEditCategory);
 router.post("/editCategory/:id", categoryController.editCategory);
 
 //brand Management
-router.get("/brands",brandController.loadBrandPage)
+router.get("/brands",brandController.loadBrandPage);
+router.post('/addBrand',uploads.single("image"),brandController.addBrand)
 
 
 module.exports = router;

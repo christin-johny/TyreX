@@ -36,27 +36,47 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-3">
-            <form method="post" action="" enctype="">
-              <div class="mb-4">
-                <label for="product_name" class="form-label">Brand Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Type here"
-                  class="form-control"
-                />
-              </div>
-              <label for="product_name" class="form-label">Brand Image</label>
-              <div class="input-upload">
-                <img src="" alt=""/>
-                <input class="form-control border" name="image" type="file" />
-              </div>
-              <div class="d-grid">
-                <button class="btn btn-primary mt-20" type="submit">
-                  Add Brand
-                </button>
-              </div>
-            </form>
+            <form method="post" action="/admin/addBrand" enctype="multipart/form-data" onsubmit="return validateForm()">
+                <!-- Brand Name Field -->
+                <div class="mb-4">
+                  <label for="brand_name" class="form-label">Brand Name</label>
+                  <input
+                    type="text"
+                    id="brand_name"
+                    name="name"
+                    placeholder="Type here"
+                    class="form-control"
+                   
+                  />
+                  <div id="brandNameError" class="error-message" style="display: none; color: red;">
+                    Please enter a valid brand name (no numbers allowed).
+                  </div>
+                </div>
+              
+                <!-- Brand Image Field -->
+                <label for="brand_image" class="form-label">Brand Image</label>
+                <div class="input-upload">
+                  <img src="" alt="" id="previewImage" style="max-width: 100px; display: none;" />
+                  <input
+                    type="file"
+                    id="brand_image"
+                    name="image"
+                    class="form-control border"
+                    accept="image/*"
+                  
+                  />
+                  <div id="brandImageError" class="error-message" style="display: none; color: red;">
+                    Please upload a valid image file (JPEG, PNG, etc.).
+                  </div>
+                </div>
+              
+                <!-- Submit Button -->
+                <div class="d-grid">
+                  <button class="btn btn-primary mt-20" type="submit">
+                    Add Brand
+                  </button>
+                </div>
+              </form>
           </div>
           <div class="col-md-7 ml-105">
             <div class="table-responsive">
@@ -70,8 +90,9 @@
                   </tr>
                 </thead>
                 <tbody>
+                    <%data.reverse().forEach((brand,index)=>{%>
                   <tr>
-                    <td class="text-start"></td>
+                    <td class="text-start"><%=brand.brandName%></td>
                     <td class="text-start">
                       <div
                         class="d-flex align-items-center justify-content-center"
@@ -83,8 +104,8 @@
                         "
                       >
                         <img
-                          src=""
-                          alt=""
+                          src="/uploads/reImage/<%=brand.brandImage[0]%>"
+                          alt="<%=brand.brandName%>"
                           class="img-fluid rounded-circle"
                           style="width: 100%; height: auto"
                         />
@@ -121,6 +142,7 @@
                       </button>
                     </td>
                   </tr>
+                  <%})%>
                 </tbody>
               </table>
             </div>
@@ -131,4 +153,107 @@
     <div class="pagination-container">
   </div>
   </section>
+  <script>
+
+
+  function validateForm() {
+    let isValid = true;
+
+    const brandName = document.getElementById('brand_name').value.trim();
+    const brandNameError = document.getElementById('brandNameError');
+    const brandNameRegex = /^[A-Za-z\s]+$/; 
+
+    if (brandName === '') {
+      brandNameError.textContent = 'Brand name cannot be empty.';
+      brandNameError.style.display = 'block';
+      isValid = false;
+    } else if (!brandNameRegex.test(brandName)) {
+      brandNameError.textContent = 'Brand name should not contain numbers or special characters.';
+      brandNameError.style.display = 'block';
+      isValid = false;
+    } else {
+      brandNameError.style.display = 'none';
+    }
+
+    const brandImage = document.getElementById('brand_image').files[0];
+    const brandImageError = document.getElementById('brandImageError');
+    if (!brandImage) {
+      brandImageError.textContent = 'Please upload a brand image.';
+      brandImageError.style.display = 'block';
+      isValid = false;
+    } else {
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(brandImage.type)) {
+        brandImageError.textContent = 'Only JPEG, PNG, or GIF images are allowed.';
+        brandImageError.style.display = 'block';
+        isValid = false;
+      } else {
+        brandImageError.style.display = 'none';
+      }
+    }
+
+    return isValid;
+  }
+
+
+  document.querySelector('form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    if (!validateForm()) return;
+
+    const formData = new FormData(this);
+
+    try {
+      const response = await fetch('/admin/addBrand', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          timer:1500,
+          showConfirmButton:false,
+          text: result.message,
+        }).then(() => {
+          window.location.href = '/admin/brands'; 
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: result.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'An error occurred while submitting the form.',
+      });
+    }
+  });
+
+  document.getElementById('brand_image').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    const previewImage = document.getElementById('previewImage');
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      previewImage.src = '';
+      previewImage.style.display = 'none';
+    }
+  });
+
+  </script>
   <%- include("../partials/admin/footer") %>

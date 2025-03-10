@@ -4,10 +4,10 @@ const path = require('path');
 
 
 const storage=multer.diskStorage({
-    destination:(req,res,cb)=>{
-        cb(null,path.join(__dirname,"../public/uploads/reImag"));
+    destination:(req,file,cb)=>{
+        cb(null,path.join(__dirname,"../public/uploads/reImage"));
     },
-    filename:(req,res,cb)=>{
+    filename:(req,file,cb)=>{
         cb(null,Date.now()+"-"+file.originalname);
     }
 })

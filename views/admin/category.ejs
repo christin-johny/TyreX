@@ -106,6 +106,13 @@
 .card-footer {
   padding: 1rem 1.25rem;
 }
+.description-container {
+  max-width: 100%; /* Ensures it stays inside the card */
+  white-space: normal; /* Allows text to wrap naturally */
+  word-wrap: break-word; /* Breaks long words if necessary */
+  overflow-wrap: break-word; /* Ensures text wraps instead of overflowing */
+  display: block; /* Ensures proper block-level behavior */
+}
 
  </style>
 </head>
@@ -238,7 +245,10 @@
               </div>
             </div>
             <div class="card-body py-2">
-              <p class="card-text text-muted text-dark"><strong>Description:</strong><%=category.description%></p>
+              <p class="card-text text-muted text-dark text-wrap">
+                <strong>Description:</strong> <span class="d-block"><%= category.description %></span>
+              </p>
+              
               
               <div class="d-flex align-items-center mb-3">
                 <span class="fw-bold me-2">Offer:</span>

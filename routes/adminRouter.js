@@ -39,6 +39,7 @@ router.post("/addCategory", categoryController.addCategory);
 router.delete("/removeCategoryOffer", categoryController.removeCategoryOffer);
 router.get("/listCategory",categoryController.getListCategory);
 router.get("/unlistCategory",categoryController.getUnlistCategory);
-
+router.get("/editCategory", categoryController.loadEditCategory);
+router.post("/editCategory/:id", categoryController.editCategory);
 
 module.exports = router;

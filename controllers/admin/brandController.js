@@ -4,7 +4,7 @@ const Product = require("../../models/productSchema");
 const loadBrandPage = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 6;
     const skip = (page - 1) * limit;
     const brandData = await Brand.find({})
       .sort({ createdAt: -1 })
@@ -24,7 +24,6 @@ const loadBrandPage = async (req, res) => {
     console.log(error);
   }
 };
-
 
 
 
@@ -61,4 +60,49 @@ const addBrand = async (req, res) => {
   }
 };
 
-module.exports = { loadBrandPage, addBrand };
+
+
+
+const blockBrand = async (req, res) => {
+    try {
+      const id = req.query.id;
+      await Brand.updateOne({ _id: id }, { $set: { isBlocked: true } });
+      req.session.message = { type: 'success', text: 'Brand blocked successfully!' };
+      res.redirect('/admin/brands');
+    } catch (error) {
+      console.error(error);
+      req.session.message = { type: 'error', text: 'An error occurred while blocking the brand.' };
+      res.redirect('/pageerror');
+    }
+  };
+  
+  const unblockBrand = async (req, res) => {
+    try {
+      const id = req.query.id;
+      await Brand.updateOne({ _id: id }, { $set: { isBlocked: false } });
+      req.session.message = { type: 'success', text: 'Brand unblocked successfully!' };
+      res.redirect('/admin/brands');
+    } catch (error) {
+      console.error(error);
+      req.session.message = { type: 'error', text: 'An error occurred while unblocking the brand.' };
+      res.redirect('/pageerror');
+    }
+  };
+  
+  const deleteBrand = async (req, res) => {
+    try {
+      const id = req.query.id;
+      if (!id) {
+        req.session.message = { type: 'error', text: 'Invalid brand ID.' };
+        return res.status(400).redirect('/pageerror');
+      }
+      await Brand.deleteOne({ _id: id });
+      req.session.message = { type: 'success', text: 'Brand deleted successfully!' };
+      res.redirect('/admin/brands');
+    } catch (error) {
+      console.error(error);
+      req.session.message = { type: 'error', text: 'An error occurred while deleting the brand.' };
+      res.status(500).redirect('/pageerror');
+    }
+  };
+module.exports = { loadBrandPage, addBrand,blockBrand,unblockBrand,deleteBrand};

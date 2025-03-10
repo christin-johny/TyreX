@@ -82,7 +82,7 @@
         const searchInput = document.getElementById("searchInput");
         const clearButton = document.getElementById("clearButton");
 
-        // Show Clear button only if the input has a value
+        
         searchInput.addEventListener("input", function () {
             if (searchInput.value.trim() !== "") {
                 clearButton.classList.remove("d-none");
@@ -91,7 +91,7 @@
             }
         });
 
-        // Keep Clear button visible if the search was submitted
+       
         if (new URLSearchParams(window.location.search).has("search")) {
             clearButton.classList.remove("d-none");
         }

@@ -3,28 +3,40 @@ const Product = require("../../models/productSchema");
 
 const categoryInfo = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 4;
-    const skip = (page - 1) * limit;
+    const search = req.query.search || ""; // Get the search query from the request
+    const page = parseInt(req.query.page) || 1; // Get the page number from the request
+    const limit = 4; // Number of categories per page
+    const skip = (page - 1) * limit; // Calculate the number of documents to skip
 
-    const categoryData = await Category.find({})
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-    const totalCategories = await Category.countDocuments();
+    // Fetch categories based on the search query
+    const categoryData = await Category.find({
+      name: { $regex: ".*" + search + ".*", $options: "i" }, // Case-insensitive search
+    })
+      .sort({ createdAt: -1 }) // Sort by creation date (newest first)
+      .skip(skip) // Skip documents for pagination
+      .limit(limit); // Limit the number of documents per page
+
+    // Count the total number of categories matching the search query
+    const totalCategories = await Category.countDocuments({
+      name: { $regex: ".*" + search + ".*", $options: "i" },
+    });
+
+    // Calculate the total number of pages
     const totalPages = Math.ceil(totalCategories / limit);
+
+    // Render the view with the category data and pagination details
     res.render("category", {
       cat: categoryData,
       currentPage: page,
       totalPages: totalPages,
       totalCategories: totalCategories,
+      searchQuery: search, // Pass the search query to the view
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching categories:", error);
     res.redirect("/pageerror");
   }
 };
-
 const addCategory = async (req, res) => {
   const { name, description } = req.body;
 
@@ -57,21 +69,17 @@ const addCategoryOffer = async (req, res) => {
     const { percentage, categoryId } = req.body;
 
     if (!percentage || !categoryId) {
-      return res
-        .status(400)
-        .json({
-          status: false,
-          message: "Percentage and category ID are required.",
-        });
+      return res.status(400).json({
+        status: false,
+        message: "Percentage and category ID are required.",
+      });
     }
 
     if (percentage < 1 || percentage > 100) {
-      return res
-        .status(400)
-        .json({
-          status: false,
-          message: "Percentage must be between 1 and 100.",
-        });
+      return res.status(400).json({
+        status: false,
+        message: "Percentage must be between 1 and 100.",
+      });
     }
 
     const category = await Category.findById(categoryId);
@@ -87,13 +95,11 @@ const addCategoryOffer = async (req, res) => {
       (product) => product.productOffer > percentage
     );
     if (hasProductsOffer) {
-      return res
-        .status(400)
-        .json({
-          status: false,
-          message:
-            "Products within this category already have a product-specific offer greater than the category offer.",
-        });
+      return res.status(400).json({
+        status: false,
+        message:
+          "Products within this category already have a product-specific offer greater than the category offer.",
+      });
     }
 
     await Category.updateOne(
@@ -110,20 +116,16 @@ const addCategoryOffer = async (req, res) => {
       await product.save();
     }
 
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: `Offer of ${percentage}% added successfully.`,
-      });
+    return res.status(200).json({
+      status: true,
+      message: `Offer of ${percentage}% added successfully.`,
+    });
   } catch (error) {
     console.error("Error adding category offer:", error);
-    return res
-      .status(500)
-      .json({
-        status: false,
-        message: "An error occurred while adding the offer.",
-      });
+    return res.status(500).json({
+      status: false,
+      message: "An error occurred while adding the offer.",
+    });
   }
 };
 const removeCategoryOffer = async (req, res) => {
@@ -161,40 +163,87 @@ const removeCategoryOffer = async (req, res) => {
       .json({ status: true, message: "Offer removed successfully." });
   } catch (error) {
     console.error("Error removing category offer:", error);
-    return res
-      .status(500)
-      .json({
-        status: false,
-        message: "An error occurred while removing the offer.",
-      });
+    return res.status(500).json({
+      status: false,
+      message: "An error occurred while removing the offer.",
+    });
   }
 };
 
+const getListCategory = async (req, res) => {
+  try {
+    let id = req.query.id;
+    await Category.updateOne({ _id: id }, { $set: { isListed: false } });
+    res.redirect("/admin/category");
+  } catch (error) {
+    res.redirect("/pageerror");
+  }
+};
 
-const getListCategory = async (req,res) => {
-    try {
-        let id=req.query.id;
-        await Category.updateOne({_id:id},{$set:{isListed:false}});
-        res.redirect("/admin/category");
-    } catch (error) {
-        res.redirect('/pageerror')
+const getUnlistCategory = async (req, res) => {
+  try {
+    let id = req.query.id;
+    await Category.updateOne({ _id: id }, { $set: { isListed: true } });
+    res.redirect("/admin/category");
+  } catch (error) {
+    res.redirect("/pageerror");
+  }
+};
+
+const loadEditCategory = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const category = await Category.findOne({ _id: id });
+
+    if (!category) {
+      return res.status(404).json({ status: false, message: "Category not found" });
     }
-}
 
+    return res.status(200).json({ status: true, category });
+  } catch (error) {
+    console.error("Error loading category:", error);
+    return res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
 
+const editCategory = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { categoryName, description } = req.body;
 
-const getUnlistCategory=async (req,res) => {
-    try {
-        let id=req.query.id;
-        await Category.updateOne({_id:id},{$set:{isListed:true}});
-        res.redirect("/admin/category");
-    } catch (error) {
-        res.redirect('/pageerror')
+   
+    const existingCategory = await Category.findOne({
+      name: categoryName,
+      _id: { $ne: id }, 
+    });
+
+    if (existingCategory) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Category exists. Please choose another name." });
     }
-}
 
 
+    const updatedCategory = await Category.findByIdAndUpdate(
+      id,
+      {
+        name: categoryName,
+        description: description,
+      },
+      { new: true }
+    );
 
+    if (!updatedCategory) {
+      return res.status(404).json({ status: false, message: "Category not found" });
+    }
+
+
+    return res.status(200).json({ status: true, message: "Category updated successfully" });
+  } catch (error) {
+    console.error("Error updating category:", error);
+    return res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
 module.exports = {
   categoryInfo,
   addCategory,
@@ -202,5 +251,6 @@ module.exports = {
   removeCategoryOffer,
   getListCategory,
   getUnlistCategory,
-
+  loadEditCategory,
+  editCategory,
 };

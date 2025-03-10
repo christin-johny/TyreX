@@ -43,115 +43,89 @@
       border-color: #0056b3;
     }
 
-    .pagination-container {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .page-link {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-decoration: none;
-    color: #007bff;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .page-link:hover {
-    background-color: #007bff;
-    color: #fff;
-  }
-
-  .page-link.active {
-    background-color: #007bff;
-    color: #fff;
-    font-weight: bold;
-    border-color: #007bff;
-  }
-
-    .error-message {
-      color: red;
+    /* Optional custom styles to enhance the bootstrap cards */
+    .card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.08);
     }
-    
-/* Optional custom styles to enhance the bootstrap cards */
-.card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.08);
-}
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-}
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
 
-.card-header {
-  background-color: transparent;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  padding: 1rem 1.25rem;
-}
+    .card-header {
+      background-color: transparent;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 1rem 1.25rem;
+    }
 
-.badge {
-  font-weight: 500;
-  padding: 0.5em 0.75em;
-}
+    .badge {
+      font-weight: 500;
+      padding: 0.5em 0.75em;
+    }
 
-.btn-sm {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-}
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
 
-.card-footer {
-  padding: 1rem 1.25rem;
-}
-.description-container {
-  max-width: 100%; /* Ensures it stays inside the card */
-  white-space: normal; /* Allows text to wrap naturally */
-  word-wrap: break-word; /* Breaks long words if necessary */
-  overflow-wrap: break-word; /* Ensures text wraps instead of overflowing */
-  display: block; /* Ensures proper block-level behavior */
-}
-
- </style>
+    .card-footer {
+      padding: 1rem 1.25rem;
+    }
+  </style>
 </head>
 <body>
   <section class="content-main container-fluid">
     <div class="content-header text-center mb-4 mt-4">
-      <h2 class="content-title card-title text-dark"><strong>Category</strong></h2>
+      <h2 class="content-title card-title text-dark">
+        <strong>Category</strong>
+      </h2>
     </div>
-    
+
     <header class="card-header text-center mb-4">
-      <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+      <div
+        class="d-flex flex-wrap justify-content-center align-items-center gap-3"
+      >
         <form action="/admin/category/" method="get" class="d-inline w-auto">
-          <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="max-width: 500px;">
+          <div
+            class="input-group input-group-sm border border-1 border-grey rounded-pill"
+            style="max-width: 500px"
+          >
             <input
               type="text"
               class="form-control border-0 rounded-pill"
               placeholder="Search categories"
               name="search"
               value="<%= searchQuery %>"
-              id="searchInput" 
+              id="searchInput"
             />
             <button class="btn border-0" type="submit">
               <i class="fas fa-search fa-fw"></i>
             </button>
-            <a href="/admin/category" class="btn btn-secondary btn-sm rounded-pill ms-2 d-none" id="clearButton">Clear</a>
+            <a
+              href="/admin/category"
+              class="btn btn-secondary btn-sm rounded-pill ms-2 d-none"
+              id="clearButton"
+              >Clear</a
+            >
           </div>
         </form>
-        
+
         <button
           class="btn btn-primary px-4 py-2"
           data-bs-toggle="modal"
           data-bs-target="#addCategoryModal"
         >
+          <i class="fas fa-plus"></i>
+
           Add Category
         </button>
       </div>
     </header>
-  
-    <!-- Add Category Modal -->
+
     <div
       class="modal fade"
       id="addCategoryModal"
@@ -161,11 +135,8 @@
     >
       <div class="modal-dialog">
         <div class="modal-content">
-          <!-- Modal Header -->
           <div class="modal-header">
-            <h5 class="modal-title" id="addCategoryModalLabel">
-              Add Category
-            </h5>
+            <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
             <button
               type="button"
               class="btn-close"
@@ -173,8 +144,7 @@
               aria-label="Close"
             ></button>
           </div>
-  
-          <!-- Modal Body -->
+
           <div class="modal-body">
             <form id="addCategoryForm">
               <div class="mb-4">
@@ -190,7 +160,7 @@
                 />
                 <div id="nameError" class="text-danger small mt-1"></div>
               </div>
-  
+
               <div class="mb-4">
                 <label class="form-label fw-medium">Description</label>
                 <textarea
@@ -200,15 +170,11 @@
                   rows="4"
                   placeholder="Enter category description"
                 ></textarea>
-                <div
-                  id="descriptionError"
-                  class="text-danger small mt-1"
-                ></div>
+                <div id="descriptionError" class="text-danger small mt-1"></div>
               </div>
             </form>
           </div>
-  
-          <!-- Modal Footer -->
+
           <div class="modal-footer">
             <button
               type="button"
@@ -228,14 +194,18 @@
         </div>
       </div>
     </div>
-  
+
     <div class="container-fluid py-4">
       <div class="row justify-content-center">
         <%cat.reverse().forEach((category,index)=>{%>
         <div class="col-12 mb-3">
           <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <h5 class="card-title mb-0 text-dark"><strong><%=category.name%></strong></h5>
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <h5 class="card-title mb-0 text-dark">
+                <strong><%=category.name%></strong>
+              </h5>
               <div>
                 <%if(category.isListed){%>
                 <span class="badge bg-success">Listed</span>
@@ -246,10 +216,10 @@
             </div>
             <div class="card-body py-2">
               <p class="card-text text-muted text-dark text-wrap">
-                <strong>Description:</strong> <span class="d-block"><%= category.description %></span>
+                <strong>Description:</strong>
+                <span class="d-block"><%= category.description %></span>
               </p>
-              
-              
+
               <div class="d-flex align-items-center mb-3">
                 <span class="fw-bold me-2">Offer:</span>
                 <span class="fs-5">
@@ -264,25 +234,45 @@
             <div class="card-footer bg-white border-top-0 py-2">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <%if(!category.categoryOffer || category.categoryOffer === 0){%>
-                  <button class="btn btn-info text-white btn-sm " onclick="addOffer('<%=category._id%>')">Add Offer</button>
+                  <%if(!category.categoryOffer || category.categoryOffer ===
+                  0){%>
+                  <button
+                    class="btn btn-info text-white btn-sm"
+                    onclick="addOffer('<%=category._id%>')"
+                  >
+                    Add Offer
+                  </button>
                   <%}else{%>
-                  <button class="btn btn-warning text-white btn-sm " onclick="removeOffer('<%=category._id%>')">Remove Offer</button>
+                  <button
+                    class="btn btn-warning text-white btn-sm"
+                    onclick="removeOffer('<%=category._id%>')"
+                  >
+                    Remove Offer
+                  </button>
                   <%}%>
                 </div>
-                
+
                 <div class="d-flex gap-2">
                   <%if(category.isListed){%>
-                  <a href="/admin/listCategory?id=<%=category._id%>" class="btn btn-danger btn-sm">Unlist</a>
+                  <a
+                    href="/admin/listCategory?id=<%=category._id%>"
+                    class="btn btn-danger btn-sm"
+                    >Unlist</a
+                  >
                   <%}else{%>
-                  <a href="/admin/unlistCategory?id=<%=category._id%>" class="btn btn-success btn-sm">List</a>
+                  <a
+                    href="/admin/unlistCategory?id=<%=category._id%>"
+                    class="btn btn-success btn-sm"
+                    >List</a
+                  >
                   <%}%>
-                  
-                  <button 
-                    class="btn btn-info text-white btn-sm " 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#editCategoryModal" 
-                    onclick="loadEditCategory('<%=category._id%>')">
+
+                  <button
+                    class="btn btn-info text-white btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editCategoryModal"
+                    onclick="loadEditCategory('<%=category._id%>')"
+                  >
                     Edit
                   </button>
                 </div>
@@ -294,24 +284,40 @@
       </div>
     </div>
     <div class="pagination-container d-flex justify-content-center mt-4">
-      <% if (currentPage > 1) { %>
-        <a href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>" class="page-link">&laquo; Previous</a>
-      <% } %>
-    
-      <% for (let i = 1; i <= totalPages; i++) { %>
-        <% if (i === currentPage) { %>
-          <span class="page-link active"><%= i %></span>
-        <% } else { %>
-          <a href="?page=<%= i %>&search=<%= searchQuery %>" class="page-link"><%= i %></a>
-        <% } %>
-      <% } %>
-    
-      <% if (currentPage < totalPages) { %>
-        <a href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>" class="page-link">Next &raquo;</a>
-      <% } %>
+      <nav aria-label="Page navigation">
+        <ul class="pagination pagination-sm flex-wrap">
+          <% if (currentPage > 1) { %>
+          <li class="page-item">
+            <a
+              href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>"
+              class="page-link"
+              >&laquo; Previous</a
+            >
+          </li>
+          <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+          currentPage) { %>
+          <li class="page-item active">
+            <span class="page-link"><%= i %></span>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+            <a href="?page=<%= i %>&search=<%= searchQuery %>" class="page-link"
+              ><%= i %></a
+            >
+          </li>
+          <% } %> <% } %> <% if (currentPage < totalPages) { %>
+          <li class="page-item">
+            <a
+              href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>"
+              class="page-link"
+              >Next &raquo;</a
+            >
+          </li>
+          <% } %>
+        </ul>
+      </nav>
     </div>
-  
-    <!-- Edit Category Modal -->
+
     <div
       class="modal fade"
       id="editCategoryModal"
@@ -321,7 +327,6 @@
     >
       <div class="modal-dialog">
         <div class="modal-content">
-          <!-- Modal Header -->
           <div class="modal-header">
             <h5 class="modal-title" id="editCategoryModalLabel">
               Edit Category
@@ -333,8 +338,7 @@
               aria-label="Close"
             ></button>
           </div>
-  
-          <!-- Modal Body -->
+
           <div class="modal-body">
             <form id="editCategoryForm">
               <div class="mb-4">
@@ -350,7 +354,7 @@
                 />
                 <div id="nameError" class="text-danger small mt-1"></div>
               </div>
-  
+
               <div class="mb-4">
                 <label class="form-label fw-medium">Description</label>
                 <textarea
@@ -364,8 +368,7 @@
               </div>
             </form>
           </div>
-  
-          <!-- Modal Footer -->
+
           <div class="modal-footer">
             <button
               type="button"
@@ -666,32 +669,30 @@
       }
     }
 
-
-
     document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("searchInput");
-  const clearButton = document.getElementById("clearButton");
+      const searchInput = document.getElementById("searchInput");
+      const clearButton = document.getElementById("clearButton");
 
-  // Show/hide the clear button based on the search input value
-  searchInput.addEventListener("input", function () {
-    if (searchInput.value.trim() !== "") {
-      clearButton.classList.remove("d-none");
-    } else {
-      clearButton.classList.add("d-none");
-    }
-  });
+      // Show/hide the clear button based on the search input value
+      searchInput.addEventListener("input", function () {
+        if (searchInput.value.trim() !== "") {
+          clearButton.classList.remove("d-none");
+        } else {
+          clearButton.classList.add("d-none");
+        }
+      });
 
-  // Show the clear button if a search query is present in the URL
-  if (new URLSearchParams(window.location.search).has("search")) {
-    clearButton.classList.remove("d-none");
-  }
+      // Show the clear button if a search query is present in the URL
+      if (new URLSearchParams(window.location.search).has("search")) {
+        clearButton.classList.remove("d-none");
+      }
 
-  // Clear the search input and redirect to the category page
-  clearButton.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent the default link behavior
-    window.location.href = "/admin/category"; // Redirect to the category page without the search query
-  });
-});
+      // Clear the search input and redirect to the category page
+      clearButton.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default link behavior
+        window.location.href = "/admin/category"; // Redirect to the category page without the search query
+      });
+    });
   </script>
 </body>
 <%- include("../partials/admin/footer") %>

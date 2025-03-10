@@ -47,9 +47,9 @@
                                 <!-- Block/Unblock Button -->
                                 <div>
                                     <% if(user.isBlocked === false) { %>
-                                        <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-danger btn-sm">Block</a>
+                                        <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-danger btn-sm block-user">Block</a>
                                     <% } else { %>
-                                        <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-success btn-sm">Unblock</a>
+                                        <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-success btn-sm unblock-user">Unblock</a>
                                     <% } %>
                                 </div>
                             </div>
@@ -61,19 +61,38 @@
     </div>
 
     <!-- Pagination -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <% for(let i = 1; i <= totalPages; i++) { %>
-                        <li class="page-item <%=(i === currentPage) ? 'active' : ''%>">
-                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                        </li>
-                    <% } %>
-                </ul>
-            </nav>
-        </div>
-    </div>
+    <div class="pagination-container d-flex justify-content-center mt-4">
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm flex-wrap">
+            
+            <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+              </li>
+            <% } %>
+      
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <% if (i === currentPage) { %>
+                <li class="page-item active">
+                  <span class="page-link"><%= i %></span>
+                </li>
+              <% } else { %>
+                <li class="page-item">
+                  <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+                </li>
+              <% } %>
+            <% } %>
+      
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a href="?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
+              </li>
+            <% } %>
+      
+          </ul>
+        </nav>
+      </div>
+      
 </div>
 
 
@@ -95,6 +114,58 @@
         if (new URLSearchParams(window.location.search).has("search")) {
             clearButton.classList.remove("d-none");
         }
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const blockButtons = document.querySelectorAll(".block-user");
+        const unblockButtons = document.querySelectorAll(".unblock-user");
+
+        // Block Confirmation
+        blockButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                const url = this.getAttribute("href");
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You are about to block this user. They will not be able to access their account.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, Block!",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+
+        // Unblock Confirmation
+        unblockButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                const url = this.getAttribute("href");
+
+                Swal.fire({
+                    title: "Unblock User?",
+                    text: "Are you sure you want to unblock this user?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#28a745",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: "Yes, Unblock!",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
     });
 </script>
 <%- include("../partials/admin/footer") %>

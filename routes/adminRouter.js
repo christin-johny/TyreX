@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin/adminController");
-const {
-  adminAuth,
-  redirectAuth,
-} = require("../middlewares/adminAuthMiddleware");
+const {adminAuth,redirectAuth,} = require("../middlewares/adminAuthMiddleware");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
+const brandController=require("../controllers/admin/brandController");
+const multer = require("multer");
+const storage=require("../helpers/multer")
+const uploads=multer({storage:storage});
+
 
 router.get("/pageerror", adminController.pageError);
 
@@ -41,5 +43,9 @@ router.get("/listCategory",categoryController.getListCategory);
 router.get("/unlistCategory",categoryController.getUnlistCategory);
 router.get("/editCategory", categoryController.loadEditCategory);
 router.post("/editCategory/:id", categoryController.editCategory);
+
+//brand Management
+router.get("/brands",brandController.loadBrandPage)
+
 
 module.exports = router;

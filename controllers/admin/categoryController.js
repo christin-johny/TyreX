@@ -3,34 +3,30 @@ const Product = require("../../models/productSchema");
 
 const categoryInfo = async (req, res) => {
   try {
-    const search = req.query.search || ""; // Get the search query from the request
-    const page = parseInt(req.query.page) || 1; // Get the page number from the request
-    const limit = 4; // Number of categories per page
-    const skip = (page - 1) * limit; // Calculate the number of documents to skip
+    const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
 
-    // Fetch categories based on the search query
     const categoryData = await Category.find({
-      name: { $regex: ".*" + search + ".*", $options: "i" }, // Case-insensitive search
+      name: { $regex: ".*" + search + ".*", $options: "i" },
     })
-      .sort({ createdAt: -1 }) // Sort by creation date (newest first)
-      .skip(skip) // Skip documents for pagination
-      .limit(limit); // Limit the number of documents per page
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    // Count the total number of categories matching the search query
     const totalCategories = await Category.countDocuments({
       name: { $regex: ".*" + search + ".*", $options: "i" },
     });
 
-    // Calculate the total number of pages
     const totalPages = Math.ceil(totalCategories / limit);
 
-    // Render the view with the category data and pagination details
     res.render("category", {
       cat: categoryData,
       currentPage: page,
       totalPages: totalPages,
       totalCategories: totalCategories,
-      searchQuery: search, // Pass the search query to the view
+      searchQuery: search,
     });
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -196,13 +192,17 @@ const loadEditCategory = async (req, res) => {
     const category = await Category.findOne({ _id: id });
 
     if (!category) {
-      return res.status(404).json({ status: false, message: "Category not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Category not found" });
     }
 
     return res.status(200).json({ status: true, category });
   } catch (error) {
     console.error("Error loading category:", error);
-    return res.status(500).json({ status: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal server error" });
   }
 };
 
@@ -211,18 +211,17 @@ const editCategory = async (req, res) => {
     const id = req.params.id;
     const { categoryName, description } = req.body;
 
-   
     const existingCategory = await Category.findOne({
       name: categoryName,
-      _id: { $ne: id }, 
+      _id: { $ne: id },
     });
 
     if (existingCategory) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Category exists. Please choose another name." });
+      return res.status(400).json({
+        status: false,
+        message: "Category exists. Please choose another name.",
+      });
     }
-
 
     const updatedCategory = await Category.findByIdAndUpdate(
       id,
@@ -234,14 +233,19 @@ const editCategory = async (req, res) => {
     );
 
     if (!updatedCategory) {
-      return res.status(404).json({ status: false, message: "Category not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Category not found" });
     }
 
-
-    return res.status(200).json({ status: true, message: "Category updated successfully" });
+    return res
+      .status(200)
+      .json({ status: true, message: "Category updated successfully" });
   } catch (error) {
     console.error("Error updating category:", error);
-    return res.status(500).json({ status: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal server error" });
   }
 };
 module.exports = {

@@ -39,6 +39,7 @@ router.get("/unblockCustomer", adminAuth, customerController.customerUnblocked);
 //category Management
 router.get("/category", categoryController.categoryInfo);
 router.post("/addCategory", categoryController.addCategory);
+router.post("/addCategoryOffer",categoryController.addCategoryOffer)
 router.delete("/removeCategoryOffer", categoryController.removeCategoryOffer);
 router.get("/listCategory",categoryController.getListCategory);
 router.get("/unlistCategory",categoryController.getUnlistCategory);

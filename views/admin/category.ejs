@@ -1,9 +1,6 @@
 <%- include("../partials/admin/sidebar") %>
 <head>
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"
-  />
+ 
   <style>
     .col-md-3 {
       padding: 20px;
@@ -43,7 +40,6 @@
       border-color: #0056b3;
     }
 
-    /* Optional custom styles to enhance the bootstrap cards */
     .card {
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       border-radius: 8px;
@@ -234,8 +230,7 @@
             <div class="card-footer bg-white border-top-0 py-2">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <%if(!category.categoryOffer || category.categoryOffer ===
-                  0){%>
+                  <%if(!category.categoryOffer || category.categoryOffer ===0){%>
                   <button
                     class="btn btn-info text-white btn-sm"
                     onclick="addOffer('<%=category._id%>')"
@@ -390,8 +385,6 @@
     </div>
   </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
   <script>
     async function addOffer(categoryId) {
@@ -413,6 +406,7 @@
           }
         },
       });
+      console.log("Sending Data:", { percentage, categoryId });
 
       if (percentage) {
         try {
@@ -494,20 +488,19 @@
       }
     }
 
-    // Function to load category data into the modal
     async function loadEditCategory(categoryId) {
       try {
         const response = await fetch(`/admin/editCategory?id=${categoryId}`);
         const data = await response.json();
 
         if (data.status === true) {
-          // Populate the modal form with category data
+ 
           document.getElementById("editCategoryName").value =
             data.category.name;
           document.getElementById("editCategoryDescription").value =
             data.category.description;
 
-          // Set the form action URL
+
           document.getElementById(
             "editCategoryForm"
           ).action = `/admin/editCategory/${categoryId}`;
@@ -528,7 +521,7 @@
       }
     }
 
-    // Reusable SweetAlert function
+
     function showSweetAlert(
       icon,
       title,
@@ -545,7 +538,7 @@
       });
     }
 
-    // Reusable modal close function
+
     function closeModalAndReload(modalId) {
       const modal = bootstrap.Modal.getInstance(
         document.getElementById(modalId)
@@ -554,13 +547,13 @@
       location.reload();
     }
 
-    // Reusable error handler
+
     function handleError(error, defaultMessage = "An error occurred.") {
       console.error("Error:", error);
       showSweetAlert("error", "Error", defaultMessage);
     }
 
-    // Function to validate the form
+
     function validateForm(formId, nameFieldName) {
       const form = document.getElementById(formId);
       const nameInput = form.querySelector(`input[name="${nameFieldName}"]`);
@@ -572,22 +565,21 @@
 
       let isValid = true;
 
-      // Reset error messages
+
       nameError.textContent = "";
       descriptionError.textContent = "";
 
-      // Validate name
-      const nameRegex = /^[A-Za-z\s]+$/;
+
+      const nameRegex = /^[A-Za-z\s\-_())]+$/;
       if (!nameInput.value.trim()) {
         nameError.textContent = "Name is required.";
         isValid = false;
       } else if (!nameRegex.test(nameInput.value.trim())) {
         nameError.textContent =
-          "Name should only contain alphabets and spaces.";
+          "Name can't have numbers.";
         isValid = false;
       }
 
-      // Validate description
       if (!descriptionInput.value.trim()) {
         descriptionError.textContent = "Description is required.";
         isValid = false;
@@ -596,13 +588,12 @@
       return isValid;
     }
 
-    // Function to submit the edit category form
     async function submitEditCategoryForm() {
       const form = document.getElementById("editCategoryForm");
       const formData = new FormData(form);
       const url = form.action;
 
-      // Validate the form
+
       if (!validateForm("editCategoryForm", "categoryName")) {
         return;
       }
@@ -633,12 +624,11 @@
       }
     }
 
-    // Function to submit the add category form
+
     async function submitAddCategoryForm() {
       const form = document.getElementById("addCategoryForm");
       const formData = new FormData(form);
 
-      // Validate the form
       if (!validateForm("addCategoryForm", "name")) {
         return;
       }
@@ -673,7 +663,6 @@
       const searchInput = document.getElementById("searchInput");
       const clearButton = document.getElementById("clearButton");
 
-      // Show/hide the clear button based on the search input value
       searchInput.addEventListener("input", function () {
         if (searchInput.value.trim() !== "") {
           clearButton.classList.remove("d-none");
@@ -682,15 +671,15 @@
         }
       });
 
-      // Show the clear button if a search query is present in the URL
+
       if (new URLSearchParams(window.location.search).has("search")) {
         clearButton.classList.remove("d-none");
       }
 
-      // Clear the search input and redirect to the category page
+
       clearButton.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent the default link behavior
-        window.location.href = "/admin/category"; // Redirect to the category page without the search query
+        event.preventDefault(); 
+        window.location.href = "/admin/category";
       });
     });
   </script>

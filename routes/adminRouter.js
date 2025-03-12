@@ -61,8 +61,8 @@ router.post("/addproduct",uploads.array("images",4),productController.addproduct
 router.get('/products',productController.loadAllproducts);
 router.post('/addProductOffer',productController.addProductOffer);
 router.post('/removeProductOffer',productController.removeProductOffer);
-
-
+router.get('/blockProduct',productController.blockProduct);
+router.get('/unblockProduct',productController.unblockProduct);
 
 
 

@@ -208,4 +208,38 @@ const removeProductOffer = async (req, res) => {
 };
 
 
-module.exports = { loadAddProductPage, addproduct, loadAllproducts,addProductOffer,removeProductOffer };
+
+const blockProduct=async (req,res) => {
+  try {
+    const id=req.query.id;
+    await Product.updateOne({_id:id},{$set:{isBlocked:true}});
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.error(error);
+    res.redirect('/admin/pageerror')
+  }
+  
+}
+
+
+
+const unblockProduct=async (req,res) => {
+  try {
+    const id=req.query.id;
+    await Product.updateOne({_id:id},{$set:{isBlocked:false}});
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.error(error);
+    res.redirect('/admin/pageerror')
+  }
+  
+}
+
+
+
+
+
+
+
+
+module.exports = { loadAddProductPage, addproduct, loadAllproducts,addProductOffer,removeProductOffer,blockProduct,unblockProduct};

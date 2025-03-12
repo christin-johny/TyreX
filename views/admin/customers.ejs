@@ -1,171 +1,183 @@
 <%- include("../partials/admin/sidebar") %>
 
 <div class="container-fluid px-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="content-header d-flex justify-content-between align-items-center mt-4">
-                <h2 class="content-title card-title text-dark">Customers</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="row justify-content-center my-3">
-        <div class="col-md-6 col-sm-10">
-            <form action="/admin/users/" method="get" id="searchForm">
-                <div class="input-group input-group-sm border border-1 border-grey rounded-pill">
-                    <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..." name="search" id="searchInput">
-                    <button class="btn border-0" type="submit">
-                        <i class="fas fa-search fa-fw"></i>
-                    </button>
-                    <a href="/admin/users" class="btn btn-secondary btn-sm rounded-pill ms-2 d-none" id="clearButton">Clear</a>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-
-    <!-- Customers List (Rows) -->
-    <div class="row">
-        <div class="col-12">
-            <% if (data.length === 0) { %>
-                <div class="text-center">
-                    <h5 class="text-muted">No customers found</h5>
-                </div>
-            <% } else { %>
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <% data.forEach(user => { %>
-                            <div class="d-flex align-items-center border-bottom py-3">
-                                <!-- Customer Details -->
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1 text-dark"><strong><%= user.name %></strong></h6>
-                                    <p class="mb-0 text-muted"><b>Email:</b> <%= user.email %></p>
-                                    <p class="mb-0 text-muted"><b>Phone:</b> <%= user.phone || 'N/A' %></p>
-                                </div>
-
-                                <!-- Block/Unblock Button -->
-                                <div>
-                                    <% if(user.isBlocked === false) { %>
-                                        <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-danger btn-sm block-user">Block</a>
-                                    <% } else { %>
-                                        <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-success btn-sm unblock-user">Unblock</a>
-                                    <% } %>
-                                </div>
-                            </div>
-                        <% }); %>
-                    </div>
-                </div>
-            <% } %>
-        </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination-container d-flex justify-content-center mt-4">
-        <nav aria-label="Page navigation">
-          <ul class="pagination pagination-sm flex-wrap">
-            
-            <% if (currentPage > 1) { %>
-              <li class="page-item">
-                <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
-              </li>
-            <% } %>
-      
-            <% for (let i = 1; i <= totalPages; i++) { %>
-              <% if (i === currentPage) { %>
-                <li class="page-item active">
-                  <span class="page-link"><%= i %></span>
-                </li>
-              <% } else { %>
-                <li class="page-item">
-                  <a href="?page=<%= i %>" class="page-link"><%= i %></a>
-                </li>
-              <% } %>
-            <% } %>
-      
-            <% if (currentPage < totalPages) { %>
-              <li class="page-item">
-                <a href="?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
-              </li>
-            <% } %>
-      
-          </ul>
-        </nav>
+  <div class="row">
+    <div class="col-12">
+      <div
+        class="content-header d-flex justify-content-between align-items-center mt-4"
+      >
+        <h2 class="content-title card-title text-dark">Customers</h2>
       </div>
-      
+    </div>
+  </div>
+
+
+  <div class="row justify-content-center my-3">
+    <div class="col-md-6 col-sm-10">
+      <form action="/admin/users/" method="get" id="searchForm">
+        <div
+          class="input-group input-group-sm border border-1 border-grey rounded-pill"
+        >
+          <input
+            type="text"
+            class="form-control border-0 rounded-pill"
+            placeholder="Search customers..."
+            name="search"
+            id="searchInput"
+          />
+          <button class="btn border-0" type="submit">
+            <i class="fas fa-search fa-fw"></i>
+          </button>
+          <a
+            href="/admin/users"
+            class="btn btn-secondary btn-sm rounded-pill ms-2 d-none"
+            id="clearButton"
+            >Clear</a
+          >
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-12">
+      <% if (data.length === 0) { %>
+      <div class="text-center">
+        <h5 class="text-muted">No customers found</h5>
+      </div>
+      <% } else { %>
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <% data.forEach(user => { %>
+          <div class="d-flex align-items-center border-bottom py-3">
+        
+            <div class="flex-grow-1">
+              <h6 class="mb-1 text-dark"><strong><%= user.name %></strong></h6>
+              <p class="mb-0 text-muted"><b>Email:</b> <%= user.email %></p>
+              <p class="mb-0 text-muted">
+                <b>Phone:</b> <%= user.phone || 'N/A' %>
+              </p>
+            </div>
+
+            <div>
+              <% if(user.isBlocked === false) { %>
+              <a
+                href="/admin/blockCustomer?id=<%= user._id %>"
+                class="btn btn-danger btn-sm block-user"
+                >Block</a
+              >
+              <% } else { %>
+              <a
+                href="/admin/unblockCustomer?id=<%= user._id %>"
+                class="btn btn-success btn-sm unblock-user"
+                >Unblock</a
+              >
+              <% } %>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="pagination-container d-flex justify-content-center mt-4">
+    <nav aria-label="Page navigation">
+      <ul class="pagination pagination-sm flex-wrap">
+        <% if (currentPage > 1) { %>
+        <li class="page-item">
+          <a href="?page=<%= currentPage - 1 %>" class="page-link"
+            >&laquo; Previous</a
+          >
+        </li>
+        <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+        currentPage) { %>
+        <li class="page-item active">
+          <span class="page-link"><%= i %></span>
+        </li>
+        <% } else { %>
+        <li class="page-item">
+          <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+        </li>
+        <% } %> <% } %> <% if (currentPage < totalPages) { %>
+        <li class="page-item">
+          <a href="?page=<%= currentPage + 1 %>" class="page-link"
+            >Next &raquo;</a
+          >
+        </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
 </div>
 
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById("searchInput");
-        const clearButton = document.getElementById("clearButton");
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const clearButton = document.getElementById("clearButton");
 
-        
-        searchInput.addEventListener("input", function () {
-            if (searchInput.value.trim() !== "") {
-                clearButton.classList.remove("d-none");
-            } else {
-                clearButton.classList.add("d-none");
-            }
-        });
-
-       
-        if (new URLSearchParams(window.location.search).has("search")) {
-            clearButton.classList.remove("d-none");
-        }
+    searchInput.addEventListener("input", function () {
+      if (searchInput.value.trim() !== "") {
+        clearButton.classList.remove("d-none");
+      } else {
+        clearButton.classList.add("d-none");
+      }
     });
 
+    if (new URLSearchParams(window.location.search).has("search")) {
+      clearButton.classList.remove("d-none");
+    }
+  });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const blockButtons = document.querySelectorAll(".block-user");
-        const unblockButtons = document.querySelectorAll(".unblock-user");
+  document.addEventListener("DOMContentLoaded", function () {
+    const blockButtons = document.querySelectorAll(".block-user");
+    const unblockButtons = document.querySelectorAll(".unblock-user");
 
-        // Block Confirmation
-        blockButtons.forEach(button => {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
-                const url = this.getAttribute("href");
+    blockButtons.forEach((button) => {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        const url = this.getAttribute("href");
 
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You are about to block this user. They will not be able to access their account.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Yes, Block!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = url;
-                    }
-                });
-            });
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You are about to block this user. They will not be able to access their account.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Yes, Block!",
+          cancelButtonText: "Cancel",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = url;
+          }
         });
-
-        // Unblock Confirmation
-        unblockButtons.forEach(button => {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
-                const url = this.getAttribute("href");
-
-                Swal.fire({
-                    title: "Unblock User?",
-                    text: "Are you sure you want to unblock this user?",
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonColor: "#28a745",
-                    cancelButtonColor: "#6c757d",
-                    confirmButtonText: "Yes, Unblock!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = url;
-                    }
-                });
-            });
-        });
+      });
     });
+
+    unblockButtons.forEach((button) => {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        const url = this.getAttribute("href");
+
+        Swal.fire({
+          title: "Unblock User?",
+          text: "Are you sure you want to unblock this user?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#28a745",
+          cancelButtonColor: "#6c757d",
+          confirmButtonText: "Yes, Unblock!",
+          cancelButtonText: "Cancel",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = url;
+          }
+        });
+      });
+    });
+  });
 </script>
 <%- include("../partials/admin/footer") %>

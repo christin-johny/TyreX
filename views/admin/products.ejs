@@ -27,7 +27,7 @@
                 <th scope="col"><b>Brand</b></th>
                 <th scope="col"><b>Category</b></th>
                 <th scope="col"><b>Sale Price</b></th>
-                <th scope="col"><b>Offer Price</b></th>
+                <th scope="col"><b>Offer </b></th>
                 <th scope="col"><b>Offer</b></th>
                 <th scope="col"><b>Quantity</b></th>
                 <th scope="col"><b>Action</b></th>
@@ -41,19 +41,25 @@
                 <td><%=data[i].brandId.brandName%></td>
                 <td><%=data[i].categoryId.name%></td>
                 <td><%=data[i].salePrice%></td>
-                <td></td>
                 <td>
-                
-                    <button class="btn btn-info" onclick="" style="width: 100px;">
+                    <%if(locals.data[i].productOffer){%>
+                        <%=data[i].productOffer%>%
+                    <%}else{%>
+                        0%
+                    <%}%>
+                </td>
+                <td>
+                <%if(locals.data[i].productOffer===0){%>
+                    <button class="btn btn-info" onclick="addOffer('<%=data[i]._id%>')" style="width: 100px;">
                         <a href="#" class="text-white">Add Offer</a>
                     </button>
-        
-                    <button class="btn btn-info" onclick="" style="width: 100px;">
-                        <a href="#" class="text-white">Remove</a>
+                    <%}else{%>
+                    <button class="btn btn-info" onclick="removeOffer('<%=data[i]._id%>')" style="width: 100px;">
+                         <a href="#" class="text-white">Remove</a>
                     </button>
-                
+                    <%}%>
                 </td>
-                <td></td>
+                <td><%=data[i].quantity%></td>
                 <td>
                 
                     <button class="btn btn-danger" style="width: 80px;">
@@ -77,21 +83,114 @@
     </table>
 </div>
 </div>
+
 </div>
 
-<div class="container mt-3">
+<div class="pagination-container d-flex justify-content-center mt-4">
     <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
- 
- 
-            <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%=(i === currentPage) ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-            </li>
-            <% } %>
- 
- 
-        </
-</div>
+      <ul class="pagination pagination-sm flex-wrap">
+        <% if (currentPage > 1) { %>
+        <li class="page-item">
+          <a href="?page=<%= currentPage - 1 %>" class="page-link"
+            >&laquo; Previous</a
+          >
+        </li>
+        <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+        currentPage) { %>
+        <li class="page-item active">
+          <span class="page-link"><%= i %></span>
+        </li>
+        <% } else { %>
+        <li class="page-item">
+          <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+        </li>
+        <% } %> <% } %> <% if (currentPage < totalPages) { %>
+        <li class="page-item">
+          <a href="?page=<%= currentPage + 1 %>" class="page-link"
+            >Next &raquo;</a
+          >
+        </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+
+<script>
+    async function addOffer(productId) {
+        const {value:amount}=await Swal.fire({
+          title:'Offer in percentage',
+          input:'number',
+          inputLabel:'percentage',
+          inputAttributes: {
+          min: 1,
+          max: 99,
+            },
+          inputPlaceholder:'%',
+          showCancelButton: true,
+          confirmButtonText: "Add Offer",
+          cancelButtonText: "Cancel",
+        })
+        $.ajax({
+            url:"/admin/addProductOffer",
+            method:'post',
+            data:{
+                percentage:amount,
+                productId:productId
+            },
+            success:(response)=>{
+                if(response.status===true){
+                    location.reload();
+                    Swal.fire('Offer added',"The offer has been removed",'success')
+                }else{
+                    Swal.fire('Offer already exists',"Offer already applied in Category",'warning')
+                }
+            }
+        })
+    }
+
+
+    function removeOffer(productId) {
+        try{
+            Swal.fire({
+                title:"Remove offer",
+                text:'Are you sure you want to remove offer',
+                icon:'warning',
+                showCancelButton:true,
+                confirmButtonColor:'#3085d6',
+                cancelButtonColor:'#d33',
+                confirmButtonText: "Yes,remove it!",
+                timer:5000,
+                timerProgressBar:true
+            }).then(async (result) => {
+                if(result.isConfirmed){
+                    $.ajax({
+                        url:'/admin/removeProductOffer',
+                        method:"post",
+                        data:{
+                            productId:productId
+                        },
+                        success:(response)=>{
+                            if(response.status===true){
+                                Swal.fire("removed!",'The offer has been removed','success');
+                                location.reload();
+                            }else if(response.status===false){
+                                Swal.fire('failed');
+                            }else{
+                                alert('failed')
+                            }
+                        }
+
+                    })
+                }
+            })
+        }
+        catch(error){
+            console.log(error)
+        }
+    }
+
+</script>
+
+
 
 <%- include("../partials/admin/footer") %>

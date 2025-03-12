@@ -59,7 +59,8 @@ router.get("/deleteBrand",adminAuth,brandController.deleteBrand);
 router.get("/addProduct",productController.loadAddProductPage)
 router.post("/addproduct",uploads.array("images",4),productController.addproduct)
 router.get('/products',productController.loadAllproducts);
-
+router.post('/addProductOffer',productController.addProductOffer);
+router.post('/removeProductOffer',productController.removeProductOffer);
 
 
 

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
-    ProductName: {
+    productName: {
       type: String,
       required: true,
     },
@@ -13,6 +13,10 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
+    },
+    productNumber:{
+      type:String,
+      required:true
     },
     regularPrice: {
       type: Number,
@@ -33,16 +37,11 @@ const productSchema = new mongoose.Schema(
     warranty: {
       type: String,
     },
-    sku: {
-      type: String,
-      unique: true,
-      required: true,
-    },
     isBlocked: {
       type: Boolean,
       default: false,
     },
-    productimage: {
+    productImage: {
       type: [String],
       required: true,
     },

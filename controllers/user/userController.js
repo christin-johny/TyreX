@@ -55,7 +55,7 @@ const login=async(req,res)=>{
     }
     if(findUser.isBlocked){
       console.log("User is blocked by admin");
-      req.flash("error", "User is blocked by admin");
+      req.flash("error", "Can't login with this email");
       return res.redirect("/user/login");
     }
 

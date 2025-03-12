@@ -23,7 +23,7 @@ router.get("/forgotPassword", adminController.forgotPassword);
 
 router.get("/dashboard", adminAuth, adminController.loadHomepage);
 
-router.get("/products", adminController.products);
+
 
 // router.get("/addProduct", adminController.loadAddProduct);
 // router.post("/addProduct", adminController.addProducts);
@@ -37,24 +37,32 @@ router.get("/unblockCustomer", adminAuth, customerController.customerUnblocked);
 
 
 //category Management
-router.get("/category", categoryController.categoryInfo);
-router.post("/addCategory", categoryController.addCategory);
-router.post("/addCategoryOffer",categoryController.addCategoryOffer)
-router.delete("/removeCategoryOffer", categoryController.removeCategoryOffer);
-router.get("/listCategory",categoryController.getListCategory);
-router.get("/unlistCategory",categoryController.getUnlistCategory);
-router.get("/editCategory", categoryController.loadEditCategory);
-router.post("/editCategory/:id", categoryController.editCategory);
+router.get("/category",adminAuth, categoryController.categoryInfo);
+router.post("/addCategory", adminAuth,categoryController.addCategory);
+router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
+router.delete("/removeCategoryOffer", adminAuth,categoryController.removeCategoryOffer);
+router.get("/listCategory",adminAuth,categoryController.getListCategory);
+router.get("/unlistCategory",adminAuth,categoryController.getUnlistCategory);
+router.get("/editCategory", adminAuth,categoryController.loadEditCategory);
+router.post("/editCategory/:id", adminAuth,categoryController.editCategory);
 
 //brand Management
-router.get("/brands",brandController.loadBrandPage);
-router.post('/addBrand',uploads.single("image"),brandController.addBrand)
-router.get("/blockBrand",brandController.blockBrand);
-router.get("/unblockBrand",brandController.unblockBrand);
-router.get("/deleteBrand",brandController.deleteBrand);
+router.get("/brands",adminAuth,brandController.loadBrandPage);
+router.post('/addBrand',adminAuth,uploads.single("image"),brandController.addBrand)
+router.get("/blockBrand",adminAuth,brandController.blockBrand);
+router.get("/unblockBrand",adminAuth,brandController.unblockBrand);
+router.get("/deleteBrand",adminAuth,brandController.deleteBrand);
 
 
 //product management
+
 router.get("/addProduct",productController.loadAddProductPage)
 router.post("/addproduct",uploads.array("images",4),productController.addproduct)
+router.get('/products',productController.loadAllproducts);
+
+
+
+
+
+
 module.exports = router;

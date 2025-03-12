@@ -1,164 +1,97 @@
 <%- include("../partials/admin/sidebar") %>
-<%- include("../partials/admin/topNav") %>
-<div class="container-fluid px-4 py-3">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
-                <h2 class="mb-0 flex-grow-1 text-dark">Products</h2>
-                <button class="btn btn-primary d-flex align-items-center justify-content-center">
-                    <i class="fas fa-plus me-2"></i>
-                    <span class="d-none d-md-inline">Add Product</span>
-                    <span class="d-md-none">Add</span>
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <div class="card shadow-sm">
-        <!-- Desktop Header (Hidden on Mobile) -->
-        <div class="card-header bg-dark text-white d-none d-md-flex align-items-center">
-            <div class="col-4">Product</div>
-            <div class="col-2 text-center">SKU</div>
-            <div class="col-2 text-center">Brand</div>
-            <div class="col-2 text-center">Price</div>
-            <div class="col-2 text-center">Action</div>
-        </div>
-    
-        <!-- Product Row -->
-        <div class="card-body">
-            <div class="row align-items-center border-bottom py-3">
-                <!-- Product Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>Product</strong>
-                        <span>Assurance All Season</span>
-                    </div>
-                </div>
-                <div class="col-md-4 d-flex align-items-center mb-2 mb-md-0">
-                    <img src="/img/favicon.svg" class="rounded me-3" 
-                         style="width: 50px; height: 50px; object-fit: cover;">
-                    <span class="d-none d-md-inline">Assurance All Season</span>
-                </div>
-    
-                <!-- SKU Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>SKU</strong>
-                        <span>GY8036</span>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center mb-1 mb-md-0">
-                    <span class="d-none d-md-inline">GY8036</span>
-                </div>
-    
-                <!-- Brand Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>Brand</strong>
-                        <span>Goodyear</span>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center mb-1 mb-md-0">
-                    <span class="d-none d-md-inline">Goodyear</span>
-                </div>
-    
-                <!-- Price Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>Price</strong>
-                        <span>$200</span>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center mb-1 mb-md-0">
-                    <span class="d-none d-md-inline">$200</span>
-                </div>
-    
-                <!-- Actions Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="text-center">
-                        <strong>Actions</strong>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center d-flex justify-content-center align-items-center gap-5">
-                    <button class="btn btn-outline-info btn-sm" title="View">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-outline-success btn-sm" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row align-items-center border-bottom py-3">
-                <!-- Product Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>Product</strong>
-                        <span>Assurance All Season</span>
-                    </div>
-                </div>
-                <div class="col-md-4 d-flex align-items-center mb-2 mb-md-0">
-                    <img src="/img/favicon.svg" class="rounded me-3" 
-                         style="width: 50px; height: 50px; object-fit: cover;">
-                    <span class="d-none d-md-inline">Assurance All Season</span>
-                </div>
-    
-                <!-- SKU Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>SKU</strong>
-                        <span>GY8036</span>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center mb-1 mb-md-0">
-                    <span class="d-none d-md-inline">GY8036</span>
-                </div>
-    
-                <!-- Brand Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>Brand</strong>
-                        <span>Goodyear</span>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center mb-1 mb-md-0">
-                    <span class="d-none d-md-inline">Goodyear</span>
-                </div>
-    
-                <!-- Price Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="d-flex justify-content-between">
-                        <strong>Price</strong>
-                        <span>$200</span>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center mb-1 mb-md-0">
-                    <span class="d-none d-md-inline">$200</span>
-                </div>
-    
-                <!-- Actions Section -->
-                <div class="col-12 d-md-none mb-2">
-                    <div class="text-center">
-                        <strong>Actions</strong>
-                    </div>
-                </div>
-                <div class="col-md-2 text-center d-flex justify-content-center align-items-center gap-5">
-                    <button class="btn btn-outline-info btn-sm" title="View">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-outline-success btn-sm" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
+
+
+
+<head>
+<div class="right mt-5"><head>
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Products</h2>
         </div>
     </div>
+    <div class="card-header text-center mb-20">
+        <form action="" method="get" class="d-inline">
+            <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px;">
+                <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search">
+                <button class="btn  border-0" type="submit">Search</button>
+            </div>
+        </form>
+    <di>
+ </head>
+   
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"><b>Product name</b></th>
+                <th scope="col"><b>Brand</b></th>
+                <th scope="col"><b>Category</b></th>
+                <th scope="col"><b>Sale Price</b></th>
+                <th scope="col"><b>Offer Price</b></th>
+                <th scope="col"><b>Offer</b></th>
+                <th scope="col"><b>Quantity</b></th>
+                <th scope="col"><b>Action</b></th>
+                <th scope="col"><b>Edit</b></th>
+            </tr>
+        </thead>
+        <tbody>
+            <%for(let i=data.length-1;i>=0;i--){%>
+            <tr>
+                <td><%=data[i].productName%></td>
+                <td><%=data[i].brandId.brandName%></td>
+                <td><%=data[i].categoryId.name%></td>
+                <td><%=data[i].salePrice%></td>
+                <td></td>
+                <td>
+                
+                    <button class="btn btn-info" onclick="" style="width: 100px;">
+                        <a href="#" class="text-white">Add Offer</a>
+                    </button>
+        
+                    <button class="btn btn-info" onclick="" style="width: 100px;">
+                        <a href="#" class="text-white">Remove</a>
+                    </button>
+                
+                </td>
+                <td></td>
+                <td>
+                
+                    <button class="btn btn-danger" style="width: 80px;">
+                        <a href="" class="text-white" style="text-decoration: none;">Block</a>
+                    </button>
+                    
+                    <button class="btn btn-success" style="width: 80px;">
+                        <a href="" class="text-white" style="text-decoration: none;">Unblock</a>
+                    </button>
+            
+                </td>
+                <td>
+                    <button class="btn btn-info" style="width: 80px;">
+                        <a href="" class="text-white" style="text-decoration: none;">Edit</a>
+                    </button>
+                </td>
+            </tr>
+            <%}%>
+        </tbody>
+
+    </table>
 </div>
+</div>
+</div>
+
+<div class="container mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+ 
+ 
+            <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%=(i === currentPage) ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+            </li>
+            <% } %>
+ 
+ 
+        </
+</div>
+
 <%- include("../partials/admin/footer") %>

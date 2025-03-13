@@ -40,11 +40,13 @@ router.get("/editCategory", adminAuth,categoryController.loadEditCategory);
 router.post("/editCategory/:id", adminAuth,categoryController.editCategory);
 
 //brand Management
-router.get("/brands",adminAuth,brandController.loadBrandPage);
+router.get("/brands",brandController.loadBrandPage);
 router.post('/addBrand',adminAuth,uploads.single("image"),brandController.addBrand)
 router.get("/blockBrand",adminAuth,brandController.blockBrand);
 router.get("/unblockBrand",adminAuth,brandController.unblockBrand);
 router.get("/deleteBrand",adminAuth,brandController.deleteBrand);
+router.get('/editbrand',adminAuth,brandController.loadEditBrand)
+router.put("/editBrand/:id",adminAuth, uploads.single("image"),brandController.editBrand)
 
 
 //product management

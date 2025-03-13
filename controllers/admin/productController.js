@@ -102,7 +102,7 @@ const loadAllproducts = async (req, res) => {
   try {
     const search = req.query.search || "";
     const page = req.query.page || 1;
-    const limit = 3;
+    const limit = 4;
 
     const productData = await Product.find({
       $or: [

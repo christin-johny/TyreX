@@ -105,4 +105,51 @@ const blockBrand = async (req, res) => {
       res.status(500).redirect('/pageerror');
     }
   };
-module.exports = { loadBrandPage, addBrand,blockBrand,unblockBrand,deleteBrand};
+
+  const loadEditBrand = async (req, res) => {
+    try {
+      const id = req.query.id;
+      const brand = await Brand.findOne({ _id: id });
+  
+      if (!brand) {
+        return res.status(404).json({ status: false, message: "Brand not found" });
+      }
+  
+      return res.status(200).json({ status: true, brand });
+    } catch (error) {
+      console.error("Error loading brand:", error);
+      return res.status(500).json({ status: false, message: "Internal server error" });
+    }
+  };
+  
+  const editBrand = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+      const brand = await Brand.findById(id);
+  
+      if (!brand) {
+        return res.status(404).json({ status: false, message: "Brand not found" });
+      }
+     const existingBrand= await Brand.findOne({brandName:name,_id:{$ne:id}});
+     if(existingBrand){
+      return res.status(400).json({ status: false, message: "Brand name already exists" });
+     }
+     console.log(existingBrand)
+      const updatedImage = req.file ? [req.file.filename] : brand.brandImage;
+  
+      const updateData = {
+        brandName: name,
+        brandImage: updatedImage,
+      };
+  
+      const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true });
+  
+      return res.json({ status: true, message: "Brand updated successfully!", brand: updatedBrand });
+    } catch (error) {
+      console.error("Error updating brand:", error);
+      return res.status(500).json({ status: false, message: "Internal server error" });
+    }
+  };
+  
+module.exports = { loadBrandPage, addBrand,blockBrand,unblockBrand,deleteBrand,loadEditBrand,editBrand};

@@ -30,7 +30,7 @@ const loadHome = async (req, res) => {
 
       productData = productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       productData = productData.splice(0,4);
-      console.log(productData)
+
     if(user){
       const userData = await User.findOne({_id:user._id});
       return res.render("homePage",{user:userData,products:productData});

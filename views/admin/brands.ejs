@@ -91,6 +91,16 @@
                     >
                       Delete
                     </button>
+
+                    <button
+                      class="btn btn-info"
+                      style="width: 90px"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editBrandModal"
+                      onclick="loadEditBrand('<%= brand._id %>')"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
                 <% }) %>
@@ -131,6 +141,95 @@
   </div>
 </section>
 
+
+<!--editBrand modal-->
+<div
+  class="modal fade"
+  id="editBrandModal"
+  tabindex="-1"
+  aria-labelledby="editBrandModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editBrandModalLabel">Edit Brand</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="editBrandForm"
+        >
+          <input type="hidden" id="brand_id" name="brandId" />
+
+          <div class="mb-4">
+            <label for="edit_brand_name" class="form-label">Brand Name</label>
+            <input
+              type="text"
+              id="editBrandName"
+              name="name"
+              placeholder="Type here"
+              class="form-control"
+            />
+            <div
+              id="editBrandNameError"
+              class="error-message"
+              style="display: none; color: red"
+            >
+              Please enter a valid brand name (no numbers allowed).
+            </div>
+          </div>
+
+          <label for="edit_brand_image" class="form-label">Brand Image</label>
+          <div class="input-upload">
+            <img
+              src=""
+              alt="Brand Image"
+              id="editPreviewImage"
+              style="max-width: 150px; display: none"
+            />
+            <input
+              type="file"
+              id="edit_brand_image"
+              name="image"
+              class="form-control border"
+              accept="image/*"
+            />
+            <div
+              id="editBrandImageError"
+              class="error-message"
+              style="display: none; color: red"
+            >
+              Please upload a valid image file (JPEG, PNG, etc.).
+            </div>
+          </div>
+          </form>
+          <div class="d-grid">
+            <button type="button"
+            class="btn btn-primary"
+            onclick="submitEditBrandForm()">
+              Update Brand
+            </button>
+            <a href="/admin/brands" class="btn btn-secondary ms-auto">Cancel</a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!--addbrand modal-->
 <div
   class="modal fade"
   id="addBrandModal"
@@ -358,6 +457,125 @@
       }
     });
   }
+
+
+
+  async function loadEditBrand(brandId) {
+  try {
+    const response = await fetch(`/admin/editbrand?id=${brandId}`);
+    const data = await response.json();
+
+    console.log("Brand Data Received:", data); 
+
+    if (data.status === true) {
+      document.getElementById("brand_id").value = brandId;
+
+     
+      document.getElementById("editBrandName").value = data.brand.brandName;
+
+    
+      const imageElement = document.getElementById("editPreviewImage");
+      if (data.brand.brandImage.length > 0) {
+        imageElement.src = `/uploads/reImage/${data.brand.brandImage[0]}`; 
+        imageElement.style.display = "block"; 
+      } else {
+        imageElement.style.display = "none"; 
+      }
+
+
+      document.getElementById("editBrandForm").action = `/admin/editBrand/${brandId}`;
+
+
+      const editBrandModal = new bootstrap.Modal(document.getElementById("editBrandModal"));
+      editBrandModal.show();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message,
+      });
+    }
+  } catch (error) {
+    console.error("Error loading brand data:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while loading brand data.",
+    });
+  }
+}
+
+
+async function submitEditBrandForm() {
+  try {
+    const brandId = document.getElementById("brand_id").value;
+    const brandName = document.getElementById("editBrandName").value;
+    const brandImage = document.getElementById("edit_brand_image").files[0];
+
+    if (!brandName.trim()) {
+      document.getElementById("editBrandNameError").style.display = "block";
+      return;
+    } else {
+      document.getElementById("editBrandNameError").style.display = "none";
+    }
+
+   
+    const formData = new FormData();
+    formData.append("name", brandName);
+    if (brandImage) {
+      formData.append("image", brandImage); 
+    }
+
+    
+    const response = await fetch(`/admin/editBrand/${brandId}`, {
+      method: "PUT", 
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (result.status === true) {
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Brand updated successfully!",
+      }).then(() => {
+        location.reload(); 
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: result.message,
+      });
+    }
+  } catch (error) {
+    console.error("Error updating brand:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while updating the brand.",
+    });
+  }
+}
+
+
+document.getElementById("edit_brand_image").addEventListener("change", function (event) {
+  const file = event.target.files[0]; 
+  const imageElement = document.getElementById("editPreviewImage");
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      imageElement.src = e.target.result;
+      imageElement.style.display = "block"; 
+    };
+    reader.readAsDataURL(file); 
+  }
+});
+
+
+
 </script>
 
 <%- include("../partials/admin/footer") %>

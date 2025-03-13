@@ -85,6 +85,7 @@ const addproduct = async (req, res) => {
       return res
         .status(200)
         .json({ success: true, message: "Product added successfully" });
+        
     } else {
       return res.status(400).json({
         success: false,
@@ -252,25 +253,6 @@ const loadEditProduct = (req, res) => {
     });
 };
 
-// async (req,res){
-//   try {
-//     const id=req.query.id;
-//     const product = await Product.findOne({_id:id});
-//     const category = await Category.find({});
-//     const brand = await Brand.find({});
-//     const size = await Size.find({});
-//     res.render("editProducts",{
-//       product:product,
-//       cat:category,
-//       brand:brand,
-//       size:size
-
-//     });
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     res.redirect("/admin/pageerror");
-//   }
-// }
 
 const editProduct = async (req, res) => {
   try {

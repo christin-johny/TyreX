@@ -69,23 +69,19 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    if (!req.session) {
+    if (!req.session.admin) {
       return res.redirect("/admin/login");
     }
 
-    req.session.destroy((err) => {
-      if (err) {
-        console.log("Error destroying session", err);
-        return res.redirect("/admin/pageerror");
-      }
-      
-      return res.redirect("/admin/login");
-    });
+    req.session.admin = null; 
+    return res.redirect("/admin/login");
+
   } catch (error) {
     console.log("Error during logout:", error);
     res.redirect("/admin/pageerror");
   }
 };
+
 
 
 

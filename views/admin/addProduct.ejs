@@ -438,7 +438,8 @@ function viewImage1(event) {
             isValid=false
           }
     
-          const descriptionregex=/^[a-zA-Z][a-zA-Z0-9.,\-\/()&'\"!?;:\s]*$/;
+          const descriptionregex=/^[A-Za-z].*/
+          ;
           if(description.trim()===''){
             displayErrorMessage('description-error', "Description can't be empty")
             isValid=false;

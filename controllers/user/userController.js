@@ -1,24 +1,44 @@
 const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
+const Product = require("../../models/productSchema");
+const Category = require("../../models/categorySchema");
+const Size = require("../../models/size");
 const env = require("dotenv").config();
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 
-
-const pageNotFound=async(req,res)=>{
+const pageNotFound = async (req, res) => {
   try {
     return res.render("pageNotFound");
   } catch (error) {
     console.log("Home page not found");
     res.status(500).send("Server error");
   }
-}
-
+};
 
 const loadHome = async (req, res) => {
   try {
-    return res.render("homepage");
+    const user = req.session.user;
+
+    let size = await Size.find({});
+    let productData = await Product.find({
+      isBlocked: false,
+      quantity: { $gt: 0 },})
+      .populate({ path: "categoryId", select: "name" })
+      .populate({ path: "brandId", select: "brandName" })
+      .populate({ path: "sizeId", select: "name" })
+      .lean();
+
+      productData = productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      productData = productData.splice(0,4);
+      console.log(productData)
+    if(user){
+      const userData = await User.findOne({_id:user._id});
+      return res.render("homePage",{user:userData,products:productData});
+    }else{
+      return res.render('homePage',{user:null,products:productData});
+    }
   } catch (error) {
-    console.log("Home page not found");
+    console.error("Home page not found",EvalError);
     res.status(500).send("Server error");
   }
 };
@@ -26,10 +46,10 @@ const loadHome = async (req, res) => {
 //login
 const loadLogin = async (req, res) => {
   try {
-    if(!req.session.user){
-    return res.render("login");
-    }else{
-      res.redirect('/user/home')
+    if (!req.session.user) {
+      return res.render("login");
+    } else {
+      res.redirect("/user/home");
     }
   } catch (error) {
     console.log("Home page not found");
@@ -37,54 +57,70 @@ const loadLogin = async (req, res) => {
   }
 };
 
-const login=async(req,res)=>{
+const login = async (req, res) => {
   try {
-    const {email,password}=req.body;
-    if (email.trim()==='' || password.trim()==="") {
+    const { email, password } = req.body;
+    if (email.trim() === "" || password.trim() === "") {
       console.log("email and password are required");
       req.flash("error", "email and password are required");
       return res.redirect("/user/login");
     }
 
-    const findUser = await User.findOne({email:email,isAdmin:false});
+    const findUser = await User.findOne({ email: email, isAdmin: false });
 
-    if(!findUser){
+    if (!findUser) {
       console.log("User not found");
       req.flash("error", "User not found");
       return res.redirect("/user/login");
     }
-    if(findUser.isBlocked){
+    if (findUser.isBlocked) {
       console.log("User is blocked by admin");
       req.flash("error", "Can't login with this email");
       return res.redirect("/user/login");
     }
 
-    const match=await bcrypt.compare(password,findUser.password);
+    const match = await bcrypt.compare(password, findUser.password);
 
-    if(!match){
+    if (!match) {
       console.log("Invalid username or password");
       req.flash("error", "Invalid username or password");
       return res.redirect("/user/login");
     }
-    req.session.user=findUser._id;
-    res.redirect("/user/home")
+    req.session.user = findUser;
+    res.redirect("/user/home");
   } catch (error) {
-    console.error("login error",error);
+    console.error("login error", error);
     req.flash("error", "Login failed. Please try again");
-    return res.redirect("/user/login"); 
+    return res.redirect("/user/login");
   }
-}
+};
+
+
+const logout = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/user/login");
+    }
+
+    req.session.user = null; 
+    res.redirect("/user/login");
+
+  } catch (error) {
+    console.log("Error during logout:", error);
+    res.redirect("/user/pageNotFound");
+  }
+};
 
 
 
 
 const loadSignup = async (req, res) => {
   try {
-    if(!req.session.user){
+    if (!req.session.user) {
       return res.render("signup");
-      }else{
-        res.redirect('/user/home')
-      }
+    } else {
+      res.redirect("/user/home");
+    }
   } catch (error) {
     console.log("Home page not found");
     res.status(500).send("Server error");
@@ -117,14 +153,14 @@ async function sendVerificationEmail(email, otp) {
     });
     return info.accepted.length > 0;
   } catch (error) {
-    console.error("Error ssending Email",error)
+    console.error("Error ssending Email", error);
     return false;
   }
 }
 
 const signup = async (req, res) => {
   try {
-    const {name,phone,email, password, cpassword } = req.body;
+    const { name, phone, email, password, cpassword } = req.body;
     const findUser = await User.findOne({ email });
     if (findUser) {
       req.flash("error", "User with this email already exists");
@@ -132,79 +168,92 @@ const signup = async (req, res) => {
     }
     const otp = generateOtp();
     const emailSent = await sendVerificationEmail(email, otp);
-    if(!emailSent){
+    if (!emailSent) {
       return res.json("email-error");
     }
-    req.session.userOtp=otp;
-    req.session.userData={name,phone,email,password};
+    req.session.userOtp = otp;
+    req.session.userData = { name, phone, email, password };
     res.render("verifyOtp");
-    console.log("OTP Sent",otp);
-
+    console.log("OTP Sent", otp);
   } catch (error) {
-    console.error("signup error",error)
+    console.error("signup error", error);
     req.flash("error", "something went wrong try again");
-      return res.redirect("/user/signup")
+    return res.redirect("/user/signup");
   }
 };
 
-
-
-
-const verifyOtp=async(req,res)=>{
+const verifyOtp = async (req, res) => {
   try {
-    const {otp}=req.body;
-    if(otp===req.session.userOtp){
-      const user=req.session.userData;
-      const passwordHash = await bcrypt.hash(user.password,10);
+    const { otp } = req.body;
+    if (otp === req.session.userOtp) {
+      const user = req.session.userData;
+      const passwordHash = await bcrypt.hash(user.password, 10);
 
-      const saveUserData= new User({
-        name:user.name,
-        email:user.email,
-        phone:user.phone,
-        password:passwordHash,
+      const saveUserData = new User({
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        password: passwordHash,
         googleId: user.googleId || undefined,
-
-      })
+      });
       await saveUserData.save();
       req.session.user = saveUserData._id;
-      res.json({success:true,redirectUrl:"/user/home"})
-    }else{
-      res.status(400).json({success:false,message:"Invalid OTP, pleaase try again"})
+      res.json({ success: true, redirectUrl: "/user/home" });
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "Invalid OTP, pleaase try again" });
     }
   } catch (error) {
-    console.error("Error verifying OTP",error)
-    res.send(500).json({success:false,messege:"an error occured"})
-    
+    console.error("Error verifying OTP", error);
+    res.send(500).json({ success: false, messege: "an error occured" });
   }
-}
+};
 
-const resendOtp=async(req,res)=>{
+const resendOtp = async (req, res) => {
   try {
-    const {email} = req.session.userData;
-    if(!email){
-      return res.status(400).json({success:false,message:"Email not found in session"})
+    const { email } = req.session.userData;
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email not found in session" });
     }
-    const otp= generateOtp();
-    req.session.userOtp=otp;
+    const otp = generateOtp();
+    req.session.userOtp = otp;
 
-    const emailSent=await sendVerificationEmail(email,otp);
-    if(emailSent){
-      console.log("Resend OTP:",otp)
-      res.status(200).json({success:true,message:"OTP resend Successfully"})
+    const emailSent = await sendVerificationEmail(email, otp);
+    if (emailSent) {
+      console.log("Resend OTP:", otp);
+      res
+        .status(200)
+        .json({ success: true, message: "OTP resend Successfully" });
+    } else {
+      res
+        .status(500)
+        .json({
+          success: false,
+          message: "Failed to resend OTP, please try again",
+        });
     }
-    else{
-      res.status(500).json({success:false,message:"Failed to resend OTP, please try again"})
-    }
-
-
   } catch (error) {
-    console.error("Error Resending OTP",otp)
-    res.status(500).json({success:false,message:"Internal server error,Please try again"})
+    console.error("Error Resending OTP", otp);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Internal server error,Please try again",
+      });
   }
-}
+};
 
-
-
-module.exports = { loadHome, loadLogin, login, loadSignup, signup,verifyOtp,resendOtp,pageNotFound,
-
-}
+module.exports = {
+  loadHome,
+  loadLogin,
+  login,
+  loadSignup,
+  signup,
+  verifyOtp,
+  resendOtp,
+  pageNotFound,
+  logout
+};

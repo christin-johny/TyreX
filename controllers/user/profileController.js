@@ -1,8 +1,10 @@
 const User = require("../../models/userSchema");
+
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+
 
 function generateOtp() {
   const digits = "1234567890";

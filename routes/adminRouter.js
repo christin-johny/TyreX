@@ -13,21 +13,14 @@ const uploads=multer({storage:storage});
 
 router.get("/pageerror", adminController.pageError);
 
+
+//profile
 router.get("/login", redirectAuth, adminController.loadLogin);
-
 router.post("/login", redirectAuth, adminController.login);
-
 router.get("/logout", adminController.logout);
-
 router.get("/forgotPassword", adminController.forgotPassword);
-
 router.get("/dashboard", adminAuth, adminController.loadHomepage);
 
-
-
-// router.get("/addProduct", adminController.loadAddProduct);
-// router.post("/addProduct", adminController.addProducts);
-// router.post("/addCategoryOffer", categoryController.addCategoryOffer);
 
 
 //Coustomer Management
@@ -56,14 +49,15 @@ router.get("/deleteBrand",adminAuth,brandController.deleteBrand);
 
 //product management
 
-router.get("/addProduct",productController.loadAddProductPage)
-router.post("/addproduct",uploads.array("images",4),productController.addproduct)
-router.get('/products',productController.loadAllproducts);
-router.post('/addProductOffer',productController.addProductOffer);
-router.post('/removeProductOffer',productController.removeProductOffer);
-router.get('/blockProduct',productController.blockProduct);
-router.get('/unblockProduct',productController.unblockProduct);
-
-
+router.get("/addProduct",adminAuth,productController.loadAddProductPage)
+router.post("/addproduct",adminAuth,uploads.array("images",4),productController.addproduct)
+router.get('/products',adminAuth,productController.loadAllproducts);
+router.post('/addProductOffer',adminAuth,productController.addProductOffer);
+router.post('/removeProductOffer',adminAuth,productController.removeProductOffer);
+router.get('/blockProduct',adminAuth,productController.blockProduct);
+router.get('/unblockProduct',adminAuth,productController.unblockProduct);
+router.get('/editProduct',adminAuth,productController.loadEditProduct);
+router.post('/editProduct/:id',adminAuth,uploads.array("images",4),productController.editProduct);
+router.post('/deleteImage',adminAuth,productController.deleteSingleImage);
 
 module.exports = router;

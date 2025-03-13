@@ -109,26 +109,6 @@ const loadAddProduct = async (req, res) => {
   }
 };
 
-//add products
-const addProducts = async (req, res) => {
-  const data=req.body;
-  
-  try {
-    
-  } catch (error) {
-    
-  }
-};
-
-const products = async (req, res) => {
-  try {
-    return res.render("products");
-  } catch (error) {
-    console.log("Page not found");
-    res.redirect("/admin/pagerror")
-  }
-};
-
 
 
 module.exports = {
@@ -137,8 +117,7 @@ module.exports = {
   login,
   forgotPassword,
   loadAddProduct,
-  products,
-  addProducts,
+
   pageError,
   logout,
 

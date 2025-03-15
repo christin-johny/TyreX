@@ -11,7 +11,7 @@
                   <div class="p-5">
                     <div class="text-center">
                     </div>
-                    <form id="otpForm" class="user form-otp" action="/user/verifyOtp" method="post" onsubmit="return validateOTPForm()">
+                    <form id="otpForm" class="user form-otp" action="/verifyOtp" method="post" onsubmit="return validateOTPForm()">
 
                       
                       <% if (locals.message && message.length > 0) { %>
@@ -55,7 +55,7 @@
                       <hr />
                     </form>
                     <div class="text-center">
-                      <a class="small" href="/user/login">Already verified? Login now</a>
+                      <a class="small" href="/login">Already verified? Login now</a>
                     </div>
                   </div>
                 </div>

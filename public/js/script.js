@@ -168,7 +168,7 @@ if(passVal !==cpassVal){
 
     $.ajax({
       type: "POST",
-      url: "/user/verifyOtp",
+      url: "/verifyOtp",
       data: { otp: otpInput },
       success: function (response) {
         if (response.success) {
@@ -211,7 +211,7 @@ if(passVal !==cpassVal){
     startTimer();
     $.ajax({
       type: "POST",
-      url: "/user/resendOtp",
+      url: "/resendOtp",
       success: function (response) {
         if (response.success) {
           Swal.fire({

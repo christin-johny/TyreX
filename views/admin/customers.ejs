@@ -1,41 +1,29 @@
 <%- include("../partials/admin/sidebar") %>
 
-<div class="container-fluid px-4">
-  <div class="row">
-    <div class="col-12">
-      <div
-        class="content-header d-flex justify-content-between align-items-center mt-4"
-      >
-        <h2 class="content-title card-title text-dark">Customers</h2>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="row justify-content-center my-3">
-    <div class="col-md-6 col-sm-10">
+<div class="container-fluid px-4 mt-5">
+  <div class="content-header d-flex justify-content-between align-items-center py-3 px-3 px-md-4">
+    <h2 class="content-title fw-bold mb-0 text-dark">Customers</h2>
+    <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
       <form action="/admin/users/" method="get" id="searchForm">
-        <div
-          class="input-group input-group-sm border border-1 border-grey rounded-pill"
-        >
-          <input
-            type="text"
-            class="form-control border-0 rounded-pill"
-            placeholder="Search customers..."
+        <div class="input-group border border-1 rounded-pill overflow-hidden">
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="form-control border-0" 
+            placeholder="Search customers..." 
             name="search"
-            id="searchInput"
-          />
-          <button class="btn border-0" type="submit">
-            <i class="fas fa-search fa-fw"></i>
-          </button>
-          <a
-            href="/admin/users"
-            class="btn btn-secondary btn-sm rounded-pill ms-2 d-none"
-            id="clearButton"
-            >Clear</a
           >
+          <button class="btn border-0 bg-white" type="submit">
+            <i class="fas fa-search text-primary"></i>
+          </button>
         </div>
       </form>
+      <div class="d-flex gap-2">
+        <a href="/admin/users" id="clearButton" class="btn btn-secondary rounded-pill d-none">
+          <i class="fas fa-times me-1"></i>
+          Clear
+        </a>
+      </div>
     </div>
   </div>
 
@@ -48,35 +36,58 @@
       </div>
       <% } else { %>
       <div class="card shadow-sm border-0">
+       
         <div class="card-body">
-          <% data.forEach(user => { %>
-          <div class="d-flex align-items-center border-bottom py-3">
-        
-            <div class="flex-grow-1">
-              <h6 class="mb-1 text-dark"><strong><%= user.name %></strong></h6>
-              <p class="mb-0 text-muted"><b>Email:</b> <%= user.email %></p>
-              <p class="mb-0 text-muted">
-                <b>Phone:</b> <%= user.phone || 'N/A' %>
-              </p>
-            </div>
-
-            <div>
-              <% if(user.isBlocked === false) { %>
-              <a
-                href="/admin/blockCustomer?id=<%= user._id %>"
-                class="btn btn-danger btn-sm block-user"
-                >Block</a
-              >
-              <% } else { %>
-              <a
-                href="/admin/unblockCustomer?id=<%= user._id %>"
-                class="btn btn-success btn-sm unblock-user"
-                >Unblock</a
-              >
-              <% } %>
-            </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% data.forEach(user => { %>
+                <tr>
+                  <td>
+                    <h6 class="mb-1 text-dark"><strong><%= user.name %></strong></h6>
+                  </td>
+                  <td>
+                    <span class="text-muted"><%= user.email %></span>
+                  </td>
+                  <td>
+                    <span class="text-muted"><%= user.phone || 'N/A' %></span>
+                  </td>
+                  <td>
+                    <% if(user.isBlocked === false) { %>
+                    <span class="badge bg-success">Active</span>
+                    <% } else { %>
+                    <span class="badge bg-danger">Blocked</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                      <% if(user.isBlocked === false) { %>
+                      <a
+                        href="/admin/blockCustomer?id=<%= user._id %>"
+                        class="btn btn-sm btn-danger"
+                      ><i class="fas fa-ban"></i> Block</a>
+                      <% } else { %>
+                      <a
+                        href="/admin/unblockCustomer?id=<%= user._id %>"
+                        class="btn btn-sm btn-success"
+                      ><i class="fas fa-check"></i> Unblock</a>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
           </div>
-          <% }); %>
         </div>
       </div>
       <% } %>

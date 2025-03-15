@@ -3,97 +3,103 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <div class="content-header d-flex justify-content-between align-items-center py-3">
-        <h2 class="content-title">Products</h2>
-        <div class="d-flex">
-            <form action="" method="get" class="me-3">
-                <div class="input-group border border-1 border-grey rounded-pill">
-                  <input type="text" id="searchInput" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search">
-                  <button class="btn border-0" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-            </form>
-              <a href="/admin/products" id="clearSearch" class="btn btn-secondary rounded-pill d-none">Clear</a>
-              
-              
-          <a href="/admin/addproduct" class="btn btn-primary rounded-pill">
-            <i class="fas fa-plus me-1"></i>
-            Add Brand
-          </a>
+      <div class="content-header d-flex justify-content-between align-items-center py-3 mt-5">
+        <h2 class="content-title fw-bold mb-0 text" >Products</h2>
+        <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
+          <form action="" method="get" class="me-md-3">
+            <div class="input-group border border-1 rounded-pill overflow-hidden">
+              <input 
+                type="text" 
+                id="searchInput" 
+                class="form-control border-0" 
+                placeholder="Search products or brands" 
+                name="search"
+              >
+              <button class="btn border-0 bg-white" type="submit">
+                <i class="fas fa-search text-primary"></i>
+              </button>
+            </div>
+          </form>
+          <div class="d-flex gap-2">
+            <a href="/admin/products" id="clearSearch" class="btn btn-secondary rounded-pill d-none">
+              <i class="fas fa-times me-1"></i>
+              Clear
+            </a>
+            <a href="/admin/addproduct" class="btn btn-primary rounded-pill">
+              <i class="fas fa-plus me-1"></i>
+              Add Product
+            </a>
+          </div>
         </div>
       </div>
       
-      <div class="product-list mt-4">
-        <%for(let i=data.length-1;i>=0;i--){%>
-          <div class="card mb-3 shadow-sm">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-md-2">
-                  <h5 class="product-name mb-1"><%=data[i].productName%></h5>
-                  <span class="badge bg-light text-dark"><%=data[i].brandId.brandName%></span>
-                </div>
-                <div class="col-md-2">
-                  <div class="product-category">
-                    <small class="text-muted">Category</small>
-                    <p class="mb-0"><%=data[i].categoryId.name%></p>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="product-price">
-                    <small class="text-muted">Price</small>
-                    <p class="mb-0 fw-bold">₹<%=data[i].salePrice%></p>
-                  </div>
-                </div>
-                <div class="col-md-1">
-                  <div class="product-quantity">
-                    <small class="text-muted">Qty</small>
-                    <p class="mb-0"><%=data[i].quantity%></p>
-                  </div>
-                </div>
-                <div class="col-md-1">
-                  <div class="product-offer">
-                    <small class="text-muted">Offer</small>
-                    <p class="mb-0 fw-bold">
+      <div class="card shadow-sm mt-4">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Image</th>
+                  <th>Price</th>
+                  <th>Qty</th>
+                  <th>Offer</th>
+                  <th>Offer Actions</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%for(let i=data.length-1;i>=0;i--){%>
+                  <tr>
+                    <td>
+                      <h5 class="mb-1 text-dark"><%=data[i].productName%></h5>
+                      <span class="small text-muted"><%=data[i].brandId.brandName%></span>
+                    </td>
+                    <td>
+                    <img src="/uploads/reImage/<%=data[i].productImage[0]%>" alt="<%=data[i].productName%>" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                    </td>
+                    <td class="fw-bold">₹<%=data[i].salePrice%></td>
+                    <td><%=data[i].quantity%></td>
+                    <td class="fw-bold">
                       <%if(locals.data[i].productOffer){%>
                         <span class="text-success"><%=data[i].productOffer%>%</span>
                       <%}else{%>
                         <span class="text-muted">0%</span>
                       <%}%>
-                    </p>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <%if(locals.data[i].productOffer===0){%>
-                    <button class="btn btn-sm btn-outline-primary" onclick="addOffer('<%=data[i]._id%>')">
-                      <i class="fas fa-percent me-1"></i> Add Offer
-                    </button>
-                  <%}else{%>
-                    <button class="btn btn-sm btn-outline-danger" onclick="removeOffer('<%=data[i]._id%>')">
-                      <i class="fas fa-times me-1"></i> Remove Offer
-                    </button>
-                  <%}%>
-                </div>
-                <div class="col-md-2">
-                  <div class="d-flex">
-                    <a href="/admin/editProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-outline-info me-2">
-                      <i class="fas fa-edit"></i> Edit
-                    </a>
-                    <%if(data[i].isBlocked===false){%>
-                      <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-outline-danger">
-                        <i class="fas fa-ban"></i> Block
-                      </a>
-                    <%}else{%>
-                      <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-outline-success">
-                        <i class="fas fa-check"></i> Unblock
-                      </a>
-                    <%}%>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    </td>
+                    <td>
+                      <%if(locals.data[i].productOffer===0){%>
+                        <button class="btn btn-sm btn-primary" onclick="addOffer('<%=data[i]._id%>')">
+                          <i class="fas fa-percent me-1"></i> Add Offer
+                        </button>
+                      <%}else{%>
+                        <button class="btn btn-sm btn-danger" onclick="removeOffer('<%=data[i]._id%>')">
+                          <i class="fas fa-times me-1"></i> Remove Offer
+                        </button>
+                      <%}%>
+                    </td>
+                    <td>
+                      <div class="d-flex">
+                        <a href="/admin/editProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-info text-white me-2">
+                          <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <%if(data[i].isBlocked===false){%>
+                          <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-danger">
+                            <i class="fas fa-ban"></i> Block
+                          </a>
+                        <%}else{%>
+                          <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-success">
+                            <i class="fas fa-check"></i> Unblock
+                          </a>
+                        <%}%>
+                      </div>
+                    </td>
+                  </tr>
+                <%}%>
+              </tbody>
+            </table>
           </div>
-        <%}%>
+        </div>
       </div>
       
       <div class="pagination-container d-flex justify-content-center mt-4 mb-4">

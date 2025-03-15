@@ -3,21 +3,27 @@ const Product = require("../../models/productSchema");
 
 const loadBrandPage = async (req, res) => {
   try {
+    const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit = 6;
     const skip = (page - 1) * limit;
-    const brandData = await Brand.find({})
+    const brandData = await Brand.find({
+      brandName: { $regex: ".*" + search + ".*", $options: "i" }
+    })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    const totalBrands = await Brand.countDocuments();
+    const totalBrands = await Brand.countDocuments({
+      brandName: { $regex: ".*" + search + ".*", $options: "i" }
+  });
     const totalPages = Math.ceil(totalBrands / limit);
-    const reverseBrand = brandData.reverse();
+    const reverseBrand = brandData
     res.render("brands", {
       data: reverseBrand,
       currentPage: page,
       totalPages: totalPages,
       totalBrands: totalBrands,
+      searchQuery: search,
     });
   } catch (error) {
     res.redirect("/pageerror");

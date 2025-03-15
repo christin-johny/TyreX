@@ -6,6 +6,14 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 
 
+
+
+const googleSession=(req, res) => {
+  req.session.user = req.user;
+  res.redirect("/home");
+}
+
+
 function generateOtp() {
   const digits = "1234567890";
   let otp = "";
@@ -57,7 +65,7 @@ const loadForgotPassPage = async (req, res) => {
   try {
     res.render("forgotPassword");
   } catch (error) {
-    res.redirect("/user/pageNotFound");
+    res.redirect("/pageNotFound");
   }
 };
 
@@ -79,10 +87,10 @@ const forgotEmailValid = async (req, res) => {
       }
     }else{
         req.flash("error", "user with this email does not exists");
-      return res.redirect("/user/forgotPassword");
+      return res.redirect("/forgotPassword");
     }
   } catch (error) {
-    res.redirect("/user/pageNotFound")
+    res.redirect("/pageNotFound")
   }
 };
 
@@ -94,7 +102,7 @@ const verifyPassForgotOTP = async (req, res) => {
       return res.json({
         success: true,
         message: "OTP Verified Successfully!",
-        redirectUrl: "/user/resetPassword",
+        redirectUrl: "/resetPassword",
       });
     } else {
       return res.json({
@@ -115,7 +123,7 @@ const loadResetPassPage= async (req,res) => {
   try {
     res.render('resetPassword')
   } catch (error) {
-    res.redirect('/user/pageNotFound')
+    res.redirect('/pageNotFound')
     
   }
   
@@ -150,10 +158,10 @@ const resetPassword= async (req,res)=>{
       await User.updateOne(
         {email:email},{$set:{password:passwordHash}}
       )
-      res.redirect('/user/login')
+      res.redirect('/login')
     }else{
       req.flash("error", "Password does not match");
-      return res.redirect("/user/resetPassword");
+      return res.redirect("/resetPassword");
     }
   } catch (error) {
     res.redirect("/pageNotFound");
@@ -167,4 +175,5 @@ module.exports = {
   loadResetPassPage,
   resendOtp,
   resetPassword,
+  googleSession,
 };

@@ -15,7 +15,7 @@
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-4">SignUp</h1>
                 </div>
-                <form class="user" action="/user/signup" method="post" id="signform">
+                <form class="user" action="/signup" method="post" id="signform">
                     <% if (success_msg.length > 0) { %>
                         <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
                           <strong>✅</strong> <%= success_msg %>
@@ -84,7 +84,7 @@
                 </button>
                   <hr />
                   <a
-                    href="/user/auth/google"
+                    href="/auth/google"
                     class="btn btn-google btn-user btn-block"
                   >
                     <i class="fab fa-google fa-fw"></i> Register with Google
@@ -93,12 +93,12 @@
                 </form>
                 <hr />
                 <div class="text-center">
-                  <a class="small" href="/user/forgotPassword"
+                  <a class="small" href="/forgotPassword"
                     >Forgot Password?</a
                   >
                 </div>
                 <div class="text-center">
-                  <a class="small" href="/user/login"
+                  <a class="small" href="/login"
                     >Already have an account? Login!</a
                   >
                 </div>

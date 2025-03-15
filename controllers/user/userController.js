@@ -32,7 +32,7 @@ const loadHome = async (req, res) => {
       productData = productData.splice(0,4);
 
     if(user){
-      const userData = await User.findOne({_id:user._id});
+      const userData = await User.findOne({_id:user});
       return res.render("homePage",{user:userData,products:productData});
     }else{
       return res.render('homePage',{user:null,products:productData});
@@ -49,7 +49,7 @@ const loadLogin = async (req, res) => {
     if (!req.session.user) {
       return res.render("login");
     } else {
-      res.redirect("/user/home");
+      res.redirect("/home");
     }
   } catch (error) {
     console.log("Home page not found");
@@ -63,7 +63,7 @@ const login = async (req, res) => {
     if (email.trim() === "" || password.trim() === "") {
       console.log("email and password are required");
       req.flash("error", "email and password are required");
-      return res.redirect("/user/login");
+      return res.redirect("/login");
     }
 
     const findUser = await User.findOne({ email: email, isAdmin: false });
@@ -71,12 +71,12 @@ const login = async (req, res) => {
     if (!findUser) {
       console.log("User not found");
       req.flash("error", "User not found");
-      return res.redirect("/user/login");
+      return res.redirect("/login");
     }
     if (findUser.isBlocked) {
       console.log("User is blocked by admin");
       req.flash("error", "Can't login with this email");
-      return res.redirect("/user/login");
+      return res.redirect("/login");
     }
 
     const match = await bcrypt.compare(password, findUser.password);
@@ -84,14 +84,14 @@ const login = async (req, res) => {
     if (!match) {
       console.log("Invalid username or password");
       req.flash("error", "Invalid username or password");
-      return res.redirect("/user/login");
+      return res.redirect("/login");
     }
     req.session.user = findUser;
-    res.redirect("/user/home");
+    res.redirect("/home");
   } catch (error) {
     console.error("login error", error);
     req.flash("error", "Login failed. Please try again");
-    return res.redirect("/user/login");
+    return res.redirect("/login");
   }
 };
 
@@ -99,15 +99,15 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   try {
     if (!req.session.user) {
-      return res.redirect("/user/login");
+      return res.redirect("/login");
     }
 
     req.session.user = null; 
-    res.redirect("/user/login");
+    res.redirect("/login");
 
   } catch (error) {
     console.log("Error during logout:", error);
-    res.redirect("/user/pageNotFound");
+    res.redirect("/pageNotFound");
   }
 };
 
@@ -119,7 +119,7 @@ const loadSignup = async (req, res) => {
     if (!req.session.user) {
       return res.render("signup");
     } else {
-      res.redirect("/user/home");
+      res.redirect("/home");
     }
   } catch (error) {
     console.log("Home page not found");
@@ -164,7 +164,7 @@ const signup = async (req, res) => {
     const findUser = await User.findOne({ email });
     if (findUser) {
       req.flash("error", "User with this email already exists");
-      return res.redirect("/user/signup");
+      return res.redirect("/signup");
     }
     const otp = generateOtp();
     const emailSent = await sendVerificationEmail(email, otp);
@@ -178,7 +178,7 @@ const signup = async (req, res) => {
   } catch (error) {
     console.error("signup error", error);
     req.flash("error", "something went wrong try again");
-    return res.redirect("/user/signup");
+    return res.redirect("/signup");
   }
 };
 
@@ -197,8 +197,8 @@ const verifyOtp = async (req, res) => {
         googleId: user.googleId || undefined,
       });
       await saveUserData.save();
-      req.session.user = saveUserData._id;
-      res.json({ success: true, redirectUrl: "/user/home" });
+      req.session.user = saveUserData;
+      res.json({ success: true, redirectUrl: "/home" });
     } else {
       res
         .status(400)

@@ -5,7 +5,7 @@ const categoryInfo = async (req, res) => {
   try {
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 7;
     const skip = (page - 1) * limit;
 
     const categoryData = await Category.find({

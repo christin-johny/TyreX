@@ -40,7 +40,7 @@ router.get("/editCategory", adminAuth,categoryController.loadEditCategory);
 router.post("/editCategory/:id", adminAuth,categoryController.editCategory);
 
 //brand Management
-router.get("/brands",brandController.loadBrandPage);
+router.get("/brands",adminAuth,brandController.loadBrandPage);
 router.post('/addBrand',adminAuth,uploads.single("image"),brandController.addBrand)
 router.get("/blockBrand",adminAuth,brandController.blockBrand);
 router.get("/unblockBrand",adminAuth,brandController.unblockBrand);
@@ -51,15 +51,15 @@ router.put("/editBrand/:id",adminAuth, uploads.single("image"),brandController.e
 
 //product management
 
-router.get("/addProduct",adminAuth,productController.loadAddProductPage)
-router.post("/addproduct",adminAuth,uploads.array("images",4),productController.addproduct)
-router.get('/products',adminAuth,productController.loadAllproducts);
-router.post('/addProductOffer',adminAuth,productController.addProductOffer);
-router.post('/removeProductOffer',adminAuth,productController.removeProductOffer);
-router.get('/blockProduct',adminAuth,productController.blockProduct);
-router.get('/unblockProduct',adminAuth,productController.unblockProduct);
-router.get('/editProduct',adminAuth,productController.loadEditProduct);
-router.post('/editProduct/:id',adminAuth,uploads.array("images",4),productController.editProduct);
-router.post('/deleteImage',adminAuth,productController.deleteSingleImage);
+router.get("/addProduct",productController.loadAddProductPage)
+router.post("/addproduct",uploads.array("images",4),productController.addproduct)
+router.get('/products',productController.loadAllproducts);
+router.post('/addProductOffer',productController.addProductOffer);
+router.post('/removeProductOffer',productController.removeProductOffer);
+router.get('/blockProduct',productController.blockProduct);
+router.get('/unblockProduct',productController.unblockProduct);
+router.get('/editProduct',productController.loadEditProduct);
+router.post('/editProduct/:id',uploads.array("images",4),productController.editProduct);
+router.delete('/deleteImage',productController.deleteSingleImage);
 
 module.exports = router;

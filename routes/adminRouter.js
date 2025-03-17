@@ -5,7 +5,8 @@ const {adminAuth,redirectAuth,} = require("../middlewares/adminAuthMiddleware");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const brandController=require("../controllers/admin/brandController");
-const productController=require("../controllers/admin/productController")
+const productController=require("../controllers/admin/productController");
+const bannerController = require("../controllers/admin/bannerController");
 const multer = require("multer");
 const storage=require("../helpers/multer")
 const uploads=multer({storage:storage});
@@ -51,15 +52,24 @@ router.put("/editBrand/:id",adminAuth, uploads.single("image"),brandController.e
 
 //product management
 
-router.get("/addProduct",productController.loadAddProductPage)
-router.post("/addproduct",uploads.array("images",4),productController.addproduct)
-router.get('/products',productController.loadAllproducts);
-router.post('/addProductOffer',productController.addProductOffer);
-router.post('/removeProductOffer',productController.removeProductOffer);
-router.get('/blockProduct',productController.blockProduct);
-router.get('/unblockProduct',productController.unblockProduct);
-router.get('/editProduct',productController.loadEditProduct);
-router.post('/editProduct/:id',uploads.array("images",4),productController.editProduct);
-router.delete('/deleteImage',productController.deleteSingleImage);
+router.get("/addProduct",adminAuth,productController.loadAddProductPage)
+router.post("/addproduct",adminAuth,uploads.array("images",4),productController.addproduct)
+router.get('/products',adminAuth,productController.loadAllproducts);
+router.post('/addProductOffer',adminAuth,productController.addProductOffer);
+router.post('/removeProductOffer',adminAuth,productController.removeProductOffer);
+router.get('/blockProduct',adminAuth,productController.blockProduct);
+router.get('/unblockProduct',adminAuth,productController.unblockProduct);
+router.get('/editProduct',adminAuth,productController.loadEditProduct);
+router.post('/editProduct/:id',adminAuth,uploads.array("images",4),productController.editProduct);
+router.delete('/deleteImage',adminAuth,productController.deleteSingleImage);
+
+//banner maagement
+router.get('/banner',bannerController.loadBannerPage)
+router.get('/addBanner',bannerController.loadAddBannerPage);
+router.post('/banner',uploads.single("images"),bannerController.addBanner)
+router.delete('/banner',bannerController.deleteBanner);
+
+
+
 
 module.exports = router;

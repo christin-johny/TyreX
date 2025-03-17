@@ -2,6 +2,8 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
 <style>
+
+
   .error-message {
     color: red;
     font-size: 0.875rem;
@@ -196,39 +198,48 @@
                   <h4 class="mb-0">Choose Images</h4>
               </div>
               <div class="card-body">
-                  <div class="row">
-                      <% for (let i = 0; i < product.productImage.length; i++) { %>
-                      <div class="col-md-3 col-6 mb-3 position-relative">
-                          <div class="border rounded p-2 text-center">
-                              <input type="hidden" value="<%= product.productImage[i] %>" id="imageDatas">
-                              <img class="rounded img-fluid" style="max-width: 100px; max-height: 100px;" 
-                                   src="/uploads/reImage/<%= product.productImage[i] %>" alt="">
-                              <i onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>')" 
-                                 class="fa fa-times text-danger position-absolute top-0 end-0 p-1" 
-                                 style="cursor: pointer;"></i>
-                          </div>
-                      </div>
-                      <% } %>
+                <div class="row" id="imageContainer">
+                  <% if (product.productImage.length > 0) { %>
+                  <% for (let i = 0; i < product.productImage.length; i++) { %>
+                  <div class="col-md-3 col-6 mb-3 position-relative">
+                  <div class="border rounded p-2 text-center">
+                  <input type="hidden" value="<%= product.productImage[i] %>" class="imageDatas">
+                  <img class="rounded img-fluid" style="max-width: 100px; max-height: 100px;" 
+                      src="/uploads/reImage/<%= product.productImage[i] %>" alt="">
+                  <i onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>')" 
+                      class="fa fa-times text-danger position-absolute top-0 end-0 p-1" 
+                      style="cursor: pointer;"></i>
                   </div>
-          
-                  <div class="row">
-                    <% for (let i = 1; i <= 4; i++) { %>
-                      <div class="col-md-3">
-                        <div class="card-body p-2 d-flex flex-column align-items-center">
-                          <img src="" alt="Image Preview" id="imgView<%= i %>" style="max-width: 100px; max-height: 100px;" />
-                          <input class="form-control form-control-sm" type="file" name="images" id="input<%= i %>"
-                            accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, '<%= i %>')" />
-                        </div>
-                        <div class="image-cropper d-flex flex-column align-items-center" id="cropperContainer<%= i %>"
-                          style="display: none; width: 200px; height: 150px;">
-                          <img src="" id="croppedImg<%= i %>" alt="Cropped Image" style="width: 200px; height: 200px;" />
-                          <button type="button" id="saveButton<%= i %>" class="btn btn-sm btn-primary mt-2">Save</button>
-                        </div>
-                      </div>
-                    <% } %>
+                </div>
+                <% } %>
+              <% } %>
+              <p id="imageError" class="text-danger" style="display: none;">
+              Please add at least one image before submitting.
+              </p>
+              </div>
+
+  
+              <div class="row container-flex">
+                
+                 <% for (let i = 1; i <= 4; i++) { %>
+                <div class="col-md-3">
+                 <div class="card-body p-2 d-flex flex-column align-items-center">
+                 <img src=""  id="imgView<%= i %>" 
+                   style="max-width: 100px; max-height: 100px;" />
+                  <input class="form-control form-control-sm imageInputs" type="file" 
+                     name="images" id="input<%= i %>"
+                     accept="image/png, image/jpeg, image/jpg" 
+                     onchange="viewImage(event, '<%= i %>')" />
                   </div>
-                  
-          
+                 <div class="image-cropper d-flex flex-column align-items-center" id="cropperContainer<%= i %>"
+                  style="display: none; width: 200px; height: 200px;">
+                  <img  id="croppedImg<%= i %>"  
+                   style="width: 100px; height: 100px;" />
+                  <button type="button" id="saveButton<%= i %>" class="btn btn-sm btn-primary mt-2">Save</button>
+              </div>
+              </div>
+             <% } %>
+              </div>
                   <div class="text-center">
                       <button class="btn btn-primary btn-md rounded font-sm hover-up" id="updatebtn" 
                               type="button" onclick="validateAndSubmit()">
@@ -238,7 +249,7 @@
               </div>
           </div>
           
-</section>
+        </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
@@ -249,7 +260,7 @@ if (validateForm()) {
 }
 }
 
-let cropperInstances = {}; // Store cropper instances
+let cropperInstances = {}; 
 
 function viewImage(event, index) {
     let input = event.target;
@@ -260,14 +271,13 @@ function viewImage(event, index) {
         let image = document.getElementById(`imgView${index}`);
         image.src = dataURL;
 
-        // Destroy any existing cropper instance
+      
         if (cropperInstances[index]) {
             cropperInstances[index].destroy();
         }
 
-        // Initialize Cropper.js
         let cropper = new Cropper(image, {
-            aspectRatio: 1,
+            aspectRatio: NaN,
             viewMode: 1,
             guides: true,
             background: false,
@@ -277,13 +287,11 @@ function viewImage(event, index) {
 
         cropperInstances[index] = cropper;
 
-        // Show cropping container
         let cropperContainer = document.getElementById(`cropperContainer${index}`);
         cropperContainer.style.display = 'block';
 
         let saveButton = document.getElementById(`saveButton${index}`);
 
-        // Remove existing event listeners before adding a new one
         saveButton.replaceWith(saveButton.cloneNode(true));
         saveButton = document.getElementById(`saveButton${index}`);
 
@@ -306,7 +314,6 @@ function viewImage(event, index) {
                 }
             });
 
-            // Hide cropper container after saving
             cropperContainer.style.display = 'none';
         });
     };
@@ -346,7 +353,7 @@ saveButton.addEventListener('click', async function () {
           const salePrice=document.getElementById('salePrice').value;
           const warranty= document.getElementById('warranty').value;
           const quantity= document.getElementById('quantity').value;
-          const images = document.getElementById('input1')
+
     
     
           let isValid=true;
@@ -415,10 +422,20 @@ saveButton.addEventListener('click', async function () {
             displayErrorMessage('warranty-error', "Please enter a valid number of months")
             isValid=false;
           }
-        //   if (images.files.length === 0) {
-        //     displayErrorMessage("images-error",'Please select an image.');
-        //     isValid = false;
-        // }
+          const uploadedImages = document.querySelectorAll(".imageDatas"); 
+          const fileInputs = document.querySelectorAll(".imageInputs");
+          const errorMsg = document.getElementById("imageError");
+
+          let hasUploadedImages = uploadedImages.length > 0; 
+          let hasFileInputImages = Array.from(fileInputs).some(input => input.files.length > 0); 
+
+          if (!hasUploadedImages && !hasFileInputImages) {
+            errorMsg.style.display = "block";
+            isValid=false; 
+          } else {
+            errorMsg.style.display = "none"; 
+            isvalid=true;
+          }
     
           return isValid;
      }

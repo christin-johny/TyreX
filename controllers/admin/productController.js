@@ -299,7 +299,6 @@ const editProduct = async (req, res) => {
 const deleteSingleImage = async (req, res) => {
   try {
     const { imageNameToServer, productIdToServer } = req.body;
-    console.log(req.body)
     const product = await Product.findByIdAndUpdate(productIdToServer, {
       $pull: { productImage: imageNameToServer },
     });
@@ -311,7 +310,7 @@ const deleteSingleImage = async (req, res) => {
     );
     if (fs.existsSync(imagePath)) {
       await fs.unlinkSync(imagePath);
-      console.log(`Image ${imageNameToServer} deleted successfully`);
+      console.log(`Image ${imageNameToServer} deleted`);
     } else {
       console.log(`image ${imageNameToServer} not found`);
     }

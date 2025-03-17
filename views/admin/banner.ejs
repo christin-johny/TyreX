@@ -1,0 +1,125 @@
+<%- include("../partials/admin/sidebar") %>
+
+<section class="content-main container-fluid">
+    <div class="content-header d-flex justify-content-between align-items-center p-3 mt-5">
+      <h2 class="content-title card-title text-dark">Banners</h2>
+      <a href="/admin/addBanner">
+        <button class="btn btn-primary">
+          <i class="fas fa-plus"></i> Add Banner
+        </button>
+      </a>
+    </div>
+  
+    <div class="card">
+      <div class="card-body align-items-center">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-hover text-center">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (locals.data) { %>
+                    <% data.reverse().forEach((banner) => { %>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px; overflow: hidden;">
+                            <img src="/uploads/reImage/<%= banner.image %>"
+                              alt="Banner Image"
+                              class="img-fluid"
+                              style="width: 100%; height: auto;">
+                          </div>
+                        </td>
+                        <td class="text-start"><%= banner.title %></td>
+                        <td class="text-start"><%= banner.description %></td>
+                        <td class="text-start">
+                          <% if (banner.startDate < Date.now() && banner.endDate > Date.now()) { %>
+                            <span class="badge rounded-pill alert-success">Active</span>
+                          <% } else { %>
+                            <span class="badge rounded-pill alert-danger">Inactive</span>
+                          <% } %>
+                        </td>
+                        <td class="text-start">
+                          <button class="btn btn-danger" style="width: 90px"
+                            onclick="deleteBanner('<%= banner._id %>')">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="5" class="text-center">No Banner Found</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+<script>
+   function deleteBanner(bannerId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/banner?id=${bannerId}`, { method: "DELETE" })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Deleted!",
+                            text: "Banner successfully deleted.",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "Failed to delete banner."
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong!",
+                    });
+                    console.error("Error:", error);
+                });
+        }
+    });
+}
+
+</script>
+
+
+
+
+
+
+
+
+
+<%- include("../partials/admin/footer") %>

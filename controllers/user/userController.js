@@ -3,6 +3,8 @@ const nodemailer = require("nodemailer");
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const Size = require("../../models/size");
+const Brand = require("../../models/brandSchema");
+const Banner = require("../../models/bannerSchema");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 
@@ -19,26 +21,48 @@ const loadHome = async (req, res) => {
   try {
     const user = req.session.user;
 
-    let size = await Size.find({});
     let productData = await Product.find({
       isBlocked: false,
-      quantity: { $gt: 0 },})
+      quantity: { $gt: 0 },
+    })
       .populate({ path: "categoryId", select: "name" })
       .populate({ path: "brandId", select: "brandName" })
       .populate({ path: "sizeId", select: "name" })
       .lean();
 
-      productData = productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      productData = productData.splice(0,4);
+    const brand = await Brand.find({ isBlocked: false });
 
-    if(user){
-      const userData = await User.findOne({_id:user});
-      return res.render("homePage",{user:userData,products:productData});
-    }else{
-      return res.render('homePage',{user:null,products:productData});
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const banners = await Banner.find({
+      startDate: { $lte: today },
+      endDate: { $gte: today },
+    });
+
+    productData = productData.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    productData = productData.splice(0, 4);
+
+    if (user) {
+      const userData = await User.findOne({ _id: user });
+      return res.render("homePage", {
+        user: userData,
+        products: productData,
+        brand: brand,
+        banner: banners,
+      });
+    } else {
+      return res.render("homePage", {
+        user: null,
+        products: productData,
+        brand: brand,
+        banner: banners,
+      });
     }
   } catch (error) {
-    console.error("Home page not found",EvalError);
+    console.error("Home page not found", error);
     res.status(500).send("Server error");
   }
 };
@@ -80,7 +104,7 @@ const login = async (req, res) => {
     }
 
     const match = await bcrypt.compare(password, findUser.password);
-
+    
     if (!match) {
       console.log("Invalid username or password");
       req.flash("error", "Invalid username or password");
@@ -95,24 +119,19 @@ const login = async (req, res) => {
   }
 };
 
-
 const logout = async (req, res) => {
   try {
     if (!req.session.user) {
       return res.redirect("/login");
     }
 
-    req.session.user = null; 
+    req.session.user = null;
     res.redirect("/login");
-
   } catch (error) {
     console.log("Error during logout:", error);
     res.redirect("/pageNotFound");
   }
 };
-
-
-
 
 const loadSignup = async (req, res) => {
   try {
@@ -228,21 +247,17 @@ const resendOtp = async (req, res) => {
         .status(200)
         .json({ success: true, message: "OTP resend Successfully" });
     } else {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to resend OTP, please try again",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Failed to resend OTP, please try again",
+      });
     }
   } catch (error) {
     console.error("Error Resending OTP", otp);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Internal server error,Please try again",
-      });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error,Please try again",
+    });
   }
 };
 
@@ -255,5 +270,5 @@ module.exports = {
   verifyOtp,
   resendOtp,
   pageNotFound,
-  logout
+  logout,
 };

@@ -64,10 +64,10 @@ router.post('/editProduct/:id',adminAuth,uploads.array("images",4),productContro
 router.delete('/deleteImage',adminAuth,productController.deleteSingleImage);
 
 //banner maagement
-router.get('/banner',bannerController.loadBannerPage)
-router.get('/addBanner',bannerController.loadAddBannerPage);
-router.post('/banner',uploads.single("images"),bannerController.addBanner)
-router.delete('/banner',bannerController.deleteBanner);
+router.get('/banner',adminAuth,bannerController.loadBannerPage)
+router.get('/addBanner',adminAuth,bannerController.loadAddBannerPage);
+router.post('/banner',adminAuth,uploads.single("images"),bannerController.addBanner)
+router.delete('/banner',adminAuth,bannerController.deleteBanner);
 
 
 

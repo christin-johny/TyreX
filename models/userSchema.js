@@ -102,7 +102,8 @@ const userSchema = new Schema({
       ref:'Category'
     },
     brand:{
-      type:String
+      type:Schema.Types.ObjectId,
+      ref:'Brand'
     },
     searchOn:{
       type:Date,

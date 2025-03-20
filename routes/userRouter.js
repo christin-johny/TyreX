@@ -2,7 +2,7 @@ const express = require('express')
 const router=express.Router()
 const userController=require('../controllers/user/userController.js');
 const profileController=require('../controllers/user/profileController.js')
-const productController=require('../controllers/user/productController.js')
+
 const {userAuth,redirectAuth,checkBlockedUser}=require('../middlewares/userAuth.js')
 const passport = require('passport')
 
@@ -14,7 +14,7 @@ router.get('/',userController.loadHome)
 router.get('/login',userController.loadLogin);
 router.post("/login",userController.login);
 router.get('/signup',redirectAuth,userController.loadSignup);
-router.post('/signup',userController.signup);
+router.post('/signup',redirectAuth,userController.signup);
 router.post('/verifyOtp',userController.verifyOtp);
 router.post("/resendOtp",userController.resendOtp);
 router.get('/auth/google',redirectAuth,passport.authenticate("google",{scope:['profile','email']}));
@@ -28,11 +28,19 @@ router.get("/resetPassword",redirectAuth,profileController.loadResetPassPage);
 router.post('/resendForgotOtp',profileController.resendOtp);
 router.post('/resetPassword',profileController.resetPassword)
 
-//home page
-router.get('/home',checkBlockedUser,userController.loadHome)
+//home page&shopping page
+router.get('/home',checkBlockedUser,userController.loadHome);
+router.get('/shop',userAuth,userController.shop)
+router.get('/filter',userAuth,userController.filter)
+router.get('/filterPrice',userAuth,userController.filterByPrice)
+router.post('/search',userAuth,userController.search)
+router.get('/clear',userAuth,userController.clear);
+router.get('/sort',userAuth,userController.sort)
 
-// //product management
-// router.get('/productList',productController.loadProductList)
+//Product Management
+router.get('/details',userAuth,userController.deatails)
+
+
 
 
 

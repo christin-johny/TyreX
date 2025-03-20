@@ -6,8 +6,6 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 
 
-
-
 const googleSession=(req, res) => {
   req.session.user = req.user;
   res.redirect("/home");

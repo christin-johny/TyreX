@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TyreX Home</title>
+  <link rel="icon" type="image/svg" sizes="20x20" href="/img/favicon.svg">
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css">
+
+  <link rel="stylesheet" href="asset/css/style.css">
+  <link rel="stylesheet" href="asset/user-assets/css/maind134.css">
+  <link rel="stylesheet" href="asset/css/nice-select.css">
+  <link rel="stylesheet" href="asset/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="asset/css/slicknav.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+  <style>
+
+    .imgThumb {
+      width: 100px;
+      height: 100px;
+    }
+    .quantity-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: fit-content;
+    }
+
+    .qty-btn {
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #e0e0e0;
+      background-color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .qty-btn:hover {
+      background-color: #69bc56;
+    }
+
+    .qty-input {
+      width: 60px;
+      height: 32px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 16px;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    button.btn-warning {
+      background-color: #ff8707 !important;
+      border: none !important;
+      color: black !important;
+      padding: 10px 20px !important;
+      font-size: 16px !important;
+      border-radius: 5px !important;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    button.btn-warning:hover {
+      background-color: #e0a800 !important;
+    }
+
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
+    <div class="container">
+      <div class="d-flex align-items-center">
+        <a class="navbar-brand me-4" href="#">
+          <img src="/img/logo.svg" height="40" alt="TyreX Logo">
+        </a>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <% if (user) { %>
+          <div class="d-flex align-items-center">
+            <span class="me-3 fw-bold"><%= user.name %></span>
+            <button class="btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          </div>
+        <% } else { %>
+          <a href="/login" class="btn login-btn btn-secondary rounded-pill px-4">LOGIN</a>
+        <% } %>
+
+        <a href="/wishlist" class="ms-3 text-decoration-none text-dark">
+          <i class="far fa-heart fs-5"></i>
+        </a>
+
+        <a href="/cart" class="ms-3 text-decoration-none text-dark position-relative">
+          <i class="fas fa-shopping-cart fs-5"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to log out?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="main ">
+    <div class="page-header breadcrumb-wrap">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="/home" rel="nofollow">Home&nbsp;>&nbsp;</a>
+          <a href="/shop" rel="nofollow">Shop&nbsp;>&nbsp;</a>
+          <a href="#" rel="nofollow"><%=product.productName%></a>
+        </div>
+      </div>
+    </div>
+
+    <section class="container mt-4">
+      <div class="row">
+        <div class="col-lg-6 col-md-12 d-flex flex-column align-items-center">
+          <div class="d-flex">
+            <!-- Thumbnail Images -->
+            <ul class="list-unstyled d-flex flex-column me-2">
+              <% product.productImage.forEach((image, i) => { %>
+                <li>
+                  <img class="imgThumb img-fluid mb-2" src="/uploads/reImage/<%= image %>" 
+                       alt="Product Image"
+                       data-image="/uploads/reImage/<%= image %>"
+                       style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+                </li>
+              <% }); %>
+            </ul>
+            <!-- Main Image with Fixed Size -->
+            <div class="zoom-container position-relative overflow-hidden">
+              <img id="zoomImage" class="img-fluid" 
+                   src="/uploads/reImage/<%= product.productImage[0] %>" 
+                   alt="Product Image" 
+                   style="width: 400px; height: 400px; object-fit: contain;">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <h2 class="title-detail"><%= product.productName %></h2>
+          <span class="text-muted">Brand: <a href="#"><%= product.brandId.brandName %></a></span>
+          <div class="product-price d-flex align-items-center mt-2">
+            <span class="text-brand fs-4 fw-bold me-2">₹<%= product.salePrice %></span>
+            <del class="text-muted fs-5">₹<%= product.regularPrice %></del>
+            <% if (totalOffer) { %>
+              <span class="badge bg-success ms-2 fs-6"><%= product.productOffer %>% OFF</span>
+            <% } else { %>
+              <span class="text-muted ms-2">No Offers</span>
+            <% } %>
+          </div>
+          <hr>
+          <p><strong>Category:</strong> <%= category.name %></p>
+          <p><strong>Size:</strong> <%= product.sizeId.name %></p>
+          <p><strong>Number:</strong> <%= product.productNumber %></p>
+          <p><strong>Description:</strong> <%= product.description %></p>
+          <hr>
+          <ul class="list-unstyled">
+            <li><i class="fi-rs-crown"></i> <%= product.warranty %> Months Brand Warranty</li>
+            <li><i class="fi-rs-refresh"></i> 30 Day Return Policy</li>
+            <li><i class="fi-rs-credit-card"></i> Cash on Delivery available</li>
+          </ul>
+          <hr>
+          <p class="fw-bold text-warning">
+            <% if (product.quantity === 0) { %>
+              Out of Stock
+            <% } else if (product.quantity < 5) { %>
+              Few left
+            <% } else { %>
+              In Stock
+            <% } %>
+          </p>
+          <div class="product-extra-link2">
+            <button class="qty-btn decrease">−</button>
+            <input type="number" id="quantity" class="qty-input" value="1" min="1" max="10" readonly>
+            <button class="qty-btn increase">+</button>
+          </div>
+          <div class="mt-3">
+            <button type="submit" class="btn btn-warning px-4">ADD TO CART</button>
+            <a aria-label="Add To Wishlist" class="btn btn-outline-secondary ms-2" href="#"><i class="fi-rs-heart"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+<hr>
+
+<section>
+  <div class="container my-5">
+    <header class="mb-4">
+      <h3>Similar Products</h3>
+    </header>
+    <div class="row">
+
+      <%for(let i=0;i<products.length;i++){%>
+
+        <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
+          <div class="card w-100 my-2 shadow-2-strong hover-shadow border-0 rounded-3 overflow-hidden">
+            <div class="bg-light text-center">
+              <a href="/details?id=<%=products[i]._id%>" class="d-block no-style">
+              <img src="/uploads/reImage/<%=products[i].productImage[0]%>" class="card-img-top p-2" style="aspect-ratio: 1 / 1; object-fit: contain;" alt="<%=products[i].productName%>">
+            </div>
+
+            <div class="card-body d-flex flex-column p-3">
+
+              <h5 class="card-title text-truncate fw-bold mb-1"><%=products[i].productName%></h5>
+            </a>
+              <h6 class="text-muted mb-2"><%=products[i].brandId.brandName%></h6>
+
+              <div class="d-flex align-items-center mb-3">
+                <span class="text-success fw-bold fs-5">&#8377;<%=products[i].salePrice%></span>
+                <del class="text-muted ms-2 small">&#8377;<%=products[i].regularPrice%></del>
+                
+                <% if (products[i].productOffer > 0) { %>
+                  <span class="badge bg-success ms-auto"><%=products[i].productOffer%>% OFF</span>
+                <% } %>
+              </div>
+
+              <div class="d-flex align-items-center mt-auto pt-2 border-top">
+                <a href="/addToCart?id=<%=products[i]._id%>" class="btn btn-primary flex-grow-1 me-2">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to cart
+                </a>
+                <a href="/addToWishlis?id<%=products[i]._id%>" class="btn btn-outline-secondary rounded-circle p-2">
+                  <i class="fas fa-heart"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      <%}%>
+    </div>
+  </div>
+</section>
+    </section>
+  </main>
+
+  <script>
+
+   document.addEventListener("DOMContentLoaded", function () {
+    const zoomImage = document.getElementById("zoomImage");
+    const zoomContainer = zoomImage.parentElement;
+    const thumbnails = document.querySelectorAll(".imgThumb");
+
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener("click", function () {
+        const newSrc = this.getAttribute("data-image");
+        zoomImage.src = newSrc;
+      });
+    });
+
+    zoomContainer.addEventListener("mousemove", function (event) {
+      const { left, top, width, height } = zoomContainer.getBoundingClientRect();
+      const x = (event.clientX - left) / width * 100;
+      const y = (event.clientY - top) / height * 100;
+      
+      zoomImage.style.transformOrigin = `${x}% ${y}%`;
+      zoomImage.style.transform = "scale(2)";
+    });
+
+    zoomContainer.addEventListener("mouseleave", function () {
+      zoomImage.style.transform = "scale(1)";
+    });
+  });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const quantityInput = document.querySelector('.qty-input');
+      const decreaseButton = document.querySelector('.decrease');
+      const increaseButton = document.querySelector('.increase');
+      
+
+      const min = parseInt(quantityInput.getAttribute('min')) || 1;
+      const max = parseInt(quantityInput.getAttribute('max')) || 10;
+      
+
+      decreaseButton.addEventListener('click', function() {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue > min) {
+          quantityInput.value = currentValue - 1;
+
+          quantityInput.dispatchEvent(new Event('change'));
+        }
+      });
+      
+
+      increaseButton.addEventListener('click', function() {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue < max) {
+          quantityInput.value = currentValue + 1;
+
+          quantityInput.dispatchEvent(new Event('change'));
+        }
+      });
+      
+
+      quantityInput.addEventListener('keydown', function(e) {
+        e.preventDefault();
+        return false;
+      });
+    });
+
+  </script>
+
+  <%- include("../partials/user/footer") %>
+ 
+</body>
+</html>

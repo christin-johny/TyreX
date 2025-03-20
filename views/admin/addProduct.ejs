@@ -207,20 +207,25 @@
                 <div id="addedImagesContainer" class="thumbnails-container"></div>
               </div>
               <div class="row">
+                
                 <% for (let i = 1; i <= 4; i++) { %>
                   <div class="col-md-3">
-                    <div class="card-body p-2 d-flex flex-column align-items-center">
-                      <img src="" alt="Image Preview" id="imgView<%= i %>" style="max-width: 100px; max-height: 100px;" />
-                      <input class="form-control form-control-sm" type="file" name="images" id="input<%= i %>"
-                        accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, '<%= i %>')" />
+                   <div class="card-body p-2 d-flex flex-column align-items-center">
+                   <img src=""  id="imgView<%= i %>" 
+                     style="max-width: 100px; max-height: 100px;" />
+                    <input class="form-control form-control-sm imageInputs" type="file" 
+                       name="images" id="input<%= i %>"
+                       accept="image/png, image/jpeg, image/jpg" 
+                       onchange="viewImage(event, '<%= i %>')" />
                     </div>
-                    <div class="image-cropper d-flex flex-column align-items-center" id="cropperContainer<%= i %>"
-                      style="display: none; width: 200px; height: 150px;">
-                      <img src="" id="croppedImg<%= i %>" alt="Cropped Image" style="width: 200px; height: 200px;" />
-                      <button type="button" id="saveButton<%= i %>" class="btn btn-sm btn-primary mt-2">Save</button>
-                    </div>
-                  </div>
-                <% } %>
+                   <div class="image-cropper d-flex flex-column align-items-center" id="cropperContainer<%= i %>"
+                    style="display: none; width: 200px; height: 200px;">
+                    <img  id="croppedImg<%= i %>"  
+                     style="width: 100px; height: 100px;" />
+                    <button type="button" id="saveButton<%= i %>" class="btn btn-sm btn-primary mt-2">Save</button>
+                </div>
+                </div>
+               <% } %>
               </div>
               
             <div class="text-center mt-4">
@@ -280,7 +285,7 @@ function validateAndSubmit(){
      }
    
 
-  let cropperInstances = {}; // Store cropper instances
+  let cropperInstances = {}; 
 
 function viewImage(event, index) {
     let input = event.target;
@@ -291,14 +296,12 @@ function viewImage(event, index) {
         let image = document.getElementById(`imgView${index}`);
         image.src = dataURL;
 
-        // Destroy any existing cropper instance
         if (cropperInstances[index]) {
             cropperInstances[index].destroy();
         }
 
-        // Initialize Cropper.js
         let cropper = new Cropper(image, {
-            aspectRatio: 1,
+            aspectRatio: NaN,
             viewMode: 1,
             guides: true,
             background: false,
@@ -308,13 +311,11 @@ function viewImage(event, index) {
 
         cropperInstances[index] = cropper;
 
-        // Show cropping container
         let cropperContainer = document.getElementById(`cropperContainer${index}`);
         cropperContainer.style.display = 'block';
 
         let saveButton = document.getElementById(`saveButton${index}`);
 
-        // Remove existing event listeners before adding a new one
         saveButton.replaceWith(saveButton.cloneNode(true));
         saveButton = document.getElementById(`saveButton${index}`);
 
@@ -337,7 +338,6 @@ function viewImage(event, index) {
                 }
             });
 
-            // Hide cropper container after saving
             cropperContainer.style.display = 'none';
         });
     };

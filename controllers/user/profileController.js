@@ -164,6 +164,22 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const loadProfile = async (req,res) => {
+  try {
+    const userData=req.session.user;
+    res.render('profile',{
+      user:userData
+    })
+
+  } catch (error) {
+    console.error(error)
+    res.redirect('/pageNotFound')
+    
+  }
+  
+}
+
+
 module.exports = {
   loadForgotPassPage,
   forgotEmailValid,
@@ -172,4 +188,5 @@ module.exports = {
   resendOtp,
   resetPassword,
   googleSession,
+  loadProfile
 };

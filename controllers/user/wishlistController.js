@@ -43,10 +43,10 @@ const addToWishlist = async(req,res)=>{
 
         if(specificItem){
             console.log('hi')
-            return res.status(200).json({status:false,message:"Product already in cart!"});
+            return res.status(400).json({status:false,message:"Product already in cart!"});
             
         }else if(user.wishlist.includes(productId)){
-            return res.status(200).json({status:false,message:"Product already in wishlist!"});
+            return res.status(400).json({status:false,message:"Product already in wishlist!"});
         } 
 
         user.wishlist.push(productId);

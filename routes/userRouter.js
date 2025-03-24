@@ -38,21 +38,28 @@ router.post('/search',userAuth,userController.search)
 router.get('/clear',userAuth,userController.clear);
 router.get('/sort',userAuth,userController.sort)
 
+//profile managemenet
+router.get('/profile',profileController.loadProfile)
+
+
+
+
+
 //Product Management
 router.get('/details',userAuth,userController.deatails)
 
 //wishlist Management
 
-router.get('/wishlist',wishlistController.loadWishlist);
-router.post('/wishlist',wishlistController.addToWishlist);
-router.delete('/wishlist',wishlistController.removeFromWishlist);
+router.get('/wishlist',userAuth,wishlistController.loadWishlist);
+router.post('/wishlist',userAuth,wishlistController.addToWishlist);
+router.delete('/wishlist',userAuth,wishlistController.removeFromWishlist);
 
 
 //cart
 router.post("/cart/:productId",userAuth,cartController.addToCart);
 router.get('/cart',userAuth,cartController.loadCart);
-router.put('/cart',cartController.changeQuantity)
-router.delete('/cart',cartController.removeFromCart)
+router.put('/cart',userAuth,cartController.changeQuantity)
+router.delete('/cart',userAuth,cartController.removeFromCart)
 
 
 

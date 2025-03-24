@@ -22,44 +22,69 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
-        <div class="container">
-          <div class="d-flex align-items-center">
-            <a class="navbar-brand me-4" href="#">
-              <img src="/img/logo.svg" height="40" alt="TyreX Logo">
-            </a>
-          </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
+    <div class="container">
       
-          <div class="search-container mx-auto" style="max-width: 400px;">
-            <form action="/search" method="POST" class="search-form">
-                <input type="text" name="query" placeholder="Search items..." class="search-input" />
-                <button type="submit" class="search-button btn-secondary">Search</button>
-            </form>
-          </div>
-          
-          <div class="d-flex align-items-center gap-3">
-            <% if (user) { %>
-              <div class="d-flex align-items-center">
-                <span class="me-3 fw-bold"><%= user.name %></span>
-                <button class="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt"></i> 
-                </button>
-              </div>
-            <% } else { %>
-              <a href="/login" class="btn login-btn btn-secondary rounded-pill px-4">LOGIN</a>
-            <% } %>
-            
-            <a href="/wishlist" class="ms-3 text-decoration-none text-dark">
-              <i class="far fa-heart fs-5"></i>
-            </a>
-            
-            <a href="/cart" class="ms-3 text-decoration-none text-dark position-relative">
-              <i class="fas fa-shopping-cart fs-5"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">0</span>
-            </a>
-          </div>
+      <!-- Logo -->
+      <a class="navbar-brand me-4" href="#">
+        <img src="/img/logo.svg" height="40" alt="TyreX Logo">
+      </a>
+  
+      <!-- Mobile Toggle Button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <i class="fas fa-bars"></i>
+      </button>
+  
+      <div class="collapse navbar-collapse" id="navbarContent">
+        
+        <!-- Search Bar (Centers on Large Screens, Moves Below Logo on Mobile) -->
+        <div class="mx-auto d-none d-lg-block search-container" style="max-width: 400px;">
+          <form action="/search" method="POST" class="search-form">
+            <input type="text" name="query" placeholder="Search items..." class="search-input" />
+            <button type="submit" class="search-button btn-secondary">Search</button>
+          </form>
         </div>
-      </nav>
+  
+        <!-- Right-side Icons & User Section -->
+        <div class="d-flex align-items-center gap-3 ms-auto">
+          
+          <% if (user) { %>
+            <div class="d-flex align-items-center">
+              <span class="me-2 fw-bold"><%= user.name %></span>
+              <button class="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </div>
+          <% } else { %>
+            <a href="/login" class="btn btn-secondary rounded-pill px-4">LOGIN</a>
+          <% } %>
+  
+          <!-- Wishlist & Cart -->
+          <a href="/wishlist" class="text-decoration-none text-dark">
+            <i class="far fa-heart fs-5"></i>
+          </a>
+  
+          <a href="/cart" class="text-decoration-none text-dark position-relative">
+            <i class="fas fa-shopping-cart fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 0.6rem;">0</span>
+          </a>
+        </div>
+        
+        <!-- Search Bar for Mobile (Appears Below Logo) -->
+        <div class="d-lg-none w-100 mt-3">
+          <form action="/search" method="POST" class="search-form">
+            <input type="text" name="query" placeholder="Search items..." class="search-input" />
+            <button type="submit" class="search-button btn-secondary">Search</button>
+          </form>
+        </div>
+  
+      </div>
+    </div>
+  </nav>
+  
+  
       
       <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

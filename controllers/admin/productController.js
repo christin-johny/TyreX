@@ -85,7 +85,7 @@ const loadAllproducts = async (req, res) => {
   try {
     const search = req.query.search || "";
     const page = req.query.page || 1;
-    const limit = 4;
+    const limit = 7;
 
     const productData = await Product.find({
       $or: [
@@ -309,7 +309,7 @@ const deleteSingleImage = async (req, res) => {
       imageNameToServer
     );
     if (fs.existsSync(imagePath)) {
-      await fs.unlinkSync(imagePath);
+    fs.unlinkSync(imagePath);
       console.log(`Image ${imageNameToServer} deleted`);
     } else {
       console.log(`image ${imageNameToServer} not found`);

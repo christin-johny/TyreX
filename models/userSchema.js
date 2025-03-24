@@ -56,13 +56,13 @@ const userSchema = new Schema({
         ref:"Payment",
     }
   ],
-  wishlists:[
+  wishlist:[
     {
         type:Schema.Types.ObjectId,
-        ref:"wishlists",
+        ref:"Wishlist",
     }
   ],
-  carts:[
+  cart:[
     {
         type:Schema.Types.ObjectId,
         ref:"Cart",

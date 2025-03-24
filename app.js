@@ -42,12 +42,6 @@ app.use(flash());
 app.use(middleware.flashMiddleware);
 
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: "Something went wrong on the server." });
-});
-
-
 app.use('/admin', adminRouter);
 app.use('/', userRouter);
 

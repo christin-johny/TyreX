@@ -58,94 +58,89 @@
     aspect-ratio: 3 / 1; 
     object-fit: contain;
 }
+.modal {
+  z-index: 1050 !important;
+}
+
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+
 
   </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 ">
-      <div class="container d-flex align-items-center justify-content-between">
-          <div class="d-flex align-items-center">
-              <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/img/logo.svg" height="40" alt="TyreX Logo">
-              </a>
-              <ul class="navbar-nav d-none d-lg-flex">
-                  <li class="nav-item"><a class="nav-link" href="#">Offers</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Brands</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Best Selling</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">New Arrival</a></li>
-              </ul>
-          </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 sticky-top">
+    <div class="container">
+      
+      <!-- Logo -->
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="/img/logo.svg" height="40" alt="TyreX Logo">
+      </a>
   
-
+      <!-- Mobile Menu Button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <i class="fas fa-bars"></i>
+      </button>
+  
+      <!-- Navbar Content -->
+      <div class="collapse navbar-collapse" id="navbarContent">
+        
+        <!-- Centered Menu -->
+        <ul class="navbar-nav mx-auto text-center">
+          <li class="nav-item"><a class="nav-link" href="/shop">Shop Now</a></li>
+          <li class="nav-item"><a class="nav-link" href="#carouselExample">Offers</a></li>
+          <li class="nav-item"><a class="nav-link" href="#bestSelling">Brands</a></li>
+          
+          <li class="nav-item"><a class="nav-link" href="#newArrival">New Arrival</a></li>
+        </ul>
+  
+        <!-- User Login/Logout Section -->
+        <div class="d-flex align-items-center justify-content-center">
           <% if (user) { %>
-            <div class="d-flex align-items-center">
-              <span class="me-2 fw-bold"><%= user.name %></span>
-              <button class="btn btn-danger btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                <i class="fas fa-sign-out-alt"></i> 
-              </button>
-              
-            </div>
-          
+            <span class="me-2 fw-bold"><%= user.name %></span>
+            <button class="btn btn-danger btn-sm rounded-circle me-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
 
-            <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
-                  </div>
-                  <div class="modal-body">
-                    Are you sure you want to log out?
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                      Cancel
-                    </button>
-                    
-                    <a href="/logout" class="btn btn-danger">Logout</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          
+            <a href="/wishlist" class="text-decoration-none text-dark me-2">
+              <i class="far fa-heart fs-5"></i>
+            </a>
+    
+            <a href="/cart" class="text-decoration-none text-dark position-relative">
+              <i class="fas fa-shopping-cart fs-5"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.6rem;">0</span>
+            </a>
           <% } else { %>
-            <a href="/login" class="btn login-btn btn-secondary rounded-pill">LOGIN</a>
+            <a href="/login" class="btn btn-secondary rounded-pill">LOGIN</a>
           <% } %>
-          
-          <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  Are you sure you want to log out?
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                  <a href="/logout" class="btn btn-danger">Logout</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button class="navbar-toggler custom-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-              <i class="fas fa-bars"></i>
-          </button>
-      </div>
+        </div>
   
-
-      <div class="collapse navbar-collapse justify-content-center mt-2 mt-lg-0" id="navbarContent">
-          <ul class="navbar-nav d-lg-none"> 
-              <li class="nav-item"><a class="nav-link" href="#">Offers</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">Brands</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">Best Selling</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">New Arrival</a></li>
-          </ul>
       </div>
-    </nav>
+    </div>
+  </nav>
+  
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to log out?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
    <div class="hero-section">
       <div class="container-fluid">
         <div class="row align-items-center">
@@ -220,7 +215,7 @@
 
   
 
-    <div class="container my-5">
+    <div class="container my-5" id="bestSelling">
       <header class="mb-4">
           <h2>Best Selling Brands</h2>
       </header>
@@ -238,7 +233,7 @@
   </div>
   
   <section>
-    <div class="container my-5">
+    <div class="container my-5" id="newArrival">
       <header class="mb-4">
         <h3>New Arrivals</h3>
       </header>
@@ -269,9 +264,9 @@
                 </div>
 
                 <div class="d-flex align-items-center mt-auto pt-2 border-top">
-                  <a href="/addToCart?id=<%=products[i]._id%>" class="btn btn-primary flex-grow-1 me-2">
+                  <button class="btn btn-primary flex-grow-1 me-2 addToCartBtn" data-id="<%= products[i]._id %>">
                     <i class="fas fa-shopping-cart me-2"></i>Add to cart
-                  </a>
+                </button>
                   <a href="/addToWishlis?id<%=products[i]._id%>" class="btn btn-outline-secondary rounded-circle p-2">
                     <i class="fas fa-heart"></i>
                   </a>
@@ -287,5 +282,43 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+<script>
+document.querySelectorAll(".addToCartBtn").forEach(button => {
+    button.addEventListener("click", async () => {
+        const productId = button.getAttribute("data-id");
 
+        try {
+            const response = await fetch(`/cart/${productId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ quantity: 1 }) // Example quantity
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Product added to Cart",
+                    showConfirmButton: false,
+                    timer:1000
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed to add to cart",
+                    text: result.message,
+                    showConfirmButton: false,
+                    timer:1000
+                });
+            }
+        } catch (error) {
+            console.error("Error:", error);
+           
+        }
+    });
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <%- include("../partials/user/footer") %>

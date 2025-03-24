@@ -661,6 +661,11 @@ const deatails = async (req, res) => {
       .populate("brandId")
       .populate("sizeId");
 
+    if(!product||product.isBlocked){
+      return res.redirect('/shop')
+    }
+
+
     const findCategory = product.categoryId;
     const categoryOffer = findCategory?.categoryOffer || 0;
     const productOffer = product.productOffer || 0;

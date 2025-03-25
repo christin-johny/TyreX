@@ -8,7 +8,17 @@ const loadWishlist = async (req,res)=>{
 try {
     const userId= req.session.user._id;
     const user = await User.findById(userId)
-    const products = await Product.find({_id:{$in:user.wishlist}}).populate('categoryId').populate('brandId');
+
+    const cart = await Cart.findOne({ userId })
+    
+    const  cartProductIds = cart.items.map(item=>item.productId);
+
+    const products = await Product.find({ _id: { $in: user.wishlist, $nin: cartProductIds },isBlocked:false})
+.populate('categoryId')
+.populate('brandId');
+
+
+
     res.render('wishlist',{
         user:user,
         wishlist:products
@@ -42,7 +52,6 @@ const addToWishlist = async(req,res)=>{
         console.log("test sp",specificItem)
 
         if(specificItem){
-            console.log('hi')
             return res.status(400).json({status:false,message:"Product already in cart!"});
             
         }else if(user.wishlist.includes(productId)){

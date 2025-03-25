@@ -4,8 +4,14 @@ const userController=require('../controllers/user/userController.js');
 const profileController=require('../controllers/user/profileController.js')
 const cartController=require('../controllers/user/cartController.js')
 const wishlistController=require('../controllers/user/wishlistController.js')
+const checkoutController = require('../controllers/user/checkoutController.js')
+const orderController=require('../controllers/user/orderController.js')
 const {userAuth,redirectAuth,checkBlockedUser}=require('../middlewares/userAuth.js')
-const passport = require('passport')
+const passport = require('passport');
+const multer = require("multer");
+const storage=require("../helpers/multer")
+const uploads=multer({storage:storage});
+
 
 router.get('/pageNotFound',userController.pageNotFound)
 
@@ -39,14 +45,30 @@ router.get('/clear',userAuth,userController.clear);
 router.get('/sort',userAuth,userController.sort)
 
 //profile managemenet
-router.get('/profile',profileController.loadProfile)
+router.get('/profile',userAuth,profileController.loadProfilePage)
+router.get('/editProfile',userAuth,profileController.loadEditProfilePage);
+router.post('/uploadProfile',userAuth,uploads.single('profileImage'),profileController.uploadProfile);
+router.get('/changePassword',userAuth,profileController.loadChangePassPage);
+router.post('/changePassword',userAuth,profileController.changePassword);
 
 
+// router.get('/forgotPassword',profileController.loadForgotPasswordPage);
+// router.post('/forgotEmailValid', profileController.forgotEmailValid);
+// router.put('/changeEmail',userAuth,profileController.changeEmail);
+// router.post('/EmailValid', userAuth, profileController.emailValid);
 
+
+//Address Management
+router.get("/address",userAuth,profileController.loadAddressPage);
+router.get('/addAddress',userAuth,profileController.loadAddAddressPage);
+router.post('/addAddress',userAuth,profileController.addAddressPage);
+router.get('/editAddress', userAuth, profileController.loadEditAddress);
+router.put('/editAddress',userAuth,profileController.editAddress);
+router.delete('/deleteAddress',userAuth,profileController.deleteAddress);
 
 
 //Product Management
-router.get('/details',userAuth,userController.deatails)
+router.get('/details',userAuth,userController.details)
 
 //wishlist Management
 
@@ -61,8 +83,18 @@ router.get('/cart',userAuth,cartController.loadCart);
 router.put('/cart',userAuth,cartController.changeQuantity)
 router.delete('/cart',userAuth,cartController.removeFromCart)
 
+//checkout
+
+router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
+router.get('/checkoutAddress',checkoutController.addAddressCheckout)
+router.post('/checkoutAddress',checkoutController.saveAddressCheckout)
 
 
+//order 
+router.post('/placeOrder',orderController.placeOrder)
+router.get('/orders',orderController.orders);
 
+
+router.get('/confirmation',orderController.loadConfirmation)
 
 module.exports = router;

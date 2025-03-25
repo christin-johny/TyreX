@@ -35,6 +35,38 @@
            color: white;
        }
        
+       .address-cards .card {
+       border: 2px solid #e9ecef;
+       transition: all 0.3s ease;
+       cursor: pointer;
+   }
+   
+   .address-cards .card:hover {
+       border-color: #007bff;
+       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+   }
+   
+   .address-cards .form-check {
+       padding-left: 0;
+   }
+   
+   .address-cards .form-check-input {
+       position: absolute;
+       right: 15px;
+       top: 15px;
+   }
+   
+   .address-cards .form-check-label {
+       display: block;
+       width: 100%;
+       cursor: pointer;
+   }
+   
+   .address-cards .card.selected {
+       border-color: #007bff;
+       background-color: #f8f9ff;
+   }
+
    </style>
 
 <body class="bg-light">
@@ -100,62 +132,6 @@
    </div>
 </div>
 
-<style>
-   .address-cards .card {
-       border: 2px solid #e9ecef;
-       transition: all 0.3s ease;
-       cursor: pointer;
-   }
-   
-   .address-cards .card:hover {
-       border-color: #007bff;
-       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-   }
-   
-   .address-cards .form-check {
-       padding-left: 0;
-   }
-   
-   .address-cards .form-check-input {
-       position: absolute;
-       right: 15px;
-       top: 15px;
-   }
-   
-   .address-cards .form-check-label {
-       display: block;
-       width: 100%;
-       cursor: pointer;
-   }
-   
-   .address-cards .card.selected {
-       border-color: #007bff;
-       background-color: #f8f9ff;
-   }
-</style>
-
-<script>
-   // Update the hidden select when a card is selected
-   document.querySelectorAll('input[name="selectedAddress"]').forEach(radio => {
-       radio.addEventListener('change', function() {
-           // Update the hidden select
-           document.getElementById('existingAddress').value = this.value;
-           
-           // Update card styling
-           document.querySelectorAll('.address-cards .card').forEach(card => {
-               card.classList.remove('selected');
-           });
-           this.closest('.card').classList.add('selected');
-       });
-   });
-</script>
-           
-           <script>
-               // JavaScript to handle the "Add New Address" button click
-               document.getElementById('addNewAddressBtn').addEventListener('click', function() {
-                   document.getElementById('newAddressForm').style.display = 'block';
-               });
-           </script>
            <!-- Order Summary -->
            <div class="col-lg-4">
                <div class="order-summary">
@@ -230,7 +206,7 @@
                    <div class="mb-4">
                        <h3 class="h5 mb-3">Payment Method</h3>
                        
-                       <!-- <div class="mb-3">
+                       <div class="mb-3">
                            <label class="d-flex align-items-center">
                                <input type="radio" name="payment" value="razorpay" class="mr-2">
                                <img src="" alt="Razorpay" style="height: 30px;">
@@ -242,7 +218,7 @@
                            <label class="d-flex align-items-center">
                                <input type="radio" name="payment" value="wallet" class="mr-2">
                                
-                           </label> -->
+                           </label>
                        </div>
                        <div class="mb-3">
                            <label class="d-flex align-items-center">
@@ -392,57 +368,57 @@ async function placeOrder() {
            return;
        }
 
-       // Check stock availability before proceeding
-       const stockStatus = await checkStockAvailability();
+    //    // Check stock availability before proceeding
+    //    const stockStatus = await checkStockAvailability();
        
-       if (stockStatus.length === 0) {
-           Swal.fire({
-               title: 'Cart Empty',
-               text: 'No items available in stock. Your cart will be cleared.',
-               icon: 'error',
-               confirmButtonText: 'Go to Shop'
-           }).then((result) => {
-               if (result.isConfirmed) {
-                   window.location.href = '/shop';
-               }
-           });
-           return;
-       }
+    //    if (stockStatus.length === 0) {
+    //        Swal.fire({
+    //            title: 'Cart Empty',
+    //            text: 'No items available in stock. Your cart will be cleared.',
+    //            icon: 'error',
+    //            confirmButtonText: 'Go to Shop'
+    //        }).then((result) => {
+    //            if (result.isConfirmed) {
+    //                window.location.href = '/shop';
+    //            }
+    //        });
+    //        return;
+    //    }
 
        // Check for blocked products
-       const blockedProducts = stockStatus.filter(item => item.isBlocked);
-       if (blockedProducts.length > 0) {
-           Swal.fire({
-               title: 'Products Blocked',
-               text: 'Some products in your cart have been blocked by admin. The page will reload to update your cart.',
-               icon: 'warning',
-               confirmButtonText: 'OK'
-           }).then(() => {
-               window.location.reload();
-           });
-           return;
-       }
+    //    const blockedProducts = stockStatus.filter(item => item.isBlocked);
+    //    if (blockedProducts.length > 0) {
+    //        Swal.fire({
+    //            title: 'Products Blocked',
+    //            text: 'Some products in your cart have been blocked by admin. The page will reload to update your cart.',
+    //            icon: 'warning',
+    //            confirmButtonText: 'OK'
+    //        }).then(() => {
+    //            window.location.reload();
+    //        });
+    //        return;
+    //    }
 
-       if (stockStatus.some(item => item.stockChanged)) {
-           Swal.fire({
-               title: 'Stock Changed',
-               text: 'Some items in your cart have limited stock. The quantities have been adjusted.',
-               icon: 'warning',
-               confirmButtonText: 'Continue with Available Stock'
-           }).then((result) => {
-               if (result.isConfirmed) {
-                   window.location.reload();
-                   proceedWithOrder();
-               }
-           });
-           return;
-       }
+    //    if (stockStatus.some(item => item.stockChanged)) {
+    //        Swal.fire({
+    //            title: 'Stock Changed',
+    //            text: 'Some items in your cart have limited stock. The quantities have been adjusted.',
+    //            icon: 'warning',
+    //            confirmButtonText: 'Continue with Available Stock'
+    //        }).then((result) => {
+    //            if (result.isConfirmed) {
+    //                window.location.reload();
+    //                proceedWithOrder();
+    //            }
+    //        });
+    //        return;
+    //    }
 
        proceedWithOrder();
    } catch (error) {
        console.error('Error:', error);
-       Swal.fire('Error', error.message || 'An error occurred while placing the order', 'error');
-   }
+       Swal.fire('Error', error.message || 'An error occurred while placing the order1', 'error');
+   } 
 }
 
 function proceedWithOrder() {
@@ -469,7 +445,6 @@ function proceedWithOrder() {
 }
 
 
-
 function processCODOrder(orderData) {
    fetch('/placeOrder', {
        method: 'POST',
@@ -480,16 +455,15 @@ function processCODOrder(orderData) {
    })
    .then(response => response.json())
    .then(data => {
+       console.log("Response from server:", data); 
        if (data.success) {
            Swal.fire({
                title: 'Order Placed Successfully!',
-               text: `Order IDs: ${data.orderIds.join(", ")}`,
                icon: 'success',
-               confirmButtonText: 'View Orders'
+               showConfirmButton:false,
+               timer:1500
            }).then((result) => {
-               if (result.isConfirmed) {
-                   window.location.href = '/orders';
-               }
+                   window.location.href = '/confirmation';
            });
        } else {
            Swal.fire('Error', data.message || 'An error occurred while placing the order', 'error');
@@ -501,84 +475,40 @@ function processCODOrder(orderData) {
    });
 }
 
-function processRazorpayOrder(orderData) {
-   // First create order on server
-   fetch('/create-razorpay-order', {
-       method: 'POST',
-       headers: {
-           'Content-Type': 'application/json',
-       },
-       body: JSON.stringify(orderData)
-   })
-   .then(response => response.json())
-   .then(data => {
-       if (data.success) {
-           const options = {
-               key: data.razorpayKeyId, // Your Razorpay Key ID
-               amount: data.amount,
-               currency: data.currency,
-               name: 'PC Monarch',
-               image: 'img/pc-logo.png',
-               description: 'Purchase Description',
-               order_id: data.orderId,
-               handler: function (response) {
-                   // Handle successful payment
-                   verifyPayment(response, orderData);
-               },
-               prefill: {
-                   name: data.customerName,
-                   email: data.customerEmail,
-                   contact: data.customerPhone
-               },
-               theme: {
-                   color: '#F37254'
-               }
-           };
-           const rzp = new Razorpay(options);
-           rzp.open();
-       } else {
-           Swal.fire('Error', data.message || 'An error occurred while creating the order', 'error');
-       }
-   })
-   .catch(error => {
-       console.error('Error:', error);
-       Swal.fire('Error', 'An error occurred while processing the payment', 'error');
-   });
-}
 
-function verifyPayment(paymentResponse, orderData) {
-   fetch('/verify-payment', {
-       method: 'POST',
-       headers: {
-           'Content-Type': 'application/json',
-       },
-       body: JSON.stringify({
-           paymentResponse,
-           orderData
-       })
-   })
-   .then(response => response.json())
-   .then(data => {
-       if (data.success) {
-           Swal.fire({
-               title: 'Payment Successful!',
-               text: `Order IDs: ${data.orderIds.join(", ")}`,
-               icon: 'success',
-               confirmButtonText: 'View Orders'
-           }).then((result) => {
-               if (result.isConfirmed) {
-                   window.location.href = '/orders';
-               }
-           });
-       } else {
-           Swal.fire('Error', data.message || 'Payment verification failed', 'error');
-       }
-   })
-   .catch(error => {
-       console.error('Error:', error);
-       Swal.fire('Error', 'An error occurred while verifying the payment', 'error');
-   });
-}
+// function verifyPayment(paymentResponse, orderData) {
+//    fetch('/verify-payment', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json',
+//        },
+//        body: JSON.stringify({
+//            paymentResponse,
+//            orderData
+//        })
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        if (data.success) {
+//            Swal.fire({
+//                title: 'Payment Successful!',
+//                text: `Order IDs: ${data.orderIds.join(", ")}`,
+//                icon: 'success',
+//                confirmButtonText: 'View Orders'
+//            }).then((result) => {
+//                if (result.isConfirmed) {
+//                    window.location.href = '/orders';
+//                }
+//            });
+//        } else {
+//            Swal.fire('Error', data.message || 'Payment verification failed', 'error');
+//        }
+//    })
+//    .catch(error => {
+//        console.error('Error:', error);
+//        Swal.fire('Error', 'An error occurred while verifying the payment', 'error');
+//    });
+// }
 
    function showShippingCharge() {
        Swal.fire({
@@ -649,7 +579,6 @@ function placeWalletOrder(orderData) {
        if (data.success) {
            Swal.fire({
                title: 'Order Placed Successfully!',
-               text: `Order IDs: ${data.orderIds.join(", ")}`,
                icon: 'success',
                confirmButtonText: 'View Orders'
            }).then((result) => {
@@ -719,5 +648,27 @@ document.getElementById('confirmWalletPayment').addEventListener('click', async 
 
    
 </script>
+<script>
+    // Update the hidden select when a card is selected
+    document.querySelectorAll('input[name="selectedAddress"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Update the hidden select
+            document.getElementById('existingAddress').value = this.value;
+            
+            // Update card styling
+            document.querySelectorAll('.address-cards .card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            this.closest('.card').classList.add('selected');
+        });
+    });
+ </script>
+            
+            <script>
+                // JavaScript to handle the "Add New Address" button click
+                document.getElementById('addNewAddressBtn').addEventListener('click', function() {
+                    document.getElementById('newAddressForm').style.display = 'block';
+                });
+            </script>
 
 <%- include("../../views/partials/user/footer") %>

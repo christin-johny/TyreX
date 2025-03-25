@@ -1,0 +1,80 @@
+<!-- sidebar -->
+<aside id="sidebar" >
+
+
+    <!-- sidebar Navigation -->
+     
+    <div class="sidebar-profileImage ">
+        <img src="uploads/reImage/<%= user.profileImage? user.profileImage : 'user.png' %>" alt="" class="profile-img">
+    </div>
+    <div class="sidebar-username mt-3">
+        <h5>
+            <%=user.name%>
+        </h5>
+    </div>
+    <ul class="sidebar-nav p-0">
+
+        <li class="sidebar-header">
+            Orders
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/profile" class="sidebar-link">
+                <i class="fa-solid fa-house"></i>
+                <span> Dashboard </span>
+            </a>
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/orders" class="sidebar-link">
+                <i class="fa fa-shopping-cart"></i>
+                <span> Orders</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/wishlist" class="sidebar-link">
+                <i class="fa fa-heart"></i>
+                <span>Wishlist</span>
+            </a>
+        </li>
+
+        <li class="sidebar-header">
+            Personal
+        </li>
+        <li class="sidebar-item">
+            <a href="/wallet" class="sidebar-link">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+        </li>
+
+        <li class="sidebar-item">
+            <a href="/address" class="sidebar-link">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Address</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/profile" class="sidebar-link">
+                <i class="fa fa-user"></i>
+                <span>My Profile</span>
+            </a>
+        </li>
+
+    </ul>
+    <!-- Sidebar Navigation Ends -->
+
+    <div class="sidebar-footer">
+        <a href="" class="sidebar-link">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/logout" class="sidebar-link">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</aside>
+<!-- Sidebar Ends -->

@@ -652,7 +652,7 @@ const sort = async (req, res) => {
   }
 };
 
-const deatails = async (req, res) => {
+const details = async (req, res) => {
   try {
     const userData = req.session.user;
     const productId = req.query.id;
@@ -715,5 +715,5 @@ module.exports = {
   search,
   clear,
   sort,
-  deatails,
+  details,
 };

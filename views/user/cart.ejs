@@ -1,5 +1,6 @@
 
 <%- include("../partials/user/cartHeader") %>
+
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
@@ -144,8 +145,10 @@
                                 </tbody>
                             </table>
                         </div>
+                        <% if (data.length> 0) { %>
                         <a href="/checkout?userId=<%= user._id %>" class="btn "> <i class="fi-rs-box-alt mr-10"></i>
                             Proceed To CheckOut</a>
+                            <%}%>
                     </div>
                 </div>
 
@@ -185,12 +188,12 @@ function changeQuantity(productId, count, salePrice, productElementId, maxStock)
     }
 
     
-    if (newQuantity > 10) {
+    if (newQuantity > 5) {
         console.log("Purchase limit exceeded - Showing SweetAlert");
         Swal.fire({
             icon: "warning",
             title: "Purchase Limit Reached",
-            text: "You can only buy a maximum of 10 products.",
+            text: "You can only buy a maximum of 5 products.",
             showConfirmButton: true
         });
         return;

@@ -35,6 +35,10 @@ const userSchema = new Schema({
     type:Boolean,
     default:false,
   },
+  profileImage: { 
+    type: String, 
+    
+    },
 
   //relations
 
@@ -59,7 +63,7 @@ const userSchema = new Schema({
   wishlist:[
     {
         type:Schema.Types.ObjectId,
-        ref:"Wishlist",
+        ref:"Product",
     }
   ],
   cart:[

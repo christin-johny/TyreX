@@ -50,7 +50,8 @@
           
           <% if (user) { %>
             <div class="d-flex align-items-center">
-              <span class="me-2 fw-bold"><%= user.name %></span>
+              <a href="/profile" class="no-style">
+                <span class="me-2 fw-bold"><%= user.name %></span></a>
               <button class="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center"
                 style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
                 <i class="fas fa-sign-out-alt"></i>

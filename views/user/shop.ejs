@@ -415,7 +415,7 @@ function addToWishlist(productId){
 							text : "The product has been added to you wishlist",
 							icon : "success",
               showConfirmButton:true,
-							timer : 20000,
+							timer : 2000,
 						})
 					} else {
 						Swal.fire({
@@ -428,9 +428,9 @@ function addToWishlist(productId){
 				},
 				error:(error)=>{
 					Swal.fire({
-						title : "Error",
+						title : "Already in cart",
 						text:"Product already in your Cart",
-						icon:"error",
+						icon:"warning",
 						timer :2000,
 					})
 					}

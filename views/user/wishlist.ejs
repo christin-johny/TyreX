@@ -6,9 +6,9 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="/home" rel="nofollow">Home &nbsp; > &nbsp;</a>
-                <a href="/shop" rel="nofollow">Shop&nbsp; > &nbsp;</a>
-                <a href="/wishlist" rel="nofollow">My Wishlist &nbsp; > &nbsp;</a>
+                <a href="/home" rel="nofollow" class="no-style">Home &nbsp; > &nbsp;</a>
+                <a href="/shop" rel="nofollow" class="no-style">Shop&nbsp; > &nbsp;</a>
+                <a href="/wishlist" rel="nofollow" class="no-style">My Wishlist &nbsp; > &nbsp;</a>
             </div>
         </div>
     </div>
@@ -140,7 +140,8 @@ document.querySelectorAll(".addToCartBtn").forEach(button => {
                     title: "Product added to Cart",
                     showConfirmButton: false,
                     timer:1500
-                });
+                })
+                location.reload();
             } else {
                 Swal.fire({
                     icon: "error",

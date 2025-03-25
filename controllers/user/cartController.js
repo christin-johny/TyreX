@@ -14,6 +14,9 @@ const addToCart = async (req, res) => {
         const { quantity } = req.body; 
         const productId = req.params.productId; 
 
+        const wishlist = await User.findById(userId,{wishlist:1})
+
+
         const product = await Product.findOne({ _id: productId, isBlocked: false }).populate("categoryId",'isListed')
 
         if (!product||!product.categoryId.isListed) {
@@ -29,10 +32,10 @@ const addToCart = async (req, res) => {
             
             if (itemIndex > -1) {
                 if((cart.items[itemIndex].quantity + quantity)>product.quantity){
-                    console.log(product.quantity)
+                    
                     return res.status(400).json({ success: false, message: `we have only ${product.quantity} in stock`});
                 }
-                if(cart.items[itemIndex].quantity + quantity>10){
+                if(cart.items[itemIndex].quantity + quantity>5){
                     return res.status(400).json({ success: false, message: "You have reached the maximum limit for this product in your cart." });
                 }
                 else{
@@ -102,8 +105,9 @@ const loadCart = async (req, res) => {
             }]
         });
 
-        console.log(cart)
+       
 
+        
 
 
         if (!cart || cart.items.length === 0) {
@@ -111,11 +115,15 @@ const loadCart = async (req, res) => {
         }
 
         
-        const cartData = cart.items.map(item => ({
+        const cartData = cart.items.filter(item => item.productId && item.productId.isBlocked === false)
+        .map(item => ({
             productDetails: item.productId, 
             quantity: item.quantity
         }));
-        let grandTotal = cart.items.reduce((acc, item) => {
+
+
+        let grandTotal = cart.items.filter(item => item.productId && item.productId.isBlocked === false)
+        .reduce((acc, item) => {
             return acc + (item.productId?.salePrice || 0) * item.quantity; 
         }, 0);
 

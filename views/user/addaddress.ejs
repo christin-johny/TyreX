@@ -1,0 +1,367 @@
+<%- include("../partials/user/header") %>
+    <link rel="stylesheet" href="/css/userprofile_style.css">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/home" rel="nofollow" class="no-style">Home &nbsp; > &nbsp;</a>
+                <a href="/profile" rel="nofollow" class="no-style">Profile&nbsp; > &nbsp;</a>
+                <a href="/"
+                <a href="/editProfile" rel="nofollow" class="no-style">Add &nbsp; > &nbsp;</a>
+            </div>
+        </div>
+    </div>
+
+    <section>
+
+        <body>
+            <div class="d-flex pt-5">
+                <%- include("../partials/user/sidebarPartials") %>
+                <!-- Main Content -->
+                <div class="main">
+                  
+
+                    <div class="content">
+                        <h4 class="pb-3">Add User Address</h4>
+
+                        <form class="row g-3"  id="address-Form" method="post" action="/addAddress">
+                            
+                          <div class="col-md-6">
+                            <label for="addressType" class="form-label">Address Type</label>
+                            <select class="form-control" id="addressType" name="addressType" onchange="validateAddressType()">
+                                <option value="">Select Address Type</option>
+                                <option value="home">Home</option>
+                                <option value="office">Office</option>
+                            </select>
+                            <span class="error" id="addressType-error"></span>
+                        </div>
+
+                            <div class="col-md-6">
+                              <label for="userName" class="form-label">Name</label>
+                              <input type="text" class="form-control" id="name" name="name" onkeyup="validateName()">
+                              <span class="error" id="name-error"></span>
+                            </div>
+                           
+                            
+                            <div class="col-md-6">
+                              <label for="apartment" class="form-label">Apartment</label>
+                              <input type="text" class="form-control" id="apartment" name="apartment" onkeyup="validateApartment()" >
+                              <span class="error" id="apartment-error"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                              <label for="building" class="form-label">Building</label>
+                              <input type="text" class="form-control" id="building" name="building" onkeyup="validateBuilding()">
+                              <span class="error" id="building-error"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Street" class="form-label">Street</label>
+                                <input type="text" class="form-control" id="street" name="street" onkeyup="validateStreet()">
+                                <span class="error" id="street-error"></span>
+                              </div>
+
+                            <div class="col-md-6">
+                              <label for="city" class="form-label">City</label>
+                              <input type="text" class="form-control" id="city" name="city" onkeyup="validateCity()">
+                              <span class="error" id="city-error"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="landmark" class="form-label">Landmark</label>
+                                <input type="text" class="form-control" id="landmark" name="landmark" onkeyup="validateLandmark()">
+                                <span class="error" id="landmark-error"></span>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label for="state" class="form-label" >State</label>
+                                <input type="text" id="state" class="form-control" name="state" onkeyup="validateState()">
+                                <span class="error" id="state-error"></span>
+                              </div>
+
+                            <div class="col-md-6">
+                              <label for="country" class="form-label">Country</label>
+                              <input type="text" id="country" class="form-control" name="country" onkeyup="validateCountry()">
+                              <span class="error" id="country-error"></span>
+                            </div>
+
+                            <div class="col-md-6 ">
+                              <label for="zip" class="form-label">Zip</label>
+                              <input type="text" class="form-control" id="zip" name="zip" onkeyup="validateZip()">
+                              <span class="error" id="zip-error"></span>
+                            </div>
+
+                            <div class="col-md-6 ">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" onkeyup="validatePhone()">
+                                <span class="error" id="phone-error"></span>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label for="alternativePhone" class="form-label">Alternative Phone</label>
+                                <input type="text" class="form-control" id="alternativePhone" name="altPhone" onkeyup="validateAlternativePhone()">
+                                <span class="error" id="altphone-error"></span>
+                              </div>
+                            
+                            <div class="col-12">
+                              <button type="submit" class="btn btn-primary" onclick="return validateForm()">Save</button>
+                              <span class="error" id="submit-error"></span>
+                            </div>
+
+                            <% if(locals.message && message.length > 0) { %>
+                                <span style="color: crimson; font-size: 12px; font-weight: bold; padding: 20px;"><%= message %></span>
+                             <% } %> 
+
+                          </form>
+                </div>
+
+               
+                
+
+    </section>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
+    <script src="valAddress.js"></script>
+   <script>
+    
+    const addressTypeError = document.getElementById("addressType-error")
+const nameError = document.getElementById("name-error");
+const apartmentError = document.getElementById("apartment-error");
+const buildingError = document.getElementById("building-error");
+const streetError = document.getElementById("street-error");
+const cityError = document.getElementById("city-error");
+const landmarkError = document.getElementById("landmark-error");
+const stateError = document.getElementById("state-error");
+const countryError = document.getElementById("country-error");
+const zipError = document.getElementById("zip-error");  
+const phoneError = document.getElementById("phone-error");
+const altPhoneError = document.getElementById("altphone-error");
+
+
+//Regular Expressions
+const nameRegex = /^[A-za-z\s]{3,20}$/;
+const phoneRegex = /^[6-9][\d]{9}$/;
+const apartmentRegex = /^(Apt|Unit|Suite)?\s?\d+[A-Za-z]?$/;
+const buildingRegex = /^(Building|Tower|Block)?\s?[A-Za-z0-9]+$/;
+const streetRegex = /^[a-zA-Z0-9\s,.#-]{3,20}$/
+const cityRegex = /^[a-zA-Z\s-]{3,20}$/
+const zipRegex = /^\d{4,6}(-\d{4})?$/; 
+
+
+function validateAddressType(){
+    const addressType = document.getElementById("addressType").value;
+
+    if(addressType.length === 0){
+        addressTypeError.textContent = "This field is required";
+        return false;
+    }
+
+    if(!nameRegex.test(addressType)){
+        addressTypeError.textContent =  "Enter a valid addressType";
+        return false;
+    }
+    addressTypeError.textContent ="";
+    return true;
+}
+
+function validateName() {
+    const name = document.getElementById("name").value;
+
+    if (name.length == 0) {
+        nameError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!nameRegex.test(name)) {
+        nameError.textContent = "Name should only contain alphabets";
+        return false;
+    }
+
+    nameError.textContent = '';
+    return true;
+}
+function validateApartment() {
+    const apartment = document.getElementById("apartment").value;
+
+    if (apartment.length == 0) {
+        apartmentError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!apartmentRegex.test(apartment)) {
+        apartmentError.textContent = "Invalid apartment format";
+        return false;
+    }
+
+    apartmentError.textContent = '';
+    return true;
+}
+function validateBuilding(){
+    const building = document.getElementById("building").value;
+
+    if (building.length == 0) {
+        buildingError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!buildingRegex.test(building)) {
+        buildingError.textContent = "Invalid building format";
+        return false;
+    }
+
+    buildingError.textContent = '';
+    return true;
+}
+function validateStreet(){
+    const street = document.getElementById("street").value;
+
+    if (street.length == 0) {
+        streetError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!streetRegex.test(street)) {
+        streetError.textContent = "Invalid street format";
+        return false;
+    }
+
+    streetError.textContent = '';
+    return true;
+}
+function validateCity() {
+    const city = document.getElementById("city").value;
+
+    if (city.length == 0) {
+        cityError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!cityRegex.test(city)) {
+        cityError.textContent = "Enter a valid city";
+        return false;
+    }
+
+     cityError.textContent = '';
+    return true;
+}
+function validateLandmark() {
+    const landmark = document.getElementById("landmark").value;
+
+    if (landmark.length == 0) {
+        landmarkError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!cityRegex.test(landmark)) {
+        landmarkError.textContent = "Enter a valid landmark";
+        return false;
+    }
+
+     landmarkError.textContent = '';
+    return true;
+}
+function validateState() {
+    const state = document.getElementById("state").value;
+
+    if (state.length == 0) {
+        stateError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!cityRegex.test(state)) {
+        stateError.textContent = "State should be valid";
+        return false;
+    }
+
+     stateError.textContent = '';
+    return true;
+}
+function validateCountry() {
+    const country = document.getElementById("country").value;
+
+    if (country.length == 0) {
+        countryError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!cityRegex.test(country)) {
+        countryError.textContent = "Country should be valid";
+        return false;
+    }
+
+     countryError.textContent = '';
+    return true;
+}
+
+function validateZip() {
+    const zip = document.getElementById('zip').value;
+
+    if (zip.length == 0) {
+        zipError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!zipRegex.test(zip)) {
+        zipError.textContent = "Only digits please ! Should be atleast 6 digits"
+        return false;
+    }
+    zipError.textContent = '';
+    return true;
+}
+function validatePhone() {
+    const phone = document.getElementById('phone').value;
+
+    if (phone.length == 0) {
+        phoneError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!phoneRegex.test(phone)) {
+        phoneError.textContent = "Only digits please ! Should be atleast 10 digits"
+        return false;
+    }
+    phoneError.textContent = '';
+    return true;
+}
+function validateAlternativePhone() {
+    const altPhone = document.getElementById('alternativePhone').value;
+
+    if (altPhone.length == 0) {
+        altPhoneError.textContent = "This field is required";
+        return false;
+    }
+
+    if (!phoneRegex.test(altPhone)) {
+        altPhoneError.textContent = "Only digits please ! Should be atleast 10 digits"
+        return false;
+    }
+    altPhoneError.textContent = '';
+    return true;
+}
+
+
+function validateForm() {
+    const isValid = validateAddressType() &&
+                    validateName() &&
+                    validateApartment() &&
+                    validateBuilding() &&
+                    validateStreet() &&
+                    validateCity() &&
+                    validateLandmark() &&
+                    validateState() &&
+                    validateCountry() &&
+                    validateZip() &&
+                    validatePhone() &&
+                    validateAlternativePhone();
+
+    if (!isValid) {
+        submitError.style.display = "block";
+        submitError.textContent = "Please fill all fields correctly before submitting";
+        setTimeout(() => submitError.style.display = "none", 3000);
+        return false;
+    }
+    return true;
+}
+   </script>
+    <%- include("../partials/user/footer") %>

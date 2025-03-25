@@ -48,7 +48,7 @@ const orderSchema = new Schema({
         required:true,
         enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
     },
-    ceatedAt:{
+    createdAt:{
         type:Date,
         default:Date.now,
         required:true

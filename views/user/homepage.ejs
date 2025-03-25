@@ -99,7 +99,8 @@
         <!-- User Login/Logout Section -->
         <div class="d-flex align-items-center justify-content-center">
           <% if (user) { %>
-            <span class="me-2 fw-bold"><%= user.name %></span>
+            <a href="/profile" class="no-style">
+            <span class="me-2 fw-bold"><%= user.name %></span></a>
             <button class="btn btn-danger btn-sm rounded-circle me-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
               <i class="fas fa-sign-out-alt"></i>
             </button>
@@ -267,9 +268,9 @@
                   <button class="btn btn-primary flex-grow-1 me-2 addToCartBtn" data-id="<%= products[i]._id %>">
                     <i class="fas fa-shopping-cart me-2"></i>Add to cart
                 </button>
-                  <a href="/addToWishlis?id<%=products[i]._id%>" class="btn btn-outline-secondary rounded-circle p-2">
-                    <i class="fas fa-heart"></i>
-                  </a>
+                <span onclick="addToWishlist('<%= products[i]._id %>')">
+                  <i class="fas fa-heart"></i>
+                </span>
                 </div>
               </div>
             </div>
@@ -318,6 +319,43 @@ document.querySelectorAll(".addToCartBtn").forEach(button => {
         }
     });
 });
+
+//Wishlist
+function addToWishlist(productId){
+			$.ajax({
+				url:'/wishlist',
+				method:'POST',
+				data :{productId :productId},
+				success :(response)=>{
+					if(response.status){
+						Swal.fire({
+							title : "Added to wishlist",
+							text : "The product has been added to you wishlist",
+							icon : "success",
+              showConfirmButton:true,
+							timer : 20000,
+						})
+					} else {
+						Swal.fire({
+							title:response.message,
+							icon:"warning",
+							timer:2000,
+
+						})
+					}
+				},
+				error:(error)=>{
+					Swal.fire({
+						title : "Error",
+						text:"Product already in your Cart",
+						icon:"error",
+						timer :2000,
+					})
+					}
+
+			})
+		}
+
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -86,15 +86,19 @@ router.delete('/cart',userAuth,cartController.removeFromCart)
 //checkout
 
 router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
-router.get('/checkoutAddress',checkoutController.addAddressCheckout)
-router.post('/checkoutAddress',checkoutController.saveAddressCheckout)
+router.get('/checkoutAddress',userAuth,checkoutController.addAddressCheckout)
+router.post('/checkoutAddress',userAuth,checkoutController.saveAddressCheckout)
 
 
 //order 
-router.post('/placeOrder',orderController.placeOrder)
-router.get('/orders',orderController.orders);
+router.post('/placeOrder',userAuth,orderController.placeOrder)
+router.get('/orders',userAuth,orderController.orders);
+router.get('/orderDetails',userAuth,orderController.orderDetails)
+router.put('/cancelOrder',userAuth,orderController.cancelOrder)
+router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 
 
-router.get('/confirmation',orderController.loadConfirmation)
+
+router.get('/confirmation',userAuth,orderController.loadConfirmation)
 
 module.exports = router;

@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon src/app.js"
+    "test": "nodemon app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Christin johny",
   "license": "ISC",
   "description": "",
   "dependencies": {

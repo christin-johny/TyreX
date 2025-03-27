@@ -2,12 +2,11 @@
 <%- include("../partials/user/cartHeader") %>
 
 <main class="main">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
+    <div class="page-header breadcrumb-wrap ">
+        <div class="container ">
             <div class="breadcrumb">
-                <a href="/home" rel="nofollow">Home &nbsp; > &nbsp;</a>
-                <a href="/shop" rel="nofollow">Shop&nbsp; > &nbsp;</a>
-                <a href="/cart" rel="nofollow">My Cart &nbsp; > &nbsp;</a>
+                <a href="/home" rel="nofollow" class="no-style">Home &nbsp; > &nbsp;</a>
+                <a href="/cart" rel="nofollow" class="no-style">My Cart</a>
             </div>
         </div>
     </div>
@@ -39,7 +38,7 @@
                                                 </td>
                                                 <td class="product-des product-name">
                                                     <h5 class="product-name">
-                                                        <a href="cart">
+                                                        <a  href="/details?id=<%=data[i].productDetails._id%>" class="no-style">
                                                             <%= data[i].productDetails.productName %>
                                                         </a>
                                                     </h5>
@@ -111,7 +110,9 @@
 
                                                 <td colspan="2" class="text-center">
                                                     <p class="lead mb-4">No item found in Cart</p>
+                                                    <a href="/shop" class="btn btn-outline-secondary">Continue Shopping</a>
                                                 </td>
+                                               
                                             </tr>
                                             <% } %>
                                                     <input type="hidden" name="" id="totalabc" value="<%= x  %>">
@@ -129,11 +130,7 @@
                             <table class="table">
                                 <tbody>
 
-                                    <tr>
-                                        <td class="cart_total_label">Shipping</td>
-                                        <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping
-                                        </td>
-                                    </tr>
+                                    
                                     <tr>
                                         <td class="cart_total_label">Total</td>
                                         <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">₹
@@ -146,7 +143,7 @@
                             </table>
                         </div>
                         <% if (data.length> 0) { %>
-                        <a href="/checkout?userId=<%= user._id %>" class="btn "> <i class="fi-rs-box-alt mr-10"></i>
+                        <a href="/checkout?userId=<%= user._id %>" class="btn btn-warning"> <i class="fi-rs-box-alt mr-10"></i>
                             Proceed To CheckOut</a>
                             <%}%>
                     </div>
@@ -161,21 +158,23 @@
     </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function changeQuantity(productId, count, salePrice, productElementId, maxStock) {
     let quantityInput = $(`#cartProductQuantity${productElementId}`);
     let decrementButton = $(`#decrement${productElementId}`);
     let incrementButton = $(`#increment${productElementId}`);
 
-    let currentQuantity = parseInt(quantityInput.val()) || 0; // Ensure it's a number
+    console.log('+ button clicked')
+    let currentQuantity = parseInt(quantityInput.val()) || 0;
     let newQuantity = currentQuantity + count;
-    maxStock = parseInt(maxStock); // Ensure maxStock is a number
+    maxStock = parseInt(maxStock);
 
     console.log(`Current Quantity: ${currentQuantity}, New Quantity: ${newQuantity}, Max Stock: ${maxStock}`);
 
    
     
-    // **Show alert and prevent exceeding stock limit**
+  
     if (newQuantity > maxStock) { 
         console.log("Stock limit reached - Showing SweetAlert");
         Swal.fire({

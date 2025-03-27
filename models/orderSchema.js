@@ -8,6 +8,11 @@ const orderSchema = new Schema({
     default: () => uuidv4(),
     unique: true,
   },
+  userId:{
+    type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+  },
   orderedItems: [{
       product: {
         type: Schema.Types.ObjectId,
@@ -37,7 +42,7 @@ const orderSchema = new Schema({
     },
     address:{
         type:Schema.Types.ObjectId,
-        ref:'User',
+        ref:'Address',
         required:true
     },
     invoiceDate:{
@@ -46,7 +51,10 @@ const orderSchema = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
+        enum:['Pending','Processing','Shipped','Delivered','cancelled','Return Request','Returned']
+    },
+    cancelReason:{
+      Type:String,
     },
     createdAt:{
         type:Date,
@@ -56,6 +64,16 @@ const orderSchema = new Schema({
     couponApplied:{
         type:Boolean,
         default:false
+    },
+    paymentMethod:{
+      type:String,
+      required:true,
+      enum:['cod']
+
+    },
+    deliveredAt:{
+      type:Date,
+      default:Date.now,
     }
 });
 

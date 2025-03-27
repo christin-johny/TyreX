@@ -1,95 +1,202 @@
-const Product = require('../../models/productSchema');
-const User = require('../../models/userSchema');
-const Cart = require("../../models/cartSchema"); 
+const Product = require("../../models/productSchema");
+const User = require("../../models/userSchema");
+const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
-const Order = require('../../models/orderSchema');
+const Order = require("../../models/orderSchema");
+const { findOne } = require("../../models/categorySchema");
 
+const placeOrder = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const { addressId, paymentMethod } = req.body;
 
-const placeOrder =async (req,res) => {
-    try {
-        console.log('--------------------------------------');
-       const  userId = req.session.user._id;
-       const {addressId,paymentMethod} = req.body;
+    const userData = await User.findById(userId);
 
+    const cart = await Cart.findOne({ userId });
 
-       const userData = await User.findById(userId);
-        
-       const cart = await Cart.findOne({ userId });
+    const cartItems = cart.items.map((item) => ({
+      product: item.productId,
+      quantity: item.quantity,
+      price: item.totalPrice,
+    }));
 
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
-        const cartItems = cart.items.map(item => ({
-            product: item.productId, 
-            quantity: item.quantity,
-            price: item.totalPrice  
-        }));
-        console.log(cartItems)
+    const finalAmount = totalPrice + 50;
 
-        const totalPrice=cartItems.reduce((sum,item)=>sum+item.price,0);
-        console.log(totalPrice)
+    const invoiceDate = new Date();
+    const status = "Processing";
 
-        const finalAmount=totalPrice+50;
+    const orderSchema = new Order({
+      userId: userId,
+      orderedItems: cartItems,
+      totalPrice: totalPrice,
+      finalAmount: finalAmount,
+      address: addressId,
+      invoiceDate: invoiceDate,
+      status: status,
+      paymentMethod: paymentMethod,
+    });
+    await orderSchema.save();
 
-        const invoiceDate = new Date();
-        const status = 'Processing';
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { orders: orderSchema._id } },
+      { new: true }
+    );
 
-        const orderSchema= new Order({
-            orderedItems:cartItems,
-            totalPrice:totalPrice,
-            finalAmount:finalAmount,
-            address:addressId,
-            invoiceDate:invoiceDate,
-            status:status,
-        });
-
-        await orderSchema.save();
-
-        await User.findByIdAndUpdate(userId, { $push: { orders: orderSchema._id } }, { new: true });
-        
-        return res.status(200).json({success:true,message:'hgvjhgv'})
-    } catch (error) {
-        
+    const orderedItems = cart.items.map((item) => ({
+      product: item.productId,
+      quantity: item.quantity,
+    }));
+    for (let i = 0; i < orderedItems.length; i++) {
+      await Product.findByIdAndUpdate(orderedItems[i].product, {
+        $inc: { quantity: -orderedItems[i].quantity },
+      });
     }
-    
-}
+
+    await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Order placed successfully" });
+  } catch (error) {}
+};
+
+const loadConfirmation = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+
+    const orderData = await User.findById(userId, { orders: 1 }).populate(
+      "orders"
+    );
+
+    const data = orderData.orders.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    const orderId = data[0].orderId;
+    res.render("orderConfirmation", { orderId: orderId });
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageNotFound");
+  }
+};
+
+const orders = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+
+    const orders = await Order.find({ userId: userId }).populate(
+      "orderedItems.product"
+    );
+
+    res.render("viewOrders", { order: {}, user: user, orders: orders });
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageNotFound");
+  }
+};
+
+const orderDetails = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+    const orderId = req.query.orderId;
+
+    let orders = await Order.findOne({ orderId: orderId })
+      .populate("orderedItems.product")
+      .lean();
+
+    const addressDoc = await Address.findOne({ userId: userId }).lean();
+
+    const userAddress = addressDoc.address.find(
+      (addr) => addr._id.toString() === orders.address.toString()
+    );
+
+    orders.address = userAddress;
+
+    res.render("orderDetails", {
+      order: orders,
+      user: user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageNotFound");
+  }
+};
+
+const cancelOrder = async (req, res) => {
+  try {
+    const user= req.session.user;
+    const { orderId, reason } = req.body;
+    console.log(orderId, reason);
+
+   const order= await Order.findById(orderId)
+
+        await Order.findOneAndUpdate(
+      { _id: orderId },
+      {$set: {status: "cancelled",cancelReason: reason,},},{ new: true });
 
 
+    const orderedItems = order.orderedItems.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+      }));
 
 
+      console.log(orderedItems);
+      for (let i = 0; i < orderedItems.length; i++) {
+        await Product.findByIdAndUpdate(orderedItems[i].product, {
+          $inc: { quantity: orderedItems[i].quantity },
+        });
+      }
 
 
-const loadConfirmation = async (req,res) => {
+    return res
+      .status(200)
+      .json({ success: true, message: "Order cancelled successfully" });
+  } catch (error) {
+    console.error(error);
+    res.redirect('/pageNotFound')
+  }
+};
+
+const downloadInvoice =async (req,res) => {
     try {
-
         const userId = req.session.user._id;
+        const user = await User.findById(userId)
+        const orderId=req.query.orderId;
+        
+        let order = await Order.findOne({orderId:orderId}).populate('orderedItems.product').lean();
+        
+        const addressDoc = await Address.findOne({ userId: userId }).lean();
+        
+        const userAddress = addressDoc.address.find((addr) => addr._id.toString() === order.address.toString());
+        console.log(userAddress)
+        order.address = userAddress
 
-        const orderData = await User.findById(userId,{orders:1}).populate('orders');
+        console.log(order);
+    
 
-        const data= orderData.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.render('invoice',{order:order,user:user});
 
-        console.log(data)
-
-        const orderId = data[0].orderId
-        res.render('orderConfirmation',{orderId:orderId})
     } catch (error) {
-        console.error(error)
+        console.error(error);
         res.redirect('/pageNotFound')
     }
     
 }
-const orders = async (req,res) => {
-    try {
-        res.render('viewOrders',{order:{},user:{},orders:{}});
-    } catch (error) {
-        
-    }
-    
-}
 
 
 
 
-module.exports={
-    loadConfirmation,
-    placeOrder,
-    orders,
-}
+module.exports = {
+  loadConfirmation,
+  placeOrder,
+  orders,
+  orderDetails,
+  cancelOrder,
+  downloadInvoice
+};

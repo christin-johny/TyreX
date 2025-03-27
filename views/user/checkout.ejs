@@ -1,4 +1,4 @@
-<%- include("../../views/partials/user/header") %>
+<%- include("../partials/user/cartHeader") %>
 
    <style>
        .order-summary {
@@ -206,7 +206,7 @@
                    <div class="mb-4">
                        <h3 class="h5 mb-3">Payment Method</h3>
                        
-                       <div class="mb-3">
+                       <!-- <div class="mb-3">
                            <label class="d-flex align-items-center">
                                <input type="radio" name="payment" value="razorpay" class="mr-2">
                                <img src="" alt="Razorpay" style="height: 30px;">
@@ -219,7 +219,7 @@
                                <input type="radio" name="payment" value="wallet" class="mr-2">
                                
                            </label>
-                       </div>
+                       </div> -->
                        <div class="mb-3">
                            <label class="d-flex align-items-center">
                                <input type="radio" name="payment" value="cod" class="mr-2">
@@ -278,68 +278,68 @@
 <script>
 
 
-let appliedCoupon = null;
+// let appliedCoupon = null;
 
-function applyCoupon() {
-   const couponCode = document.getElementById('couponCode').value;
-   const subtotal = parseFloat(document.getElementById('subtotal').textContent);
+// function applyCoupon() {
+//    const couponCode = document.getElementById('couponCode').value;
+//    const subtotal = parseFloat(document.getElementById('subtotal').textContent);
 
-   fetch('/apply-coupon', {
-       method: 'POST',
-       headers: {
-           'Content-Type': 'application/json',
-       },
-       body: JSON.stringify({ couponCode, subtotal }),
-   })
-   .then(response => response.json())
-   .then(data => {
-       const messageElement = document.getElementById('couponMessage');
-       if (data.success) {
-           appliedCoupon = data.coupon;
-           updateOrderSummary();
-           messageElement.textContent = 'Coupon applied successfully!';
-           messageElement.style.color = 'green';
-           document.getElementById('appliedCoupon').style.display = 'block';
-           document.getElementById('appliedCouponName').textContent = data.coupon.name;
-           document.querySelector('.coupon-section').style.display = 'none';
-       } else {
-           messageElement.textContent = data.message;
-           messageElement.style.color = 'red';
-       }
-       messageElement.style.display = 'block';
-   })
-   .catch(error => {
-       console.error('Error:', error);
-       Swal.fire('Error', 'An error occurred while applying the coupon', 'error');
-   });
-}
+//    fetch('/apply-coupon', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json',
+//        },
+//        body: JSON.stringify({ couponCode, subtotal }),
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        const messageElement = document.getElementById('couponMessage');
+//        if (data.success) {
+//            appliedCoupon = data.coupon;
+//            updateOrderSummary();
+//            messageElement.textContent = 'Coupon applied successfully!';
+//            messageElement.style.color = 'green';
+//            document.getElementById('appliedCoupon').style.display = 'block';
+//            document.getElementById('appliedCouponName').textContent = data.coupon.name;
+//            document.querySelector('.coupon-section').style.display = 'none';
+//        } else {
+//            messageElement.textContent = data.message;
+//            messageElement.style.color = 'red';
+//        }
+//        messageElement.style.display = 'block';
+//    })
+//    .catch(error => {
+//        console.error('Error:', error);
+//        Swal.fire('Error', 'An error occurred while applying the coupon', 'error');
+//    });
+// }
 
-function removeCoupon() {
-   appliedCoupon = null;
-   updateOrderSummary();
-   document.getElementById('appliedCoupon').style.display = 'none';
-   document.querySelector('.coupon-section').style.display = 'block';
-   document.getElementById('couponMessage').style.display = 'none';
-   document.getElementById('couponCode').value = '';
-}
+// function removeCoupon() {
+//    appliedCoupon = null;
+//    updateOrderSummary();
+//    document.getElementById('appliedCoupon').style.display = 'none';
+//    document.querySelector('.coupon-section').style.display = 'block';
+//    document.getElementById('couponMessage').style.display = 'none';
+//    document.getElementById('couponCode').value = '';
+// }
 
-function updateOrderSummary() {
-   const subtotalElement = document.getElementById('subtotal');
-   const couponDiscountElement = document.getElementById('couponDiscount');
-   const grandTotalElement = document.getElementById('grandTotal');
+// function updateOrderSummary() {
+//    const subtotalElement = document.getElementById('subtotal');
+//    const couponDiscountElement = document.getElementById('couponDiscount');
+//    const grandTotalElement = document.getElementById('grandTotal');
 
-   const subtotal = parseFloat(subtotalElement.textContent);
-   let discount = 0;
+//    const subtotal = parseFloat(subtotalElement.textContent);
+//    let discount = 0;
 
-   if (appliedCoupon) {
-       discount = appliedCoupon.offerPrice;
-   }
+//    if (appliedCoupon) {
+//        discount = appliedCoupon.offerPrice;
+//    }
 
-   const grandTotal = subtotal - discount + 50;
+//    const grandTotal = subtotal - discount + 50;
 
-   couponDiscountElement.textContent = discount.toFixed(2);
-   grandTotalElement.textContent = grandTotal.toFixed(2);
-}
+//    couponDiscountElement.textContent = discount.toFixed(2);
+//    grandTotalElement.textContent = grandTotal.toFixed(2);
+// }
 
 
 function checkStockAvailability() {
@@ -522,126 +522,126 @@ function processCODOrder(orderData) {
 
 
 
-   function checkWalletBalance() {
-   const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
-   const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
+//    function checkWalletBalance() {
+//    const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
+//    const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
    
-   document.getElementById('payableAmount').textContent = payableAmount.toFixed(2);
+//    document.getElementById('payableAmount').textContent = payableAmount.toFixed(2);
    
-   const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
-   const insufficientFunds = document.getElementById('insufficientFunds');
-   const confirmWalletPayment = document.getElementById('confirmWalletPayment');
+//    const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
+//    const insufficientFunds = document.getElementById('insufficientFunds');
+//    const confirmWalletPayment = document.getElementById('confirmWalletPayment');
    
-   if (walletBalance < payableAmount) {
-       insufficientFunds.style.display = 'block';
-       confirmWalletPayment.style.display = 'none';
-   } else {
-       insufficientFunds.style.display = 'none';
-       confirmWalletPayment.style.display = 'block';
-   }
+//    if (walletBalance < payableAmount) {
+//        insufficientFunds.style.display = 'block';
+//        confirmWalletPayment.style.display = 'none';
+//    } else {
+//        insufficientFunds.style.display = 'none';
+//        confirmWalletPayment.style.display = 'block';
+//    }
    
-   walletPaymentModal.show();
-}
+//    walletPaymentModal.show();
+// }
 
 
 
-function processWalletOrder(orderData) {
-   const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
-   const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
+// function processWalletOrder(orderData) {
+//    const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
+//    const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
    
-   document.getElementById('payableAmount').textContent = payableAmount.toFixed(2);
+//    document.getElementById('payableAmount').textContent = payableAmount.toFixed(2);
    
-   const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
-   const insufficientFunds = document.getElementById('insufficientFunds');
-   const confirmWalletPayment = document.getElementById('confirmWalletPayment');
+//    const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
+//    const insufficientFunds = document.getElementById('insufficientFunds');
+//    const confirmWalletPayment = document.getElementById('confirmWalletPayment');
    
-   if (walletBalance < payableAmount) {
-       insufficientFunds.style.display = 'block';
-       confirmWalletPayment.style.display = 'none';
-   } else {
-       insufficientFunds.style.display = 'none';
-       confirmWalletPayment.style.display = 'block';
-   }
+//    if (walletBalance < payableAmount) {
+//        insufficientFunds.style.display = 'block';
+//        confirmWalletPayment.style.display = 'none';
+//    } else {
+//        insufficientFunds.style.display = 'none';
+//        confirmWalletPayment.style.display = 'block';
+//    }
    
-   walletPaymentModal.show();
-}
+//    walletPaymentModal.show();
+// }
 
-function placeWalletOrder(orderData) {
-   fetch('/place-wallet-order', {
-       method: 'POST',
-       headers: {
-           'Content-Type': 'application/json',
-       },
-       body: JSON.stringify(orderData)
-   })
-   .then(response => response.json())
-   .then(data => {
-       if (data.success) {
-           Swal.fire({
-               title: 'Order Placed Successfully!',
-               icon: 'success',
-               confirmButtonText: 'View Orders'
-           }).then((result) => {
-               if (result.isConfirmed) {
-                   window.location.href = '/orders';
-               }
-           });
-       } else {
-           Swal.fire('Error', data.message || 'Failed to place order', 'error');
-       }
-   })
-   .catch(error => {
-       console.error('Error:', error);
-       Swal.fire('Error', 'An error occurred while placing the order', 'error');
-   });
-}
-
-
+// function placeWalletOrder(orderData) {
+//    fetch('/place-wallet-order', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json',
+//        },
+//        body: JSON.stringify(orderData)
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        if (data.success) {
+//            Swal.fire({
+//                title: 'Order Placed Successfully!',
+//                icon: 'success',
+//                confirmButtonText: 'View Orders'
+//            }).then((result) => {
+//                if (result.isConfirmed) {
+//                    window.location.href = '/orders';
+//                }
+//            });
+//        } else {
+//            Swal.fire('Error', data.message || 'Failed to place order', 'error');
+//        }
+//    })
+//    .catch(error => {
+//        console.error('Error:', error);
+//        Swal.fire('Error', 'An error occurred while placing the order', 'error');
+//    });
+// }
 
 
 
-document.getElementById('confirmWalletPayment').addEventListener('click', async () => {
-   const selectedAddress = document.getElementById('existingAddress');
-   if (!selectedAddress || selectedAddress.value === 'Select an address') {
-       alert('Please select a shipping address');
-       return;
-   }
 
-   const orderData = {
-       addressId: selectedAddress.value,
-       paymentMethod: 'wallet',
-       couponCode: appliedCoupon ? appliedCoupon.name : null
-   };
 
-   try {
-       const response = await fetch('/place-wallet-order', {
-           method: 'POST',
-           headers: {
-               'Content-Type': 'application/json'
-           },
-           body: JSON.stringify(orderData)
-       });
+// document.getElementById('confirmWalletPayment').addEventListener('click', async () => {
+//    const selectedAddress = document.getElementById('existingAddress');
+//    if (!selectedAddress || selectedAddress.value === 'Select an address') {
+//        alert('Please select a shipping address');
+//        return;
+//    }
 
-       const data = await response.json();
-       if (data.success) {
-           Swal.fire({
-               title: 'Order Placed Successfully!',
-               text: `Order IDs: ${data.orderIds.join(", ")}`,
-               icon: 'success',
-               confirmButtonText: 'View Orders'
-           }).then((result) => {
-               if (result.isConfirmed) {
-                   window.location.href = '/orders';
-               }
-           });
-       } else {
-           Swal.fire('Error', data.message || 'Failed to place order', 'error');
-       }
-   } catch (error) {
-       console.error('Error:', error);
-       Swal.fire('Error', 'An error occurred while placing the order', 'error');
-   }
-});
+//    const orderData = {
+//        addressId: selectedAddress.value,
+//        paymentMethod: 'wallet',
+//        couponCode: appliedCoupon ? appliedCoupon.name : null
+//    };
+
+//    try {
+//        const response = await fetch('/place-wallet-order', {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json'
+//            },
+//            body: JSON.stringify(orderData)
+//        });
+
+//        const data = await response.json();
+//        if (data.success) {
+//            Swal.fire({
+//                title: 'Order Placed Successfully!',
+//                text: `Order IDs: ${data.orderIds.join(", ")}`,
+//                icon: 'success',
+//                confirmButtonText: 'View Orders'
+//            }).then((result) => {
+//                if (result.isConfirmed) {
+//                    window.location.href = '/orders';
+//                }
+//            });
+//        } else {
+//            Swal.fire('Error', data.message || 'Failed to place order', 'error');
+//        }
+//    } catch (error) {
+//        console.error('Error:', error);
+//        Swal.fire('Error', 'An error occurred while placing the order', 'error');
+//    }
+// });
 
    // Update the place order button onclick handler
    document.querySelector('.place-order-btn').onclick = placeOrder;

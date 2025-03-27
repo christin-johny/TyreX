@@ -38,7 +38,7 @@
                                             </td>
                                             <td class="product-des product-name">
                                                 <h5 class="product-name">
-                                                    <a href="">
+                                                    <a href="/details?id=<%=product._id%>" class="no-style">
                                                        <%=product.productName%>
                                                     </a>
                                                 </h5>
@@ -67,6 +67,7 @@
                                     <tr>
                                         <td colspan="5" class="text-center">
                                             <p class="lead mb-4">No items found in Wishlist</p>
+                                            <a href="/shop" class="btn btn-outline-secondary">Continue Shopping</a>
                                         </td>
                                     </tr>
                                     <%}%>

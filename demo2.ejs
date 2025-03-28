@@ -65,7 +65,7 @@
    }
  }
  body {
-            background-color: #ffffff;
+            background-color: #f7f7f7;
         }
         .sidebar {
             background-color: white;
@@ -90,7 +90,7 @@
         .main-content {
             background-color: white;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .main-content h2 {
             margin-bottom: 20px;
@@ -136,7 +136,7 @@
             border-bottom-right-radius: 5px;
         }
         .order-card {
-            border: 1px solid #ffffff;
+            border: 1px solid #dee2e6;
             border-radius: 5px;
             margin-bottom: 20px;
         }
@@ -181,26 +181,8 @@
 <%- include("../partials/user/sidebarPartials") %>
 
         <!-- Main Content -->
-        <div class="col-md-10"><div>
-            <h2 >Your Orders</h2>
-            <div class="container-fluid py-3">
-                <div class="row justify-content-center">
-                    <div class="col-12 col-md-10 col-lg-8">
-                        <form action="/orderSearch" method="post" class="d-flex">
-                            
-                            <input type="text" id="searchInput" name="query" placeholder="Enter Order ID...." 
-                                   class="form-control me-2"/>
-                            <button type="submit" class="btn btn-secondary me-2">Search</button>
-                            <a href="/orders" id="clearButton" class="btn btn-secondary d-flex align-items-center">Clear</a>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            
-            
-            
-            
-            
+        <div class="col-md-10">
+            <h2 class="mb-4">Your Orders</h2>
             
             <% if (orders && orders.length > 0) { %>
                 <% orders.forEach(order => { %>
@@ -232,7 +214,7 @@
                                     </span>
                                     <%if(order.status === 'delivered'){%>
                                         On
-                                        <%=new Date(order.deliveredAt).toLocaleDateString()%>
+                                        <%=new Date(order.deliveredOn).toLocaleDateString()%>
                                     <%}%> 
                                     <%if(order.status === 'returned'){%>
                                         On
@@ -260,12 +242,12 @@
                                                 class="btn btn-warning btn-sm mt-2">
                                             Request Return
                                         </button>
-                                    <% } else if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
+                                    <% } else if (order.status === 'return_requested' && order.requestStatus === 'pending') { %>
                                         <button onclick="cancelReturn('<%= order._id %>')"
                                                 class="btn btn-danger btn-sm mt-2">
                                             Cancel Return Request
                                         </button>
-                                    <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
+                                    <% } else if (!['delivered', 'cancelled', 'return_requested', 'returning', 'returned'].includes(order.status)) { %>
                                         <button onclick="cancelOrder('<%= order._id %>')"
                                                 class="btn btn-outline-danger btn-sm mt-2">
                                             Cancel Order
@@ -308,24 +290,6 @@
             <% } %>
         </div>
     </div>
-</div>
-
-<!-- Pagination -->
-                  
-<div class="pagination d-flex justify-content-center">
-    <% if (currentPage > 1) { %>
-      <a class="btn btn-secondary" href="/orders?page=<%= currentPage - 1 %>">Prev</a>
-    <% } %>
-
-
-    <% for (let i = 1; i <= totalPages; i++) { %>
-      <a class="btn  <%= currentPage === i ? 'active' : '' %>" href="/orders?page=<%= i %>"><%= i %></a>
-    <% } %>
-
-
-    <% if (currentPage < totalPages) { %>
-      <a class="btn btn-secondary" href="/orders?page=<%= currentPage + 1 %>">Next</a>
-    <% } %>
 </div>
 
 <!-- Return Modal -->
@@ -418,7 +382,7 @@ async function submitReturn() {
             formData.append('images', files[i]);
         }
 
-        const response = await fetch('/return', {
+        const response = await fetch('/orders/return', {
             method: 'POST',
             body: formData
         });
@@ -460,8 +424,8 @@ async function cancelReturn(orderId) {
         });
 
         if (result.isConfirmed) {
-            const response = await fetch('/cancelReturnRequest', {
-                method: 'PUT',
+            const response = await fetch('/orders/cancel-return', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },

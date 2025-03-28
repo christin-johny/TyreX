@@ -257,7 +257,9 @@
 
                 <div class="d-flex align-items-center mb-3">
                   <span class="text-success fw-bold fs-5">&#8377;<%=products[i].salePrice%></span>
-                  <del class="text-muted ms-2 small">&#8377;<%=products[i].regularPrice%></del>
+                  <%if(products[i].salePrice!=products[i].regularPrice){%>
+                    <del class="text-muted ms-2 small">&#8377;<%= products[i].regularPrice %></del>
+                    <%}%>
                   
                   <% if (products[i].productOffer > 0) { %>
                     <span class="badge bg-success ms-auto"><%=products[i].productOffer%>% OFF</span>
@@ -333,7 +335,7 @@ function addToWishlist(productId){
 							text : "The product has been added to you wishlist",
 							icon : "success",
               showConfirmButton:true,
-							timer : 20000,
+							timer : 2000,
 						})
 					} else {
 						Swal.fire({

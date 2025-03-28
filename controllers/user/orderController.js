@@ -3,7 +3,7 @@ const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
-const { findOne } = require("../../models/categorySchema");
+
 
 const placeOrder = async (req, res) => {
   try {
@@ -87,12 +87,28 @@ const orders = async (req, res) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
 
     const orders = await Order.find({ userId: userId }).populate(
       "orderedItems.product"
-    );
+    )
+    .skip(skip)
+    .limit(limit)
 
-    res.render("viewOrders", { order: {}, user: user, orders: orders });
+    const totalOrders = await Order.countDocuments({userId:userId});
+    const totalPages = Math.ceil(totalOrders/limit);
+
+
+
+    res.render("viewOrders", {
+      user: user, 
+      orders: orders,
+      currentPage:page,
+      totalPages:totalPages,
+     });
+
   } catch (error) {
     console.error(error);
     res.redirect("/pageNotFound");
@@ -129,67 +145,155 @@ const orderDetails = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
   try {
-    const user= req.session.user;
+    const user = req.session.user;
     const { orderId, reason } = req.body;
     console.log(orderId, reason);
 
-   const order= await Order.findById(orderId)
+    const order = await Order.findById(orderId);
 
-        await Order.findOneAndUpdate(
+    await Order.findOneAndUpdate(
       { _id: orderId },
-      {$set: {status: "cancelled",cancelReason: reason,},},{ new: true });
-
+      { $set: { status: "cancelled", cancelReason: reason } },
+      { new: true }
+    );
 
     const orderedItems = order.orderedItems.map((item) => ({
-        product: item.product,
-        quantity: item.quantity,
-      }));
+      product: item.product,
+      quantity: item.quantity,
+    }));
 
-
-      console.log(orderedItems);
-      for (let i = 0; i < orderedItems.length; i++) {
-        await Product.findByIdAndUpdate(orderedItems[i].product, {
-          $inc: { quantity: orderedItems[i].quantity },
-        });
-      }
-
+    console.log(orderedItems);
+    for (let i = 0; i < orderedItems.length; i++) {
+      await Product.findByIdAndUpdate(orderedItems[i].product, {
+        $inc: { quantity: orderedItems[i].quantity },
+      });
+    }
 
     return res
       .status(200)
       .json({ success: true, message: "Order cancelled successfully" });
   } catch (error) {
     console.error(error);
-    res.redirect('/pageNotFound')
+    res.redirect("/pageNotFound");
   }
 };
 
-const downloadInvoice =async (req,res) => {
-    try {
-        const userId = req.session.user._id;
-        const user = await User.findById(userId)
-        const orderId=req.query.orderId;
-        
-        let order = await Order.findOne({orderId:orderId}).populate('orderedItems.product').lean();
-        
-        const addressDoc = await Address.findOne({ userId: userId }).lean();
-        
-        const userAddress = addressDoc.address.find((addr) => addr._id.toString() === order.address.toString());
-        console.log(userAddress)
-        order.address = userAddress
+const downloadInvoice = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+    const orderId = req.query.orderId;
 
-        console.log(order);
-    
+    let order = await Order.findOne({ orderId: orderId })
+      .populate("orderedItems.product")
+      .lean();
 
-        res.render('invoice',{order:order,user:user});
+    const addressDoc = await Address.findOne({ userId: userId }).lean();
 
-    } catch (error) {
-        console.error(error);
-        res.redirect('/pageNotFound')
+    const userAddress = addressDoc.address.find(
+      (addr) => addr._id.toString() === order.address.toString()
+    );
+    console.log(userAddress);
+    order.address = userAddress;
+
+    console.log(order);
+
+    res.render("invoice", { order: order, user: user });
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageNotFound");
+  }
+};
+
+const requestReturn = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const { orderId, returnReason, returnDescription } = req.body;
+    const images = req.files.map((items) => items.filename);
+
+    const user = await User.findById(userId);
+
+    if (user.orders.includes(orderId)) {
+      await Order.findByIdAndUpdate(orderId, {
+        $set: {
+          status: "return requested",
+          requestStatus:'pending',
+          returnReason: returnReason,
+          returnDescription: returnDescription,
+          returnImage: images,
+        },
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: "Order not Found" });
+    }
+
+    return res.status(200).json({ success: true, message: "returned" });
+  } catch (error) {
+    console.error(error);
+    res.render("/pageNotFound");
+  }
+};
+
+
+const orderSearch=async (req,res) => {
+
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+    const search= req.body.query;
+    console.log(search);
+
+    const orders = await Order.find({ orderId: search }).populate(
+      "orderedItems.product"
+    );
+    if(orders){
+     return res.render("viewOrders", {user: user, orders: orders });
+    }else{
+      return res.render("viewOrders", {user: {}, orders: {} });
     }
     
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageNotFound");
+  }
+
+  
+  
 }
 
+const cancelReturnRequest=async (req,res)=>{
+  try {
+    const userId = req.session.user._id;
+    const { orderId} = req.body;
 
+
+    const user = await User.findById(userId);
+
+    if (user.orders.includes(orderId)) {
+      await Order.findByIdAndUpdate(orderId, {
+        $set: {
+          status: 'delivered',
+          requestStatus: '',
+          returnReason: '',
+          returnDescription: '',
+          returnImage: [],
+        },
+      });
+      
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: "Order not Found" });
+    }
+
+    return res.status(200).json({ success: true, message: "return request cancelled" });
+  } catch (error) {
+    console.error(error);
+    res.render("/pageNotFound");
+  }
+}
 
 
 module.exports = {
@@ -198,5 +302,9 @@ module.exports = {
   orders,
   orderDetails,
   cancelOrder,
-  downloadInvoice
+  downloadInvoice,
+  requestReturn,
+  orderSearch,
+  cancelReturnRequest,
+
 };

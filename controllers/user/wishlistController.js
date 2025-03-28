@@ -8,20 +8,28 @@ const loadWishlist = async (req,res)=>{
 try {
     const userId= req.session.user._id;
     const user = await User.findById(userId)
+    const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1) * limit;
 
     const cart = await Cart.findOne({ userId })
     
     const  cartProductIds = cart.items.map(item=>item.productId);
 
     const products = await Product.find({ _id: { $in: user.wishlist, $nin: cartProductIds },isBlocked:false})
-.populate('categoryId')
-.populate('brandId');
-
-
+    .populate('categoryId')
+    .populate('brandId')
+    .skip(skip)
+    .limit(limit)
+    const totalProducts=await Product.countDocuments({ _id: { $in: user.wishlist, $nin: cartProductIds },isBlocked:false})
+    const totalPages = Math.ceil(totalProducts/limit);
 
     res.render('wishlist',{
         user:user,
-        wishlist:products
+        wishlist:products,
+        currentPage:page,
+        totalPages:totalPages,
+
     });
 
 } catch (error) {

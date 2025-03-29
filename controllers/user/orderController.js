@@ -94,8 +94,10 @@ const orders = async (req, res) => {
     const orders = await Order.find({ userId: userId }).populate(
       "orderedItems.product"
     )
+    .sort({createdAt:-1})
     .skip(skip)
     .limit(limit)
+    
 
     const totalOrders = await Order.countDocuments({userId:userId});
     const totalPages = Math.ceil(totalOrders/limit);

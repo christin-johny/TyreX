@@ -28,6 +28,89 @@
 
 <div class="container-fluid px-4">
     <h1 class="mt-4">Order Management</h1>
+    <form method="GET" action="/admin/orders" class="mb-4 p-3 bg-light rounded shadow-sm">
+        <div class="row g-2 align-items-center">
+            <!-- Search Input -->
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control border-primary" placeholder="Search Order ID or Name" value="<%= search %>">
+                    <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+    
+            <!-- Status Filter -->
+            <div class="col-md-3">
+                <select name="status" class="form-select border-primary custom-select">
+                    <option value="all" <%= status === 'all' ? 'selected' : '' %>>All Status</option>
+                    <option value="returned" <%= status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                    <option value="Processing" <%= status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                    <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                    <option value="delivered" <%= status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                    <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                </select>
+            </div>
+    
+            <!-- Sorting Options -->
+            <div class="col-md-2">
+                <select name="sortField" class="form-select border-primary custom-select">
+                    <option value="createdAt" <%= sortField === 'createdAt' ? 'selected' : '' %>>Date</option>
+                    <option value="finalAmount" <%= sortField === 'finalAmount' ? 'selected' : '' %>>Price</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="sortOrder" class="form-select border-primary custom-select">
+                    <option value="desc" <%= sortOrder === -1 ? 'selected' : '' %>>Descending</option>
+                    <option value="asc" <%= sortOrder === 1 ? 'selected' : '' %>>Ascending</option>
+                </select>
+            </div>
+    
+            <!-- Filter and Clear Buttons -->
+            <div class="col-md-1 d-grid">
+                <button type="submit" class="btn btn-success">Filter</button>
+            </div>
+            <div class="col-md-1 d-grid mt-3">
+                <button type="button" class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+            </div>
+        </div>
+    </form>
+    
+    <script>
+        function clearFilters() {
+            window.location.href = "/admin/orders";
+        }
+    </script>
+    
+    <style>
+        .custom-select {
+            background-color: #fff;
+            color: #333;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .custom-select:focus {
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
+        }
+    
+        .form-control {
+            border-radius: 8px;
+        }
+    
+        .btn {
+            border-radius: 8px;
+        }
+    
+        .form-control:focus, .custom-select:focus {
+            outline: none;
+        }
+    
+        .input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    </style>
     
     <div class="card mb-4">
         <div class="card-header">
@@ -60,11 +143,11 @@
                                 <td>₹<%= Math.round(order.finalAmount) %></td>
                                 <td>
                                     <div>
-                                        <span class="status-badge d-inline-block px-2 py-1 rounded <%= 
+                                        <span class=" text-white  status-badge d-inline-block px-2 py-1 rounded <%= 
                                             order.status === 'delivered' ? 'bg-success text-white' :
                                             order.status === 'cancelled' ? 'bg-danger text-white' :
                                             order.status === 'shipped' ? 'bg-info text-white' :
-                                            order.status === 'return_requested' ? 'bg-warning text-dark' :
+                                            order.status === 'return requested' ? 'bg-warning text-dark' :
                                             order.status === 'returning' ? 'bg-info text-white' :
                                             order.status === 'returned' ? 'bg-secondary text-white' :
                                             'bg-warning text-dark'
@@ -80,21 +163,21 @@
                                     
                                     <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                         <div class="btn-group mt-2">
-                                            <button onclick="handleReturn('approve', '<%= order._id %>')" 
+                                            <button onclick="handleReturn('approved', '<%= order._id %>')" 
                                                     class="btn btn-success btn-sm">
                                                 Approve Return
                                             </button>
-                                            <button onclick="handleReturn('reject', '<%= order._id %>')" 
+                                            <button onclick="handleReturn('rejected', '<%= order._id %>')" 
                                                     class="btn btn-danger btn-sm">
                                                 Reject
                                             </button>
                                         </div>
-                                    <% } else if (order.status === 'returning' && order.requestStatus === 'approved') { %>
+                                    <% } else if (order.requestStatus === 'approved' && order.status != 'returned') { %>
                                         <button onclick="updateReturnStatus('<%= order._id %>')" 
                                                 class="btn btn-info btn-sm mt-2">
                                             Update Return Status
                                         </button>
-                                    <% } else if (!['cancelled', 'delivered', 'returned', 'return_requested', 'returning'].includes(order.status)) { %>
+                                    <% } else if (!['cancelled', 'delivered', 'returned', 'return requested', 'returning'].includes(order.status)) { %>
                                         <div class="mt-2">
                                             <button onclick="updateStatus('<%= order._id %>')" 
                                                     class="btn btn-info btn-sm">
@@ -115,6 +198,33 @@
             </div>
         </div>
     </div>
+    <div class="pagination-container d-flex justify-content-center mt-4 mb-4">
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm flex-wrap">
+            <% if (currentPage > 1) { %>
+            <li class="page-item">
+              <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+            </li>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <% if (i === currentPage) { %>
+                <li class="page-item active">
+                  <span class="page-link"><%= i %></span>
+                </li>
+              <% } else { %>
+                <li class="page-item">
+                  <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+                </li>
+              <% } %>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a href="?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
 </div>
 
 <!-- Rejection Modal -->
@@ -147,8 +257,11 @@
                 <button type="button" class="btn btn-danger" onclick="submitRejection()">Submit</button>
             </div>
         </div>
+        
     </div>
+    
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -255,13 +368,13 @@ async function cancelOrder(orderId) {
 async function handleReturn(action, orderId) {
     currentOrderId = orderId;
     
-    if (action === 'reject') {
+    if (action === 'rejected') {
         const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
         modal.show();
         return;
     }
 
-    if (action === 'approve') {
+    if (action === 'approved') {
         Swal.fire({
             title: 'Are you sure?',
             text: "You are about to approve this return request!",
@@ -273,8 +386,8 @@ async function handleReturn(action, orderId) {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch('/admin/orders/handle-return', {
-                        method: 'POST',
+                    const response = await fetch('/admin/handleReturn', {
+                        method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -320,14 +433,14 @@ async function submitRejection() {
     }
 
     try {
-        const response = await fetch('/admin/orders/handle-return', {
-            method: 'POST',
+        const response = await fetch('/admin/handleReturn', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 orderId: currentOrderId,
-                action: 'reject',
+                action: 'rejected',
                 category: category,
                 message: reason
             })
@@ -363,8 +476,8 @@ async function updateReturnStatus(orderId) {
         title: 'Update Return Status',
         input: 'select',
         inputOptions: {
-            'returning': 'Returning',
-            'returned': 'Returned'
+            'returning': 'returning',
+            'returned': 'returned'
         },
         inputPlaceholder: 'Select status',
         showCancelButton: true,
@@ -377,8 +490,8 @@ async function updateReturnStatus(orderId) {
 
     if (status) {
         try {
-            const response = await fetch('/admin/orders/update-return-status', {
-                method: 'POST',
+            const response = await fetch('/admin/updateReturnStatus', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },

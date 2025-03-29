@@ -262,7 +262,6 @@ const resendOtp = async (req, res) => {
   }
 };
 
-
 const shop = async (req, res) => {
   try {
     const user = req.session.user;
@@ -319,20 +318,20 @@ const shop = async (req, res) => {
   }
 };
 
-
 const filter = async (req, res) => {
   try {
     const user = req.session.user;
     const category = req.query.category;
     const brand = req.query.brand;
-    
+
     let findProducts;
 
-   
-    if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
+    if (
+      req.session.filteredProducts &&
+      req.session.filteredProducts.length > 0
+    ) {
       findProducts = req.session.filteredProducts;
     } else {
-
       findProducts = await Product.find({
         isBlocked: false,
         quantity: { $gt: 0 },
@@ -341,18 +340,19 @@ const filter = async (req, res) => {
         .lean();
     }
 
-
     if (category) {
-      findProducts = findProducts.filter(product => product.categoryId.toString() === category);
+      findProducts = findProducts.filter(
+        (product) => product.categoryId.toString() === category
+      );
     }
 
     if (brand) {
-      findProducts = findProducts.filter(product => product.brandId._id.toString() === brand);
+      findProducts = findProducts.filter(
+        (product) => product.brandId._id.toString() === brand
+      );
     }
 
-
     findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
 
     const categories = await Category.find({ isListed: true }).lean();
     const brands = await Brand.find({}).lean();
@@ -362,14 +362,12 @@ const filter = async (req, res) => {
       name: category.name,
     }));
 
-  
     let itemsPerPage = 6;
     let currentPage = parseInt(req.query.page) || 1;
     let startIndex = (currentPage - 1) * itemsPerPage;
     let endIndex = startIndex + itemsPerPage;
     let totalPages = Math.ceil(findProducts.length / itemsPerPage);
     const currentProduct = findProducts.slice(startIndex, endIndex);
-
 
     req.session.filteredProducts = findProducts;
 
@@ -386,7 +384,6 @@ const filter = async (req, res) => {
       }
     }
 
-
     res.render("shop", {
       user: userData,
       products: currentProduct,
@@ -397,13 +394,11 @@ const filter = async (req, res) => {
       selectedCategory: category || null,
       selectedBrand: brand || null,
     });
-
   } catch (error) {
     console.error(error);
     res.redirect("/pageNotFound");
   }
 };
-
 
 const filterByPrice = async (req, res) => {
   try {
@@ -661,10 +656,9 @@ const details = async (req, res) => {
       .populate("brandId")
       .populate("sizeId");
 
-    if(!product||product.isBlocked){
-      return res.redirect('/shop')
+    if (!product || product.isBlocked) {
+      return res.redirect("/shop");
     }
-
 
     const findCategory = product.categoryId;
     const categoryOffer = findCategory?.categoryOffer || 0;

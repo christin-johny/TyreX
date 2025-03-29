@@ -147,7 +147,7 @@
                                <% subtotal += item.totalPrice; %>
                                <div class="d-flex justify-content-between mb-2">
                                    <div class="d-flex align-items-center">
-                                       <a style="all: unset; display: contents;" href="/productDetails?id=<%=item.product._id%>">
+                                       <a style="all: unset; display: contents;" href="/details?id=<%=item.product._id%>">
                                             <img src="/uploads/reImage/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>">
                                             <div class="ml-2">
                                            <p class="product-name mb-0"><%= item.product.productName.split('|')[0].trim() %> (x<%= item.quantity %>)</p>

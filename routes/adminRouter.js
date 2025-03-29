@@ -74,10 +74,10 @@ router.delete('/banner',adminAuth,bannerController.deleteBanner);
 //order management
 router.get('/orders',orderController.loadOrders);
 router.get('/adminOrders/:id',orderController.viewOrderDetails);
-
 router.put('/updateStatus',orderController.updateStatus);
-router.put('/orderCancel',orderController.orderCancel)
-
+router.put('/orderCancel',orderController.orderCancel);
+router.put('/handleReturn',orderController.handleReturn)
+router.put('/updateReturnStatus',orderController.updateReturnStatus)
 
 
 module.exports = router;

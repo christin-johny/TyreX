@@ -51,7 +51,7 @@ const orderSchema = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','Returned']
+        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','returned','returning']
     },
     cancelReason:{
       Type:String,
@@ -77,7 +77,7 @@ const orderSchema = new Schema({
     },
     requestStatus:{
       type:String,
-      enum:['pending','approved']
+      enum:['pending','approved','rejected']
     },
     returnReason:{
       type:String,
@@ -88,7 +88,15 @@ const orderSchema = new Schema({
     returnImage:[{
       type:String,
     }],
-
+    rejectionCategory:{
+      type:String
+    },
+    rejectionReason:{
+      type:String
+    },
+    updatedAt:{
+      type: Date,
+    }
 });
 
 

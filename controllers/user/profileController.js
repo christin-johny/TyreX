@@ -367,7 +367,7 @@ const loadEditAddress = async (req, res) => {
       if (!addressData) {
         return res.status(404).send("Address not found");
       }
-      console.log(addressData)
+      console.log(addressData);
       res.render("editAddress", { user, address: addressData });
     }
   } catch (error) {
@@ -375,7 +375,6 @@ const loadEditAddress = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
 
 const editAddress = async (req, res) => {
   try {
@@ -435,73 +434,66 @@ const editAddress = async (req, res) => {
   }
 };
 
-
-
-const deleteAddress = async(req,res,next)=>{
+const deleteAddress = async (req, res, next) => {
   try {
-      
-      const addressId = req.query.id;
-      
-      if (!addressId) {
-          return res.status(400).json({ message: "Address ID is required" });
-      }
-      const updatedDocument = await Address.findOneAndUpdate(
-          {"address._id":addressId},
-          {$pull:{address:{_id:addressId}}},
-          {new:true},
-      )
-      
-      if (!updatedDocument) {
-          return res.status(404).json({ message: "Address not found" });
-      }
+    const addressId = req.query.id;
 
-      console.log("Address deleted successfully");
-      res.status(200).json({ message: "Address deleted successfully!" });
+    if (!addressId) {
+      return res.status(400).json({ message: "Address ID is required" });
+    }
+    const updatedDocument = await Address.findOneAndUpdate(
+      { "address._id": addressId },
+      { $pull: { address: { _id: addressId } } },
+      { new: true }
+    );
 
+    if (!updatedDocument) {
+      return res.status(404).json({ message: "Address not found" });
+    }
 
+    console.log("Address deleted successfully");
+    res.status(200).json({ message: "Address deleted successfully!" });
   } catch (error) {
-      console.error(" Error deleting address:", error);
-      next(error);
+    console.error(" Error deleting address:", error);
+    next(error);
   }
-}
-
+};
 
 const uploadProfile = async (req, res, next) => {
   try {
-      if (!req.file) {
-          return res.status(400).send("No file uploaded.");
-      }
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
 
-      const updatedUser = await User.findByIdAndUpdate(
-          req.session.user._id,
-          { profileImage:req.file.filename },
-          { new: true }
-      );
-      if (!updatedUser) {
-          return next(new Error("User not found."));
-      }
-      res.redirect('profile');
-
+    const updatedUser = await User.findByIdAndUpdate(
+      req.session.user._id,
+      { profileImage: req.file.filename },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return next(new Error("User not found."));
+    }
+    res.redirect("profile");
   } catch (error) {
-      next(error);
+    next(error);
   }
-}
+};
 
 const loadEditProfilePage = async (req, res, next) => {
   try {
-      const userid = req.session.user._id;
-      if (mongoose.isValidObjectId(userid)) {
-          const userData = await User.findOne({ _id: userid });
-          const addressData = await Address.findOne({ userId: userid });
-          res.render("editProfile", {
-              user: userData,
-              userAddress: addressData,
-          });
-      }
+    const userid = req.session.user._id;
+    if (mongoose.isValidObjectId(userid)) {
+      const userData = await User.findOne({ _id: userid });
+      const addressData = await Address.findOne({ userId: userid });
+      res.render("editProfile", {
+        user: userData,
+        userAddress: addressData,
+      });
+    }
   } catch (error) {
-      next(error);
+    next(error);
   }
-}
+};
 
 const loadChangePassPage = async (req, res) => {
   try {
@@ -511,12 +503,12 @@ const loadChangePassPage = async (req, res) => {
   }
 };
 
-const changePassword= async (req, res) => {
+const changePassword = async (req, res) => {
   try {
     const { password, cPassword } = req.body;
-    console.log(password,cPassword)
+    console.log(password, cPassword);
     const userId = req.session.user._id;
-    console.log(req.session.user)
+    console.log(req.session.user);
     if (password === cPassword) {
       const passwordHash = await bcrypt.hash(password, 10);
       await User.updateOne(
@@ -531,8 +523,7 @@ const changePassword= async (req, res) => {
   } catch (error) {
     res.redirect("/pageNotFound");
   }
-
-}
+};
 
 module.exports = {
   loadForgotPassPage,

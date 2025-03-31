@@ -251,7 +251,7 @@ const orderSearch=async (req,res) => {
       "orderedItems.product"
     );
     if(orders){
-     return res.render("viewOrders", {user: user, orders: orders });
+     return res.render("viewOrders", {user: user, orders: orders,currentPage:0,totalPages:0 });
     }else{
       return res.render("viewOrders", {user: {}, orders: {} });
     }

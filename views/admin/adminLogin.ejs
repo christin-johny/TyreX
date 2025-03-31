@@ -22,25 +22,54 @@
       rel="stylesheet"
     />
 
-
     <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <style>
+      /* Form field styling */
+      .form-control-user {
+        border-radius: 10rem;
+        padding: 1.5rem 1rem;
+      }
+      
+      /* Focus styling for all fields */
+      .focus-group {
+        position: relative;
+      }
+      .focus-group:focus-within {
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        border-radius: 10rem;
+        transition: all 0.3s;
+      }
+      .focus-group:focus-within .form-control-user {
+        border-color: #4e73df;
+        outline: none;
+      }
+      
+      /* Password toggle button styling */
+      .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6e707e;
+        z-index: 5;
+      }
+    </style>
   </head>
 
   <body class="login-bg-color">
     <div class="container">
-
       <div class="row justify-content-center">
         <div class="col-xl-10 col-lg-12 col-md-9">
           <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
-          
               <div class="row">
                 <div
                   class="col-lg-6 d-none d-lg-block login-bg-color text-center"
                 >
                   <img src="/img/logo_white.svg" alt="" />
-                  <h1 class="admin-login-h4"><strong>Admin Pannel Login</strong></h1>
+                  <h1 class="admin-login-h4"><strong>Admin Panel Login</strong></h1>
                 </div>
                 <div class="col-lg-6">
                   <div class="p-5">
@@ -50,17 +79,17 @@
                     <form class="user" method="post" action="/admin/login" id="loginForm">
                       <% if (success_msg.length > 0) { %>
                         <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
-                          <strong>✅</strong> <%= success_msg %>
+                           <%= success_msg %>
                         </div>
                       <% } %>
                       
                       <% if (error_msg.length > 0) { %>
                         <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
-                          <strong>❌</strong> <%= error_msg %>
+                           <%= error_msg %>
                         </div>
                       <% } %>
                       
-                      <div class="form-group">
+                      <div class="form-group focus-group">
                         <input
                           type="email"
                           class="form-control form-control-user"
@@ -70,7 +99,8 @@
                           placeholder="Enter Email Address..."
                         />
                       </div>
-                      <div class="form-group">
+                      
+                      <div class="form-group focus-group position-relative">
                         <input
                           type="password"
                           class="form-control form-control-user"
@@ -78,12 +108,14 @@
                           name="password"
                           placeholder="Password"
                         />
+                        <span class="password-toggle" onclick="togglePassword()">
+                          <i id="toggleIcon" class="fas fa-eye"></i>
+                        </span>
                       </div>
                       
                       <button type="submit" class="btn btn-primary btn-user btn-block">
                         Login
-                    </button>
-                      
+                      </button>
                     </form>
                   </div>
                 </div>
@@ -94,13 +126,26 @@
       </div>
     </div>
 
-
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
     <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-
     <script src="/js/sb-admin-2.min.js"></script>
+
+    <script>
+      function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const icon = document.getElementById('toggleIcon');
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          passwordInput.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+        passwordInput.focus();
+      }
+    </script>
   </body>
 </html>

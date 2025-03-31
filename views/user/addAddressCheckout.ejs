@@ -1,4 +1,4 @@
-<%- include("../partials/user/header") %>
+<%- include("../partials/user/cartHeader") %>
     <link rel="stylesheet" href="/css/userprofile_style.css">
 
 
@@ -14,7 +14,7 @@
                     <div class="content">
                         <h4 class="pb-3">Add User Address</h4>
 
-                        <form class="row g-3"  id="address-Form" method="post" action="/checkoutAddress">
+                        <form class="row g-3"  id="address-Form" method="post" action="/checkoutAddress" onsubmit="return validateForm()">
                             
                           <div class="col-md-6">
                             <label for="addressType" class="form-label">Address Type</label>
@@ -94,7 +94,7 @@
                               </div>
                             
                             <div class="col-12">
-                              <button type="submit" class="btn btn-primary" onclick="return validateForm()">Save</button>
+                              <button type="submit" class="btn btn-primary" >Save</button>
                               <span class="error" id="submit-error"></span>
                             </div>
 
@@ -122,7 +122,7 @@ const countryError = document.getElementById("country-error");
 const zipError = document.getElementById("zip-error");  
 const phoneError = document.getElementById("phone-error");
 const altPhoneError = document.getElementById("altphone-error");
-
+const submitError = document.getElementById("submit-error");
 
 //Regular Expressions
 const nameRegex = /^[A-za-z\s]{3,20}$/;

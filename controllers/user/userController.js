@@ -39,6 +39,7 @@ const loadHome = async (req, res) => {
       startDate: { $lte: today },
       endDate: { $gte: today },
     });
+    console.log(banners)
 
     productData = productData.sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)

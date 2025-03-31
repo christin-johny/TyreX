@@ -1,4 +1,4 @@
-<%- include("../partials/user/header") %>
+<%- include("../partials/user/cartHeader") %>
 <link rel="stylesheet" href="/css/userprofile_style.css">
 
 
@@ -137,7 +137,7 @@
                    window.location.href = '/profile';
                 });
             } else {
-                Swal.fire(data.error);
+                Swal.fire("Warning", data.message || "Address updated successfully!", "warning");
             }
             } catch (error) {
                 Swal.fire("Error", "Something went wrong. Please try again.", "error");
@@ -157,7 +157,7 @@ const zipError = document.getElementById("zip-error");
 const phoneError = document.getElementById("phone-error");
 const altPhoneError = document.getElementById("altphone-error");
 
-
+const submitError = document.getElementById("submit-error");
 //Regular Expressions
 const nameRegex = /^[A-za-z\s]{3,20}$/;
 const phoneRegex = /^[6-9][\d]{9}$/;

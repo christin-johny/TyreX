@@ -473,7 +473,7 @@ const uploadProfile = async (req, res, next) => {
     if (!updatedUser) {
       return next(new Error("User not found."));
     }
-    res.redirect("profile");
+    res.redirect("/profile");
   } catch (error) {
     next(error);
   }
@@ -505,9 +505,17 @@ const loadChangePassPage = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const { password, cPassword } = req.body;
-    console.log(password, cPassword);
+    const { password, cPassword,currentPassword } = req.body;
+    console.log(password, cPassword,currentPassword);
     const userId = req.session.user._id;
+    const user = await User.findById(userId)
+
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if(!match){
+      req.flash("error", "Enter correct current Password");
+      return res.redirect("/changePassword");
+    }
+
     console.log(req.session.user);
     if (password === cPassword) {
       const passwordHash = await bcrypt.hash(password, 10);
@@ -521,6 +529,7 @@ const changePassword = async (req, res) => {
       return res.redirect("/changePassword");
     }
   } catch (error) {
+    console.error(error)
     res.redirect("/pageNotFound");
   }
 };

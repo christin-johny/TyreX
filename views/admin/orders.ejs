@@ -33,7 +33,7 @@
             <!-- Search Input -->
             <div class="col-md-4">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control border-primary" placeholder="Search Order ID or Name" value="<%= search %>">
+                    <input type="text" name="search" class="form-control border-primary" placeholder="Search Order ID..." value="<%= search %>">
                     <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                     <option value="all" <%= status === 'all' ? 'selected' : '' %>>All Status</option>
                     <option value="returned" <%= status === 'Returned' ? 'selected' : '' %>>Returned</option>
                     <option value="Processing" <%= status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                    <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                    <option value="shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                     <option value="delivered" <%= status === 'delivered' ? 'selected' : '' %>>Delivered</option>
                     <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
                 </select>

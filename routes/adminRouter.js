@@ -79,5 +79,8 @@ router.put('/orderCancel',orderController.orderCancel);
 router.put('/handleReturn',orderController.handleReturn)
 router.put('/updateReturnStatus',orderController.updateReturnStatus)
 
+// Inventory management
+router.get('/inventory',productController.loadInventory);
+router.patch('/updateInventory',productController.updateInventory)
 
 module.exports = router;

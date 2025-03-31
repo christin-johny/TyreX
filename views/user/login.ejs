@@ -1,100 +1,132 @@
 <%- include("../partials/user/profileHeader") %>
+<style>
 
-              <div class="row">
-                <div
-                  class="col-lg-6 d-none d-lg-block login-bg-color text-center"
-                >
-                  <img src="/img/logo_white.svg" alt="" />
-                  <h1 class="admin-login-h4"><strong>Welcome Back</strong></h1>
-                </div>
-                <div class="col-lg-6">
-                  <div class="p-5">
-                    <div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">Login</h1>
-                    </div>
-                    <form class="user" method="post" action="/login" id="loginForm">
-                      
-                      
-                      <div class="form-group">
-                        <input
-                          type="email"
-                          class="form-control form-control-user"
-                          id="email"
-                          name="email"
-                          aria-describedby="emailHelp"
-                          placeholder="Enter Email Address..."
-                        />
-                      </div>
-                      <div class="form-group">
-                        <input
-                          type="password"
-                          class="form-control form-control-user"
-                          id="password"
-                          name="password"
-                          placeholder="Password"
-                        />
-                      </div>
-                      <div class="form-group">
-                        <div class="custom-control custom-checkbox small">
-                          <input
-                            type="checkbox"
-                            class="custom-control-input"
-                            id="customCheck"
-                          />
-                          <label class="custom-control-label" for="customCheck"
-                            >Remember Me</label
-                          >
-                        </div>
-                      </div>
-                      <% if (success_msg.length > 0) { %>
-                        <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
-                           <%= success_msg %>
-                        </div>
-                      <% } %>
-                      
-                      <% if (error_msg.length > 0) { %>
-                        <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
-                           <%= error_msg %>
-                        </div>
-                      <% } %>
-                      <button type="submit" class="btn btn-primary btn-user btn-block">
-                        Login
-                    </button>
-                      <hr />
-                      <a
-                        href="/auth/google"
-                        class="btn btn-google btn-user btn-block"
-                      >
-                        <i class="fab fa-google fa-fw"></i> Login with Google
-                      </a>
-                    </form>
-                    <hr />
-                    <div class="text-center">
-                      <a class="small" href="/forgotPassword"
-                        >Forgot Password?</a
-                      >
-                    </div>
-                    <div class="text-center">
-                      <a class="small" href="/signup"
-                        >Create an Account!</a
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
+  .input-group > .form-control:not(:last-child),
+  .input-group > .custom-select:not(:last-child) {
+    border-top-right-radius: 10rem;
+    border-bottom-right-radius: 10rem;
+  }
+  .input-group > .input-group-append:last-child > .input-group-text {
+    border-top-right-radius: 10rem;
+    border-bottom-right-radius: 10rem;
+  }
+  
+  .focus-group:focus-within,
+  .focus-group-single:focus-within {
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    border-radius: 10rem;
+    transition: all 0.3s;
+  }
+  .focus-group:focus-within .form-control,
+  .focus-group:focus-within .input-group-text,
+  .focus-group-single:focus-within .form-control {
+    border-color: #4e73df;
+    outline: none;
+  }
+
+  .focus-group-single {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+</style>
+<div class="row">
+  <div class="col-lg-6 d-none d-lg-block login-bg-color text-center">
+    <img src="/img/logo_white.svg" alt="" />
+    <h1 class="admin-login-h4"><strong>Welcome Back</strong></h1>
+  </div>
+  <div class="col-lg-6">
+    <div class="p-5">
+      <div class="text-center">
+        <h1 class="h4 text-gray-900 mb-4">Login</h1>
+      </div>
+      <form class="user" method="post" action="/login" id="loginForm">
+        <div class="form-group focus-group-single">
+          <input
+            type="email"
+            class="form-control form-control-user"
+            id="email"
+            name="email"
+            aria-describedby="emailHelp"
+            placeholder="Enter Email Address..."
+          />
+        </div>
+        <div class="form-group">
+          <div class="input-group focus-group">
+            <input
+              type="password"
+              class="form-control form-control-user"
+              id="password"
+              name="password"
+              placeholder="Password"
+              style="border-right: none;"
+            />
+            <div class="input-group-append">
+              <span class="input-group-text bg-transparent" onclick="togglePassword()" style="cursor: pointer; border-left: none;">
+                <i id="toggleIcon" class="fas fa-eye"></i>
+              </span>
             </div>
           </div>
         </div>
+        <div class="form-group">
+          <div class="custom-control custom-checkbox small">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="customCheck"
+            />
+            <label class="custom-control-label" for="customCheck">Remember Me</label>
+          </div>
+        </div>
+        <% if (success_msg.length > 0) { %>
+          <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+            <%= success_msg %>
+          </div>
+        <% } %>
+        <% if (error_msg.length > 0) { %>
+          <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+            <%= error_msg %>
+          </div>
+        <% } %>
+        <button type="submit" class="btn btn-primary btn-user btn-block">
+          Login
+        </button>
+        <hr />
+        <a href="/auth/google" class="btn btn-google btn-user btn-block">
+          <i class="fab fa-google fa-fw"></i> Login with Google
+        </a>
+      </form>
+      <hr />
+      <div class="text-center">
+        <a class="small" href="/forgotPassword">Forgot Password?</a>
+      </div>
+      <div class="text-center">
+        <a class="small" href="/signup">Create an Account!</a>
       </div>
     </div>
+  </div>
+</div>
 
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
 
 
-    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-
-    <script src="js/sb-admin-2.min.js"></script>
-  </body>
-</html>
+<script>
+  function togglePassword() {
+    var passwordInput = document.getElementById("password");
+    var icon = document.getElementById("toggleIcon");
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    }
+    passwordInput.focus();
+  }
+</script>

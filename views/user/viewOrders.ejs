@@ -253,7 +253,7 @@
                                 </div>
                                 <div class="col-md-3 text-end d-flex">
                                     <a href="/orderDetails?orderId=<%= order.orderId %>" 
-                                       class="btn btn-outline-primary btn-sm mt-2" style='height:30px;'>View Details</a>
+                                       class="btn btn-outline-primary btn-sm mt-2" >View Details</a>
                                     
                                     <% if (order.status === 'delivered' && !order.returnReason && order.requestStatus !== "rejected") { %>
                                         <button onclick="initiateReturn('<%= order._id %>')" 

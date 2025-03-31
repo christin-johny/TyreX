@@ -98,8 +98,7 @@ router.put('/cancelOrder',userAuth,orderController.cancelOrder)
 router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth,uploads.array('images', 3), orderController.requestReturn);
 router.post('/orderSearch',userAuth,orderController.orderSearch)
-router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest)
-
+router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest);
 
 router.get('/confirmation',userAuth,orderController.loadConfirmation)
 

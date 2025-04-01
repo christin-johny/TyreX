@@ -225,7 +225,7 @@ const removeFromCart= async(req,res,next)=>{
         );
         
 
-         console.log("product removed successfully from wishlist");
+        
         return res.status(200).json({success:true,message:'Product removed successfully'})
     } catch (error) {
         console.error("Error deleting product from wishlist", error);

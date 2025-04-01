@@ -261,8 +261,8 @@
                     <del class="text-muted ms-2 small">&#8377;<%= products[i].regularPrice %></del>
                     <%}%>
                   
-                  <% if (products[i].productOffer > 0) { %>
-                    <span class="badge bg-success ms-auto"><%=products[i].productOffer%>% OFF</span>
+                  <% if (products[i].salePrice!=products[i].regularPrice) { %>
+                    <span class="badge bg-success ms-auto"><%=Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100)%>% OFF</span>
                   <% } %>
                 </div>
 

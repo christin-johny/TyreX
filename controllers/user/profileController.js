@@ -294,7 +294,7 @@ const addAddressPage = async (req, res) => {
         phone,
         altPhone,
       } = req.body;
-      console.log(req.body);
+      
       const userAddress = await Address.findOne({ userId: userData._id });
       if (!userAddress) {
         const newAddress = new Address({
@@ -317,7 +317,7 @@ const addAddressPage = async (req, res) => {
           ],
         });
         await newAddress.save();
-        console.log("Address Saved!");
+        
       } else {
         userAddress.address.push({
           addressType,
@@ -334,13 +334,13 @@ const addAddressPage = async (req, res) => {
           altPhone,
         });
         await userAddress.save();
-        console.log("Appended Address saved!");
+        
       }
 
       res.redirect("/address");
     }
   } catch (error) {
-    console.log("Error Adding address :", error);
+    console.error(error);
     res.redirect("/pageNotFound");
   }
 };
@@ -367,7 +367,7 @@ const loadEditAddress = async (req, res) => {
       if (!addressData) {
         return res.status(404).send("Address not found");
       }
-      console.log(addressData);
+
       res.render("editAddress", { user, address: addressData });
     }
   } catch (error) {
@@ -426,7 +426,7 @@ const editAddress = async (req, res) => {
       return res.status(400).json({ message: "No changes were made" });
     }
 
-    console.log("Address updated successfully");
+
     res.status(200).json({ message: "Address updated successfully!" });
   } catch (error) {
     console.error(" Error editing address:", error);
@@ -451,7 +451,7 @@ const deleteAddress = async (req, res, next) => {
       return res.status(404).json({ message: "Address not found" });
     }
 
-    console.log("Address deleted successfully");
+
     res.status(200).json({ message: "Address deleted successfully!" });
   } catch (error) {
     console.error(" Error deleting address:", error);
@@ -506,7 +506,7 @@ const loadChangePassPage = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { password, cPassword,currentPassword } = req.body;
-    console.log(password, cPassword,currentPassword);
+   
     const userId = req.session.user._id;
     const user = await User.findById(userId)
 
@@ -516,7 +516,7 @@ const changePassword = async (req, res) => {
       return res.redirect("/changePassword");
     }
 
-    console.log(req.session.user);
+
     if (password === cPassword) {
       const passwordHash = await bcrypt.hash(password, 10);
       await User.updateOne(

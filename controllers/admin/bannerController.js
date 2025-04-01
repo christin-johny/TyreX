@@ -9,7 +9,7 @@ const loadBannerPage = async (req,res)=>{
         const findBanner =  await Banner.find({});
         res.render('banner',{data:findBanner});
     }catch (error){
-        console.log(error)
+        console.error(error)
         res.redirect("/admin/pageerror")
     }
 }

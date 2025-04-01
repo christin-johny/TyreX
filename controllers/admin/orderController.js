@@ -53,7 +53,7 @@ const loadOrders = async (req, res) => {
 const viewOrderDetails = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
+    
 
     const order = await Order.findById(id)
       .populate("orderedItems.product")
@@ -69,7 +69,7 @@ const viewOrderDetails = async (req, res) => {
       );
 
       order.address = userAddress;
-      console.log(order.address);
+      
 
       res.render("adminOrderDetails", { order: order });
     } else {
@@ -121,7 +121,7 @@ const orderCancel = async (req, res) => {
       quantity: item.quantity,
     }));
 
-    console.log(orderedItems);
+    
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product, {
         $inc: { quantity: orderedItems[i].quantity },

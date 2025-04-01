@@ -31,7 +31,6 @@
     width: 250px;
   }
   
-  /* New styles for search and responsive design */
   .search-container {
     display: flex;
     flex-direction: column;
@@ -223,7 +222,7 @@
     }
 
     $.ajax({
-      url: `/admin/updateInventory?id=${productId}`,
+      url: `/admin/inventory?id=${productId}`,
       type: "PATCH",
       contentType: "application/json",
       data: JSON.stringify({ quantity: value }),

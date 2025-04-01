@@ -13,7 +13,7 @@ const loadHomepage = async (req, res) => {
   try {
     return res.render("home");
   } catch (error) {
-    console.log("Home page not found");
+    console.error(error);
     res.redirect("/admin/pagerror")
   }
 };
@@ -23,7 +23,7 @@ const loadLogin = async (req, res) => {
   try {
     return res.render("adminLogin");
   } catch (error) {
-    console.log("Login page not found");
+    console.error("Login page not found");
     res.redirect("/admin/pagerror")
   }
 };
@@ -32,13 +32,13 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
-      console.log("email and password are required");
+      
       req.flash("error", "email and password are required");
       return res.redirect("/admin/login");
     }
     const user = await User.findOne({ email: email, isAdmin: true });
     if (!user) {
-      console.log("Invalid email or password1");
+      
       req.flash("error", "Invalid email or password.");
       return res.redirect("/admin/login");
     }
@@ -46,7 +46,7 @@ const login = async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      console.log("Invalid email or password2");
+      
       req.flash("error", "Invalid email or password.");
       return res.redirect("/admin/login");
     }
@@ -59,7 +59,7 @@ const login = async (req, res) => {
 
     return res.redirect("/admin/dashboard");
   } catch (error) {
-    console.log("error during login");
+    console.error(error)
     req.flash("error", "An error occurred. Please try again.");
     return res.redirect("/admin/login");
   }
@@ -75,7 +75,7 @@ const logout = async (req, res) => {
     return res.redirect("/admin/login");
 
   } catch (error) {
-    console.log("Error during logout:", error);
+    console.error(error);
     res.redirect("/admin/pageerror");
   }
 };
@@ -89,7 +89,7 @@ const forgotPassword = async (req, res) => {
   try {
     return res.render("forgotPassword");
   } catch (error) {
-    console.log("Page not found");
+    console.error(error);
     res.redirect("/admin/pagerror")
   }
 };
@@ -98,7 +98,7 @@ const loadAddProduct = async (req, res) => {
   try {
     return res.render("addProduct");
   } catch (error) {
-    console.log("Page not found");
+    console.error(error)
     res.redirect("/admin/pagerror")
   }
 };

@@ -27,7 +27,7 @@ const loadBrandPage = async (req, res) => {
     });
   } catch (error) {
     res.redirect("/pageerror");
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -141,7 +141,7 @@ const blockBrand = async (req, res) => {
      if(existingBrand){
       return res.status(400).json({ status: false, message: "Brand name already exists" });
      }
-     console.log(existingBrand)
+     
       const updatedImage = req.file ? [req.file.filename] : brand.brandImage;
   
       const updateData = {

@@ -4,7 +4,6 @@ const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 
-
 const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user._id;
@@ -91,26 +90,21 @@ const orders = async (req, res) => {
     const limit = 5;
     const skip = (page - 1) * limit;
 
-    const orders = await Order.find({ userId: userId }).populate(
-      "orderedItems.product"
-    )
-    .sort({createdAt:-1})
-    .skip(skip)
-    .limit(limit)
-    
+    const orders = await Order.find({ userId: userId })
+      .populate("orderedItems.product")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    const totalOrders = await Order.countDocuments({userId:userId});
-    const totalPages = Math.ceil(totalOrders/limit);
-
-
+    const totalOrders = await Order.countDocuments({ userId: userId });
+    const totalPages = Math.ceil(totalOrders / limit);
 
     res.render("viewOrders", {
-      user: user, 
+      user: user,
       orders: orders,
-      currentPage:page,
-      totalPages:totalPages,
-     });
-
+      currentPage: page,
+      totalPages: totalPages,
+    });
   } catch (error) {
     console.error(error);
     res.redirect("/pageNotFound");
@@ -149,7 +143,6 @@ const cancelOrder = async (req, res) => {
   try {
     const user = req.session.user;
     const { orderId, reason } = req.body;
-    console.log(orderId, reason);
 
     const order = await Order.findById(orderId);
 
@@ -164,7 +157,6 @@ const cancelOrder = async (req, res) => {
       quantity: item.quantity,
     }));
 
-    console.log(orderedItems);
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product, {
         $inc: { quantity: orderedItems[i].quantity },
@@ -195,10 +187,8 @@ const downloadInvoice = async (req, res) => {
     const userAddress = addressDoc.address.find(
       (addr) => addr._id.toString() === order.address.toString()
     );
-    console.log(userAddress);
-    order.address = userAddress;
 
-    console.log(order);
+    order.address = userAddress;
 
     res.render("invoice", { order: order, user: user });
   } catch (error) {
@@ -219,7 +209,7 @@ const requestReturn = async (req, res) => {
       await Order.findByIdAndUpdate(orderId, {
         $set: {
           status: "return requested",
-          requestStatus:'pending',
+          requestStatus: "pending",
           returnReason: returnReason,
           returnDescription: returnDescription,
           returnImage: images,
@@ -238,65 +228,62 @@ const requestReturn = async (req, res) => {
   }
 };
 
-
-const orderSearch=async (req,res) => {
-
+const orderSearch = async (req, res) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
-    const search= req.body.query;
-    console.log(search);
+    const search = req.body.query;
 
     const orders = await Order.find({ orderId: search }).populate(
       "orderedItems.product"
     );
-    if(orders){
-     return res.render("viewOrders", {user: user, orders: orders,currentPage:0,totalPages:0 });
-    }else{
-      return res.render("viewOrders", {user: {}, orders: {} });
+    if (orders) {
+      return res.render("viewOrders", {
+        user: user,
+        orders: orders,
+        currentPage: 0,
+        totalPages: 0,
+      });
+    } else {
+      return res.render("viewOrders", { user: {}, orders: {} });
     }
-    
   } catch (error) {
     console.error(error);
     res.redirect("/pageNotFound");
   }
+};
 
-  
-  
-}
-
-const cancelReturnRequest=async (req,res)=>{
+const cancelReturnRequest = async (req, res) => {
   try {
     const userId = req.session.user._id;
-    const { orderId} = req.body;
-
+    const { orderId } = req.body;
 
     const user = await User.findById(userId);
 
     if (user.orders.includes(orderId)) {
       await Order.findByIdAndUpdate(orderId, {
         $set: {
-          status: 'delivered',
-          requestStatus: '',
-          returnReason: '',
-          returnDescription: '',
+          status: "delivered",
+          requestStatus: "",
+          returnReason: "",
+          returnDescription: "",
           returnImage: [],
         },
       });
-      
     } else {
       return res
         .status(400)
         .json({ success: false, message: "Order not Found" });
     }
 
-    return res.status(200).json({ success: true, message: "return request cancelled" });
+    return res
+      .status(200)
+      .json({ success: true, message: "return request cancelled" });
   } catch (error) {
     console.error(error);
     res.render("/pageNotFound");
   }
-}
-
+};
 
 module.exports = {
   loadConfirmation,
@@ -308,5 +295,4 @@ module.exports = {
   requestReturn,
   orderSearch,
   cancelReturnRequest,
-
 };

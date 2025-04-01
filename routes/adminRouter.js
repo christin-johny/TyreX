@@ -8,6 +8,7 @@ const brandController=require("../controllers/admin/brandController");
 const productController=require("../controllers/admin/productController");
 const bannerController = require("../controllers/admin/bannerController");
 const orderController = require("../controllers/admin/orderController");
+const couponController = require('../controllers/admin/couponController');
 const multer = require("multer");
 const storage=require("../helpers/multer")
 const uploads=multer({storage:storage});
@@ -72,15 +73,22 @@ router.delete('/banner',adminAuth,bannerController.deleteBanner);
 
 
 //order management
-router.get('/orders',orderController.loadOrders);
-router.get('/adminOrders/:id',orderController.viewOrderDetails);
-router.put('/updateStatus',orderController.updateStatus);
-router.put('/orderCancel',orderController.orderCancel);
-router.put('/handleReturn',orderController.handleReturn)
-router.put('/updateReturnStatus',orderController.updateReturnStatus)
+router.get('/orders',adminAuth,orderController.loadOrders);
+router.get('/adminOrders/:id',adminAuth,orderController.viewOrderDetails);
+router.put('/updateStatus',adminAuth,orderController.updateStatus);
+router.put('/orderCancel',adminAuth,orderController.orderCancel);
+router.put('/handleReturn',adminAuth,orderController.handleReturn)
+router.put('/updateReturnStatus',adminAuth,orderController.updateReturnStatus)
 
 // Inventory management
-router.get('/inventory',productController.loadInventory);
-router.patch('/updateInventory',productController.updateInventory)
+router.get('/inventory',adminAuth,productController.loadInventory);
+router.patch('/inventory',adminAuth,productController.updateInventory)
+
+//Coupon Management
+
+router.get('/coupon',couponController.loadCoupon);
+router.post ('/coupon',couponController.addCoupon);
+router.put('/coupon',couponController.editCoupon);
+router.delete('/coupon',couponController.deleteCoupon);
 
 module.exports = router;

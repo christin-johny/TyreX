@@ -59,7 +59,7 @@ const addToWishlist = async (req, res) => {
       (item) =>
         item.productId && item.productId._id.toString() === productId.toString()
     );
-    console.log("test sp", specificItem);
+
 
     if (specificItem) {
       return res
@@ -78,7 +78,7 @@ const addToWishlist = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Product added to wishlist" });
   } catch (error) {
-    console.log("Error adding products to wishlist", error);
+    console.error(error);
     res.redirect("/pageNotFound");
   }
 };
@@ -91,11 +91,10 @@ const removeFromWishlist = async (req, res, next) => {
     const user = await User.findById(userId);
 
     const index = user.wishlist.indexOf(productId);
-    console.log(index);
+
     user.wishlist.splice(index, 1);
 
     await user.save();
-    console.log("product removed successfully from wishlist");
     return res
       .status(200)
       .json({ success: true, message: "Product removed successfully!" });

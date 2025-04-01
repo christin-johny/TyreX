@@ -105,7 +105,7 @@ const saveAddressCheckout = async (req, res) => {
         if (mongoose.isValidObjectId(userId)) {
             const userData = await User.findOne({ _id: userId });
             const { addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone } = req.body;
-            console.log(req.body);
+            
             const userAddress = await Address.findOne({ userId: userData._id });
             if (!userAddress) {
                 const newAddress = new Address({
@@ -126,11 +126,11 @@ const saveAddressCheckout = async (req, res) => {
                     }]
                 });
                 await newAddress.save();
-                console.log("Address Saved!");
+                
             } else {
                 userAddress.address.push({ addressType, name, apartment, building, street, city, landmark, state, country, zip, phone, altPhone });
                 await userAddress.save();
-                console.log("Appended Address saved!")
+                
             }
   
             res.redirect("/checkout");
@@ -138,7 +138,7 @@ const saveAddressCheckout = async (req, res) => {
   
   
     } catch (error) {
-        console.log("Error Adding address :", error);
+        console.error(error);
         res.redirect('/pageNotFound');
     }
 };

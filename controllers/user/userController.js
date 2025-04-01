@@ -39,7 +39,7 @@ const loadHome = async (req, res) => {
       startDate: { $lte: today },
       endDate: { $gte: today },
     });
-    console.log(banners)
+ 
 
     productData = productData.sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -77,7 +77,7 @@ const loadLogin = async (req, res) => {
       res.redirect("/home");
     }
   } catch (error) {
-    console.log("Home page not found");
+    console.error(error);
     res.status(500).send("Server error");
   }
 };
@@ -86,7 +86,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (email.trim() === "" || password.trim() === "") {
-      console.log("email and password are required");
+      
       req.flash("error", "email and password are required");
       return res.redirect("/login");
     }
@@ -94,12 +94,11 @@ const login = async (req, res) => {
     const findUser = await User.findOne({ email: email, isAdmin: false });
 
     if (!findUser) {
-      console.log("User not found");
+    
       req.flash("error", "User not found");
       return res.redirect("/login");
     }
     if (findUser.isBlocked) {
-      console.log("User is blocked by admin");
       req.flash("error", "Can't login with this email");
       return res.redirect("/login");
     }
@@ -107,7 +106,6 @@ const login = async (req, res) => {
     const match = await bcrypt.compare(password, findUser.password);
 
     if (!match) {
-      console.log("Invalid username or password");
       req.flash("error", "Invalid username or password");
       return res.redirect("/login");
     }
@@ -129,7 +127,7 @@ const logout = async (req, res) => {
     req.session.user = null;
     res.redirect("/home");
   } catch (error) {
-    console.log("Error during logout:", error);
+    console.error(error);
     res.redirect("/pageNotFound");
   }
 };
@@ -142,7 +140,7 @@ const loadSignup = async (req, res) => {
       res.redirect("/home");
     }
   } catch (error) {
-    console.log("Home page not found");
+    console.error(error);
     res.status(500).send("Server error");
   }
 };
@@ -571,7 +569,7 @@ const clear = async (req, res) => {
 const sort = async (req, res) => {
   try {
     const sort = req.query.sort;
-    console.log("test sort", sort);
+  
     const user = req.session.user;
 
     const categories = await Category.find({ isListed: true });
@@ -667,7 +665,7 @@ const details = async (req, res) => {
     const totalOffer = categoryOffer + productOffer;
 
     const catId = product.categoryId._id;
-    console.log(catId);
+
 
     let productData = await Product.find({
       isBlocked: false,

@@ -21,7 +21,7 @@ router.get("/pageerror", adminController.pageError);
 router.get("/login", redirectAuth, adminController.loadLogin);
 router.post("/login", redirectAuth, adminController.login);
 router.get("/logout", adminController.logout);
-router.get("/forgotPassword", adminController.forgotPassword);
+// router.get("/forgotPassword", adminController.forgotPassword);
 router.get("/dashboard", adminAuth, adminController.loadHomepage);
 
 
@@ -85,10 +85,12 @@ router.get('/inventory',adminAuth,productController.loadInventory);
 router.patch('/inventory',adminAuth,productController.updateInventory)
 
 //Coupon Management
+router.get('/coupon',adminAuth,couponController.loadCoupon);
+router.post ('/coupon',adminAuth,couponController.addCoupon);
+router.put('/coupon',adminAuth,couponController.editCoupon);
+router.delete('/coupon',adminAuth,couponController.deleteCoupon);
 
-router.get('/coupon',couponController.loadCoupon);
-router.post ('/coupon',couponController.addCoupon);
-router.put('/coupon',couponController.editCoupon);
-router.delete('/coupon',couponController.deleteCoupon);
+
+
 
 module.exports = router;

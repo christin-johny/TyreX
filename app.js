@@ -46,6 +46,16 @@ app.use('/admin', adminRouter);
 app.use('/', userRouter);
 
 
+//error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack); 
+
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || 'Internal Server Error'
+    });
+});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('> Server is up and running on port : ' + port));

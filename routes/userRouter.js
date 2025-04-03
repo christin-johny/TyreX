@@ -6,6 +6,7 @@ const cartController=require('../controllers/user/cartController.js')
 const wishlistController=require('../controllers/user/wishlistController.js')
 const checkoutController = require('../controllers/user/checkoutController.js')
 const orderController=require('../controllers/user/orderController.js')
+const walletController= require('../controllers/user/walletController.js')
 const {userAuth,redirectAuth,checkBlockedUser}=require('../middlewares/userAuth.js')
 const passport = require('passport');
 const multer = require("multer");
@@ -99,7 +100,13 @@ router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth,uploads.array('images', 3), orderController.requestReturn);
 router.post('/orderSearch',userAuth,orderController.orderSearch)
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest);
-
 router.get('/confirmation',userAuth,orderController.loadConfirmation)
+
+//wallet
+router.get('/wallet',userAuth,walletController.loadWallet)
+
+router.post("/wallet/createOrder",userAuth, walletController.createOrder);
+router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
+router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney)
 
 module.exports = router;

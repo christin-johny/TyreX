@@ -721,3 +721,26 @@ document.getElementById('confirmWalletPayment').addEventListener('click', async 
 </script>
 
 <%- include("../../views/partials/user/footer") %>
+
+
+
+
+
+<% if (transactions && transactions.length > 0) { %>
+    <% transactions.forEach(transaction => { %>
+        <tr>
+            <td>₹<%= transaction.amount.toFixed(2) %></td>
+            <td><%= transaction.description %></td>
+            <td><%= new Date(transaction.createdAt).toLocaleDateString() %></td>
+            <td>
+                <span class="transaction-status <%= transaction.transactionType === 'credit' ? 'status-credit' : 'status-debit' %>">
+                    <%= transaction.transactionType.charAt(0).toUpperCase() + transaction.transactionType.slice(1) %>
+                </span>
+            </td>
+        </tr>
+    <% }); %>
+<% } else { %>
+    <tr>
+        <td colspan="4" class="text-center">No transactions found</td>
+    </tr>
+<% } %>

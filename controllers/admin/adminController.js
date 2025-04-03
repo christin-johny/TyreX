@@ -85,14 +85,14 @@ const logout = async (req, res) => {
 
 
 
-const forgotPassword = async (req, res) => {
-  try {
-    return res.render("forgotPassword");
-  } catch (error) {
-    console.error(error);
-    res.redirect("/admin/pagerror")
-  }
-};
+// const forgotPassword = async (req, res) => {
+//   try {
+//     return res.render("forgotPassword");
+//   } catch (error) {
+//     console.error(error);
+//     res.redirect("/admin/pagerror")
+//   }
+// };
 
 const loadAddProduct = async (req, res) => {
   try {
@@ -109,9 +109,7 @@ module.exports = {
   loadHomepage,
   loadLogin,
   login,
-  forgotPassword,
   loadAddProduct,
-
   pageError,
   logout,
 

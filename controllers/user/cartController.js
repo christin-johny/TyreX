@@ -165,6 +165,7 @@ const changeQuantity = async (req, res) => {
 
      
         specificItem.quantity += count;
+        specificItem.totalPrice=specificItem.quantity*specificItem.price;
 
         if (specificItem.quantity < 1) {
             specificItem.quantity = 1;

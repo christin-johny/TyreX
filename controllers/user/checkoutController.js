@@ -5,7 +5,7 @@ const Address = require("../../models/addressSchema");
 const Cart =require('../../models/cartSchema')
 const mongoose = require('mongoose')
 // const Coupon = require("../../models/couponSchema");
-// const Wallet = require("../../models/walletSchema");
+const Wallet = require("../../models/walletSchema");
 
 const loadCheckoutPage = async (req, res) => {
     try {
@@ -28,13 +28,8 @@ const loadCheckoutPage = async (req, res) => {
             });
         
         
-      // const wallet = await Wallet.findOne({ userId: userId });
-          
-      //   let transactions = [];
-      //   if (wallet) {
-      //       transactions = wallet.transactions.sort((a, b) => b.createdAt - a.createdAt);
-      //   }
-  
+      const wallet = await Wallet.findOne({ userId: userId });
+
         const addressData = await Address.findOne({ userId: userId });
   
         if (!user) {
@@ -66,20 +61,21 @@ const loadCheckoutPage = async (req, res) => {
             }));
   
         const subtotal = cartItems.reduce((total, item) => total + item.totalPrice, 0);
-        const shippingCharge = 0; 
-        const grandTotal = subtotal + shippingCharge;
+        let grandTotal=0;
+        if(subtotal<15000){
+        grandTotal = subtotal + 500;
+        }else{
+          grandTotal = subtotal
+        }
 
-          
-
+  
         res.render("checkout", {
             user,
             cartItems,
             subtotal,
-            shippingCharge,
             grandTotal,
             userAddress: addressData,
-           wallet:null,
-          //  wallet || { balance: 0, refundAmount: 0, totalDebited: 0 },
+           wallet:wallet|| { balance: 0},
         });
     } catch (error) {
         console.error("Error in loadCheckoutPage:", error);

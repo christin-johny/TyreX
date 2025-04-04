@@ -3,57 +3,57 @@ const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
+const Wallet = require("../../models/walletSchema");
 
 const loadOrders = async (req, res) => {
-    try {
-      let search = req.query.search || "";
-      const page = parseInt(req.query.page) || 1;
-      const limit = 6;
-      const skip = (page - 1) * limit;
-  
-      let sortField = req.query.sortField || "createdAt";
-      let sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
-  
-      let filter = {};
-      if (req.query.status && req.query.status !== "all") {
-        filter.status = req.query.status;
-      }
-  
-      if (search) {
-        filter.$or = [
-          { orderId: { $regex: search, $options: "i" } },
-          { "userId.name": { $regex: search, $options: "i" } }
-        ];
-      }
-  
-      const orders = await Order.find(filter)
-        .populate("userId")
-        .sort({ [sortField]: sortOrder })
-        .skip(skip)
-        .limit(limit);
-  
-      const totalOrders = await Order.countDocuments(filter);
-      const totalPages = Math.ceil(totalOrders / limit);
-  
-      res.render("orders", {
-        orders,
-        search,
-        currentPage: page,
-        totalPages,
-        sortField,
-        sortOrder,
-        status: req.query.status || "all"
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Internal Server Error");
+  try {
+    let search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+
+    let sortField = req.query.sortField || "createdAt";
+    let sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+
+    let filter = {};
+    if (req.query.status && req.query.status !== "all") {
+      filter.status = req.query.status;
     }
-  };
+
+    if (search) {
+      filter.$or = [
+        { orderId: { $regex: search, $options: "i" } },
+        { "userId.name": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const orders = await Order.find(filter)
+      .populate("userId")
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(limit);
+
+    const totalOrders = await Order.countDocuments(filter);
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    res.render("orders", {
+      orders,
+      search,
+      currentPage: page,
+      totalPages,
+      sortField,
+      sortOrder,
+      status: req.query.status || "all",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 const viewOrderDetails = async (req, res) => {
   try {
     const id = req.params.id;
-    
 
     const order = await Order.findById(id)
       .populate("orderedItems.product")
@@ -69,7 +69,6 @@ const viewOrderDetails = async (req, res) => {
       );
 
       order.address = userAddress;
-      
 
       res.render("adminOrderDetails", { order: order });
     } else {
@@ -121,7 +120,6 @@ const orderCancel = async (req, res) => {
       quantity: item.quantity,
     }));
 
-    
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product, {
         $inc: { quantity: orderedItems[i].quantity },
@@ -193,7 +191,7 @@ const updateReturnStatus = async (req, res) => {
     if (status === "returning") {
       const order = await Order.findByIdAndUpdate(
         orderId,
-        { $set: { status: status,updatedAt:new Date()} },
+        { $set: { status: status, updatedAt: new Date() } },
         { new: true }
       );
       if (order) {
@@ -209,10 +207,29 @@ const updateReturnStatus = async (req, res) => {
       const order = await Order.findByIdAndUpdate(
         orderId,
         {
-          $set: {status: status,updatedAt:new Date()},
+          $set: { status: status, updatedAt: new Date() },
         },
         { new: true }
       );
+
+      const orderData = await Order.findById(orderId);
+      const userId = orderData.userId;
+
+      let wallet = await Wallet.findOne({ userId: userId });
+      if (!wallet) {
+        wallet = new Wallet({ userId, balance: 0, transactions: [] });
+      }
+
+      wallet.balance += parseInt(orderData.finalAmount);
+
+      wallet.transactions.push({
+        amount:orderData.finalAmount,
+        type: "credit",
+        description: "Order return Refund",
+      });
+
+      await wallet.save();
+
       if (order) {
         return res
           .status(200)

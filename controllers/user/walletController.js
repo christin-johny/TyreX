@@ -9,7 +9,7 @@ const loadWallet = async (req, res, next) => {
         const userData = await User.findById(userId);
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 5;
+        const limit = 10;
         const skip = (page - 1) * limit;
 
         const wallet = await Wallet.findOne({ userId });
@@ -30,8 +30,9 @@ const loadWallet = async (req, res, next) => {
 
         
         const paginatedTransactions = wallet.transactions
+           .sort((a, b) => new Date(b.date) - new Date(a.date))
             .slice(skip, skip + limit)
-            .reverse(); 
+            
         res.render("wallet", {
             user: userData,
             wallet: wallet,
@@ -44,9 +45,6 @@ const loadWallet = async (req, res, next) => {
         next(error);
     }
 };
-
-
-
 
 
 const createOrder = async (req, res) => {

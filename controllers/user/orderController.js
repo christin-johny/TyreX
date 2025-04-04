@@ -4,6 +4,8 @@ const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
+const razorpay = require("../../config/razorpay");
+const crypto = require("crypto");
 
 const placeOrder = async (req, res) => {
   try {
@@ -243,6 +245,24 @@ const cancelOrder = async (req, res) => {
     const { orderId, reason } = req.body;
 
     const order = await Order.findById(orderId);
+    if(order.paymentMethod!='cod'){
+      let wallet = await Wallet.findOne({ userId: user._id });
+
+      if (!wallet) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Wallet not Found" });
+      }
+
+      wallet.balance += parseInt(order.finalAmount);
+    wallet.transactions.push({
+      amount:order.finalAmount,
+      type: "credit",
+      description: "Order cancellation Refund",
+    });
+    await wallet.save();
+
+    }
 
     await Order.findOneAndUpdate(
       { _id: orderId },
@@ -269,6 +289,7 @@ const cancelOrder = async (req, res) => {
     res.redirect("/pageNotFound");
   }
 };
+
 
 const downloadInvoice = async (req, res) => {
   try {
@@ -383,6 +404,123 @@ const cancelReturnRequest = async (req, res) => {
   }
 };
 
+const createOrder = async (req, res, next) => {
+  try {
+    const userId = req.session.user._id;
+    
+
+    const userData = await User.findById(userId);
+    const cart = await Cart.findOne({ userId });
+
+    const cartItems = cart.items.map((item) => ({
+      product: item.productId,
+      quantity: item.quantity,
+      price: item.totalPrice,
+    }));
+
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
+    let finalAmount = totalPrice < 15000 ? totalPrice + 500 : totalPrice;
+
+    const options = {
+      amount: finalAmount * 100, 
+      currency: "INR",
+      receipt: `txn_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    
+    res.status(200).json({
+      id: order.id, 
+      amount: options.amount, 
+      currency: options.currency,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+const verifyPayment = async (req, res, next) => {
+  try {
+   
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
+    const { addressId, paymentMethod } = req.body;
+    console.log(addressId,paymentMethod);
+    const userId = req.session.user._id;
+     
+    
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({ success: false, error: "Invalid payment signature" });
+    }
+
+    const userData = await User.findById(userId);
+
+    const cart = await Cart.findOne({ userId });
+
+    const cartItems = cart.items.map((item) => ({
+      product: item.productId,
+      quantity: item.quantity,
+      price: item.totalPrice,
+    }));
+
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
+    let finalAmount=0;
+    if(totalPrice<15000){
+    finalAmount = totalPrice + 500;
+    }else{
+      finalAmount = totalPrice 
+    }
+
+    
+
+    const invoiceDate = new Date();
+    const status = "Processing";
+
+    const orderSchema = new Order({
+      userId: userId,
+      orderedItems: cartItems,
+      totalPrice: totalPrice,
+      finalAmount: finalAmount,
+      address: addressId,
+      invoiceDate: invoiceDate,
+      status: status,
+      paymentMethod: paymentMethod,
+    });
+    await orderSchema.save();
+
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { orders: orderSchema._id } },
+      { new: true }
+    );
+
+    const orderedItems = cart.items.map((item) => ({
+      product: item.productId,
+      quantity: item.quantity,
+    }));
+    for (let i = 0; i < orderedItems.length; i++) {
+      await Product.findByIdAndUpdate(orderedItems[i].product, {
+        $inc: { quantity: -orderedItems[i].quantity },
+      });
+    }
+
+    await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+
+
+    res.status(200).json({ success: true, message: "Payment successful" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 module.exports = {
   loadConfirmation,
   placeOrder,
@@ -394,4 +532,6 @@ module.exports = {
   orderSearch,
   cancelReturnRequest,
   placeWalletOrder,
+  createOrder,
+  verifyPayment
 };

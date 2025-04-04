@@ -109,6 +109,11 @@ router.get('/wallet',userAuth,walletController.loadWallet)
 
 router.post("/wallet/createOrder",userAuth, walletController.createOrder);
 router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
-router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney)
+router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
+
+
+//rozorpay
+router.post("/order/createOrder",userAuth,orderController.createOrder)
+router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
 
 module.exports = router;

@@ -85,16 +85,15 @@ router.put('/cart',userAuth,cartController.changeQuantity)
 router.delete('/cart',userAuth,cartController.removeFromCart)
 
 //checkout
-
 router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
 router.get('/checkoutAddress',userAuth,checkoutController.addAddressCheckout)
 router.post('/checkoutAddress',userAuth,checkoutController.saveAddressCheckout)
-
+router.post('/applyCoupon',userAuth,checkoutController.applyCoupon);
+router.delete('/removeCoupon',userAuth,checkoutController.removeCoupon)
 
 //order 
 router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/placeWalletOrder',userAuth,orderController.placeWalletOrder)
-
 router.get('/orders',userAuth,orderController.orders);
 router.get('/orderDetails',userAuth,orderController.orderDetails)
 router.put('/cancelOrder',userAuth,orderController.cancelOrder)
@@ -102,18 +101,21 @@ router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth,uploads.array('images', 3), orderController.requestReturn);
 router.post('/orderSearch',userAuth,orderController.orderSearch)
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest);
-router.get('/confirmation',userAuth,orderController.loadConfirmation)
+router.get('/confirmation',userAuth,orderController.loadConfirmation),
+
+
+
 
 //wallet
 router.get('/wallet',userAuth,walletController.loadWallet)
-
 router.post("/wallet/createOrder",userAuth, walletController.createOrder);
 router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
 router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 
-
-//rozorpay
+//rozorpay online payment
 router.post("/order/createOrder",userAuth,orderController.createOrder)
 router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
+
+
 
 module.exports = router;

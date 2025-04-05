@@ -4,7 +4,7 @@ const Category = require("../../models/categorySchema");
 const Address = require("../../models/addressSchema");
 const Cart =require('../../models/cartSchema')
 const mongoose = require('mongoose')
-// const Coupon = require("../../models/couponSchema");
+const Coupon = require("../../models/couponSchema")
 const Wallet = require("../../models/walletSchema");
 
 const loadCheckoutPage = async (req, res) => {
@@ -27,7 +27,9 @@ const loadCheckoutPage = async (req, res) => {
               ],
             });
         
+        const coupons= await Coupon.find({isListed:true})
         
+
       const wallet = await Wallet.findOne({ userId: userId });
 
         const addressData = await Address.findOne({ userId: userId });
@@ -72,6 +74,7 @@ const loadCheckoutPage = async (req, res) => {
         res.render("checkout", {
             user,
             cartItems,
+            coupons,
             subtotal,
             grandTotal,
             userAddress: addressData,
@@ -139,109 +142,40 @@ const saveAddressCheckout = async (req, res) => {
     }
 };
 
-const applyCoupon = async (req, res) => {
+const applyCoupon = async (req, res,next) => {
   try {
-    const { couponCode, subtotal } = req.body;
-    const userId = req.session.user;
+    const userId= req.session.user._id;
+    const {couponCode, subtotal} = req.body;
+    
+    const coupon = await Coupon.findOne({name:couponCode})
 
-    const coupon = await Coupon.findOne({ name: couponCode, isList: true });
-
-    if (!coupon) {
-      return res.json({ success: false, message: "Invalid coupon code" });
-    }
-
-    if (new Date() > coupon.expireOn) {
-      return res.json({ success: false, message: "Coupon has expired" });
-    }
-
-    if (subtotal < coupon.minimumPrice) {
-      return res.json({
-        success: false,
-        message: `Minimum purchase amount should be ₹${coupon.minimumPrice}`,
-      });
-    }
-
-    if (coupon.userId.includes(userId)) {
-      return res.json({
-        success: false,
-        message: "You have already used this coupon",
-      });
-    }
-
-    res.json({ success: true, coupon: coupon });
+    if(!coupon){
+      return res.json({success:false, message:'Invalid coupon code'});
+     }
+     await Cart.findOneAndUpdate({userId:userId},{$set:{discount:coupon.offerPrice}},{new:true});
+     
+     res.status(200).json({success:true,message:'Coupon applied',coupon})
   } catch (error) {
-    console.error("Error applying coupon:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while applying the coupon",
-      });
+    next(error)
   }
 };
 
-const checkStock = async (req, res) => {
+const removeCoupon = async (req,res,next) => {
   try {
-    const userId = req.session.user;
-    const user = await User.findById(userId).populate({
-      path: "cart.productId",
-      model: "Product",
-    });
+    const userId= req.session.user._id;
+    await Cart.findOneAndUpdate({userId:userId},{$set:{discount:0}},{new:true});
+    res.status(200).json({success:true,message:'Coupon applied'})
 
-    if (!user || !user.cart.length) {
-      return res.json({
-        success: false,
-        message: "Cart is empty",
-      });
-    }
-
-    const stockChanges = user.cart.map((item) => {
-      const product = item.productId;
-      const requestedQty = item.quantity;
-      const availableQty = product.quantity;
-
-      return {
-        productId: product._id,
-        stockChanged: requestedQty > availableQty,
-        availableQty: availableQty,
-        requestedQty: requestedQty,
-      };
-    });
-
-    // Update cart quantities if needed
-    for (const item of stockChanges) {
-      if (item.stockChanged) {
-        await User.updateOne(
-          {
-            _id: userId,
-            "cart.productId": item.productId,
-          },
-          {
-            $set: {
-              "cart.$.quantity": item.availableQty,
-            },
-          }
-        );
-      }
-    }
-
-    res.json({
-      success: true,
-      items: stockChanges,
-    });
   } catch (error) {
-    console.error("Error checking stock:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error checking stock availability",
-    });
+    next(error)
   }
-};
+  
+}
 
 module.exports = {
   loadCheckoutPage,
   addAddressCheckout,
   saveAddressCheckout,
   applyCoupon,
-  checkStock,
+  removeCoupon,
 };

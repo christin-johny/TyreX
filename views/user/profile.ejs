@@ -41,6 +41,14 @@
                                         <label for="phone" class="form-label">Phone Number</label>
                                         <input type="tel" class="form-control" id="phone" value="<%=user.phone%>" placeholder="Enter phone number" readonly>
                                     </div>
+                                    <div class="col-md-6 mb-3 mt-2">
+                                        <%if(user.referralCode){%>
+                                            <label for="phone" class="form-label">Referral Code</label>
+                                        <h5 class="text-success">
+                                            <%=user.referralCode%>
+                                        </h5>
+                                        <%}%>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-end mt-3">

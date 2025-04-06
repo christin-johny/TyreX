@@ -5,6 +5,7 @@ const Category = require("../../models/categorySchema");
 const Size = require("../../models/size");
 const Brand = require("../../models/brandSchema");
 const Banner = require("../../models/bannerSchema");
+const Wallet = require("../../models/walletSchema");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 
@@ -39,7 +40,6 @@ const loadHome = async (req, res) => {
       startDate: { $lte: today },
       endDate: { $gte: today },
     });
- 
 
     productData = productData.sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -86,7 +86,6 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (email.trim() === "" || password.trim() === "") {
-      
       req.flash("error", "email and password are required");
       return res.redirect("/login");
     }
@@ -94,7 +93,6 @@ const login = async (req, res) => {
     const findUser = await User.findOne({ email: email, isAdmin: false });
 
     if (!findUser) {
-    
       req.flash("error", "User not found");
       return res.redirect("/login");
     }
@@ -179,19 +177,29 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
   try {
-    const { name, phone, email, password, cpassword } = req.body;
+    const { name, phone, email, password, cpassword, referral } = req.body;
     const findUser = await User.findOne({ email });
     if (findUser) {
       req.flash("error", "User with this email already exists");
       return res.redirect("/signup");
     }
+    if (referral && referral.trim()) {
+      const referralCode = referral.toUpperCase();
+      const referredUser = await User.findOne({ referralCode: referralCode });
+      if (!referredUser) {
+        req.flash("error", "Not a Valid Refferal Code");
+        return res.redirect("/signup");
+      }
+    }
+
     const otp = generateOtp();
     const emailSent = await sendVerificationEmail(email, otp);
     if (!emailSent) {
       return res.json("email-error");
     }
+
     req.session.userOtp = otp;
-    req.session.userData = { name, phone, email, password };
+    req.session.userData = { name, phone, email, password, referral };
     res.render("verifyOtp");
     console.log("OTP Sent", otp);
   } catch (error) {
@@ -201,6 +209,18 @@ const signup = async (req, res) => {
   }
 };
 
+function generateReferralCode(input) {
+  if (!input || typeof input !== "string") return null;
+
+  const base = input.substring(0, 4).toUpperCase();
+
+  const randomNumber = Math.floor(Math.random() * 100)
+    .toString()
+    .padStart(2, "0");
+
+  return `${base}${randomNumber}`;
+}
+
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -208,14 +228,46 @@ const verifyOtp = async (req, res) => {
       const user = req.session.userData;
       const passwordHash = await bcrypt.hash(user.password, 10);
 
+      let referral = req.session.userData.referral;
+      referral = referral.toUpperCase();
+      let referredUser;
+      if (referral && referral.trim()) {
+        referredUser = await User.findOne({ referralCode: referral });
+
+        let wallet = await Wallet.findOne({ userId: referredUser._id });
+        if (!wallet) {
+          wallet = new Wallet({
+            userId: referredUser._id,
+            balance: 0,
+            transactions: [],
+          });
+        }
+
+        wallet.balance += 500;
+
+        wallet.transactions.push({
+          amount: 500,
+          type: "credit",
+          description: "Referral Reward",
+        });
+
+        await wallet.save();
+      }
+
+      const referralCode = generateReferralCode(user.name);
+
       const saveUserData = new User({
         name: user.name,
         email: user.email,
         phone: user.phone,
         password: passwordHash,
         googleId: user.googleId || undefined,
+        referralCode,
+        referredBy: referredUser?.name,
       });
+
       await saveUserData.save();
+
       req.session.user = saveUserData;
       res.json({ success: true, redirectUrl: "/home" });
     } else {
@@ -569,7 +621,7 @@ const clear = async (req, res) => {
 const sort = async (req, res) => {
   try {
     const sort = req.query.sort;
-  
+
     const user = req.session.user;
 
     const categories = await Category.find({ isListed: true });
@@ -665,7 +717,6 @@ const details = async (req, res) => {
     const totalOffer = categoryOffer + productOffer;
 
     const catId = product.categoryId._id;
-
 
     let productData = await Product.find({
       isBlocked: false,

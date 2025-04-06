@@ -270,7 +270,8 @@
                   value="online payment"
                   class="mr-2"
                 />
-                <img src="" alt="Razorpay" style="height: 30px" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" style="height: 24px; background-color: white; padding: 4px; border-radius: 4px;">
+
 
                 <span class="ml-2">Online Payment</span>
               </label>
@@ -447,9 +448,10 @@ document.getElementById("applyCouponBtn").addEventListener("click", function () 
     }
 
     setTimeout(() => {
-        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-        document.body.classList.remove("modal-open");
-    }, 200);
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = "";
+}, 200);
 });
 
 

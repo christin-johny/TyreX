@@ -39,6 +39,14 @@ const userSchema = new Schema({
     type: String, 
     
     },
+referralCode: {
+  type: String,
+  unique: true
+},
+referredBy: {
+  type: String,
+  default: null
+},
 
   //relations
 

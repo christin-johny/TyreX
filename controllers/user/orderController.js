@@ -103,7 +103,7 @@ const placeWalletOrder = async (req, res, next) => {
 
     const addressData = await Address.findOne(
       { userId: userId, "address._id": addressId },
-      { "address.$": 1 } // Project only the matching address in the array
+      { "address.$": 1 } 
     ).lean();
     
     if (!addressData || !addressData.address || addressData.address.length === 0) {
@@ -149,13 +149,7 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
         .json({ success: false, message: "Wallet not Found" });
     }
 
-    wallet.balance -= parseInt(finalAmount);
-    wallet.transactions.push({
-      amount:finalAmount,
-      type: "debit",
-      description: "Deducted for purchase",
-    });
-    await wallet.save();
+    
 
     const orderSchema = new Order({
       userId: userId,
@@ -168,7 +162,20 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
       paymentMethod: paymentMethod,
       discount:cart.discount
     });
-    await orderSchema.save();
+   const savedOrder= await orderSchema.save();
+  
+  
+  
+
+    wallet.balance -= parseInt(finalAmount);
+    wallet.transactions.push({
+      amount:finalAmount,
+      type: "debit",
+      description: "Deducted for purchase",
+      orderId:savedOrder._id,
+    });
+    await wallet.save();
+
 
     if(couponCode){
       await Coupon.findOneAndUpdate(
@@ -288,6 +295,7 @@ const cancelOrder = async (req, res) => {
       amount:order.finalAmount,
       type: "credit",
       description: "Order cancellation Refund",
+      orderId:order._id,
     });
     await wallet.save();
 

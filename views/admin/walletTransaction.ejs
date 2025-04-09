@@ -1,4 +1,4 @@
-
+<%- include("../partials/admin/sidebar") %>
 
 <div class="container mt-5">
   <div class="card shadow-lg">
@@ -10,31 +10,32 @@
       <!-- User Details -->
       <h5 class="mb-3">User Information</h5>
       <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Name:</strong> John Doe</li>
-        <li class="list-group-item"><strong>Email:</strong> johndoe@example.com</li>
-        <li class="list-group-item"><strong>Phone:</strong> +91-9876543210</li>
+        <li class="list-group-item"><strong>Name:</strong> <%=wallet.userId.name%></li>
+        <li class="list-group-item"><strong>Email:</strong> <%=wallet.userId.email%></li>
+        <li class="list-group-item"><strong>Phone:</strong> <%=wallet.userId.phone ? wallet.userId.phone : "NA"%></li>
       </ul>
 
       <!-- Transaction Info -->
       <h5 class="mb-3">Transaction Information</h5>
       <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Transaction ID:</strong> TXN123456789</li>
-        <li class="list-group-item"><strong>Date:</strong> 2025-04-08 14:22:11</li>
+        <li class="list-group-item"><strong>Transaction ID:</strong> <%=transaction.transactionId%></li>
+        <li class="list-group-item"><strong>Date:</strong> <%= new Date(transaction.date).toLocaleString("en-IN", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) %>
+        </li>
         <li class="list-group-item">
           <strong>Type:</strong>
-          <span class="badge bg-success text-dark">Credit</span>
+          <span class="badge <%= transaction.type === 'credit' ? 'bg-success text-dark' : 'bg-danger text-white' %>">
+            <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+          </span>
         </li>
-        <li class="list-group-item"><strong>Amount:</strong> ₹1,250.00</li>
+        <li class="list-group-item"><strong>Amount:</strong> ₹<%=transaction.amount%></li>
+        <li class="list-group-item"><strong>Transaction Source:</strong> <%=transaction.description%></li>
       </ul>
 
-      <!-- Transaction Source -->
-      <h5 class="mb-3">Transaction Source</h5>
-      <div class="mb-3">
-        <p>This transaction is a result of a <strong>refund</strong> from an order.</p>
-        <a href="/admin/order/ORDER123456" class="btn btn-warning">
+      <%if(transaction.orderId){%>
+        <a href="/admin/adminOrders/<%= transaction.orderId %>" class="btn btn-warning">
           View Related Order
         </a>
-      </div>
+        <%}%>
 
       <a href="/admin/wallet" class="btn btn-secondary mt-3">Back to Wallet</a>
 

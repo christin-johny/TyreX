@@ -98,7 +98,7 @@ router.get('/salesReport',salesController.loadSalesReport);
 
 //wallet management
 router.get('/wallet',walletController.loadWallet);
-router.get('/walletTransaction',walletController.loadTransaction)
+router.get('/walletTransaction/:id',walletController.loadTransaction)
 
 
 

@@ -169,7 +169,7 @@
                     <% if (order.status === 'delivered' || order.status === 'returned') { %>
                         <div class="card">
                             <div class="card-header">
-                                <p class="mb-0"><strong>Delivered On:</strong> <%= new Date(order.deliveredOn).toLocaleDateString() %></p>
+                                <p class="mb-0"><strong>Delivered On:</strong> <%= new Date(order.deliveredAt).toLocaleDateString() %></p>
 
                             </div>
 

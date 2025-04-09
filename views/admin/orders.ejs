@@ -110,6 +110,16 @@
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
         }
+       
+    .status-badge {
+        font-weight: 700 !important;
+        font-size: 0.95rem;
+        letter-spacing: 0.4px;
+    }
+    .text-true-black {
+        color: #000000 !important;
+    }
+
     </style>
     
     <div class="card mb-4">
@@ -142,50 +152,61 @@
                                 </td>
                                 <td>₹<%= Math.round(order.finalAmount) %></td>
                                 <td>
-                                    <div>
-                                        <span class=" text-white  status-badge d-inline-block px-2 py-1 rounded <%= 
-                                            order.status === 'delivered' ? 'bg-success text-white' :
-                                            order.status === 'cancelled' ? 'bg-danger text-white' :
-                                            order.status === 'shipped' ? 'bg-info text-white' :
-                                            order.status === 'return requested' ? 'bg-warning text-dark' :
-                                            order.status === 'returning' ? 'bg-info text-white' :
-                                            order.status === 'returned' ? 'bg-secondary text-white' :
-                                            'bg-warning text-dark'
-                                        %>">
-                                            <%= order.status.toUpperCase() %>
-                                        </span>
-                                    </div>
+
+<div>
+    <span class="status-badge d-inline-block px-3 py-1 rounded text-uppercase 
+        <%= order.status === 'delivered' ? 'bg-success text-white' :
+             order.status === 'cancelled' ? 'bg-danger text-white' :
+             order.status === 'shipped' ? 'bg-info text-true-black' :
+             order.status === 'return requested' ? 'bg-warning text-true-black' :
+             order.status === 'returning' ? 'bg-info text-true-black' :
+             order.status === 'returned' ? 'bg-secondary text-white' :
+             'bg-warning text-true-black' %>">
+        
+        <%= order.status %>
+    </span>
+</div>
+
+
                                 </td>
-                                <td class="text-center">
-                                    <a href="/admin/adminOrders/<%= order._id %>" class="btn btn-primary btn-sm">
-                                        View Details
+                                <td class="text-center p-3">
+                                    <!-- View Details Button -->
+                                    <a href="/admin/adminOrders/<%= order._id %>" class="btn btn-primary btn-sm" style="display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px;">
+                                        <i class="fas fa-eye" style="margin-right: 8px; color: white;"></i>
+                                        <span style="color: white;">View Details</span>
                                     </a>
                                     
+                                    <!-- Return Request Controls -->
                                     <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
-                                        <div class="btn-group mt-2">
+                                        <div style="display: flex; flex-direction: column; width: 100%; gap: 8px; margin-top: 10px;">
                                             <button onclick="handleReturn('approved', '<%= order._id %>')" 
-                                                    class="btn btn-success btn-sm">
-                                                Approve Return
+                                                    class="btn btn-success btn-sm" style="display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-check-circle" style="margin-right: 8px; color: white;"></i>
+                                                <span style="color: white;">Approve Return</span>
                                             </button>
                                             <button onclick="handleReturn('rejected', '<%= order._id %>')" 
-                                                    class="btn btn-danger btn-sm">
-                                                Reject
+                                                    class="btn btn-danger btn-sm" style="display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-times-circle" style="margin-right: 8px; color: white;"></i>
+                                                <span style="color: white;">Reject</span>
                                             </button>
                                         </div>
                                     <% } else if (order.requestStatus === 'approved' && order.status != 'returned') { %>
                                         <button onclick="updateReturnStatus('<%= order._id %>')" 
-                                                class="btn btn-info btn-sm mt-2">
-                                            Update Return Status
+                                                class="btn btn-info btn-sm" style="display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 10px;">
+                                            <i class="fas fa-truck-loading" style="margin-right: 8px; color: white;"></i>
+                                            <span style="color: white;">Update Return Status</span>
                                         </button>
                                     <% } else if (!['cancelled', 'delivered', 'returned', 'return requested', 'returning'].includes(order.status)) { %>
-                                        <div class="mt-2">
+                                        <div style="display: flex; flex-direction: column; width: 100%; gap: 8px; margin-top: 10px;">
                                             <button onclick="updateStatus('<%= order._id %>')" 
-                                                    class="btn btn-info btn-sm">
-                                                Update Status
+                                                    class="btn btn-info btn-sm" style="display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-sync-alt" style="margin-right: 8px; color: white;"></i>
+                                                <span style="color: white;">Update Status</span>
                                             </button>
                                             <button onclick="cancelOrder('<%= order._id %>')" 
-                                                    class="btn btn-danger btn-sm">
-                                                Cancel
+                                                    class="btn btn-danger btn-sm" style="display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-ban" style="margin-right: 8px; color: white;"></i>
+                                                <span style="color: white;">Cancel</span>
                                             </button>
                                         </div>
                                     <% } %>

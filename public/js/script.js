@@ -36,20 +36,25 @@ const signForm = document.getElementById("signform");
   const error5 = document.getElementById("error5");
 
   function nameValidateChecking(e) {
-    const nameVal = nameId.value;
-    const namePattern = /^[A-Za-z\s]+$/;
-
-    if (nameVal.trim() === "") {
+    const nameVal = nameId.value.trim();
+    const namePattern = /^[A-Za-z\s]+$/; // Only letters and spaces
+    const letterCount = (nameVal.match(/[A-Za-z]/g) || []).length;
+  
+    if (nameVal === "") {
       error1.style.display = "block";
       error1.innerHTML = "Please enter a valid name";
     } else if (!namePattern.test(nameVal)) {
       error1.style.display = "block";
       error1.innerHTML = "Name can only contain alphabets and spaces";
+    } else if (letterCount < 3) {
+      error1.style.display = "block";
+      error1.innerHTML = "Please enter a valid name ";
     } else {
       error1.style.display = "none";
       error1.innerHTML = "";
     }
   }
+  
 
 
 

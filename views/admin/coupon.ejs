@@ -9,9 +9,18 @@
   }
 
   .error-message {
-    color: red;
-    margin-top: 5px;
-  }
+  color: red;
+  margin-top: 5px;
+  font-size: 0.875rem;
+  display: block;
+}
+.editError-message{
+  color: red;
+  margin-top: 5px;
+  font-size: 0.875rem;
+  display: block;
+}
+
 
   .form-label {
     margin-bottom: 8px;
@@ -127,7 +136,7 @@
               aria-labelledby="editCouponLabel"
               aria-hidden="true"
             >
-              <div class="modal-dialog">
+              <div class="modal-dialog " >
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title">Edit Coupon</h5>
@@ -151,6 +160,9 @@
                           name="name"
                           value="<%= coupon.name%>"
                         />
+                        <div id="couponNameError" class="editError-message"></div>
+
+
                       </div>
                       <div class="mb-3">
                         <label for="couponCreateOn" class="form-label"
@@ -163,6 +175,8 @@
                           name="createdOn"
                           value="<%= new Date(coupon.createdOn).toLocaleDateString('en-CA') %>"
                         />
+                        <div id="startDateError" class="editError-message"></div>
+
                       </div>
 
                       <div class="mb-3">
@@ -176,6 +190,8 @@
                           name="expireOn"
                           value="<%= new Date(coupon.expireOn).toLocaleDateString('en-CA') %>"
                         />
+                        <div id="expireDateError" class="editError-message"></div>
+
                       </div>
 
                       <div class="mb-3">
@@ -189,6 +205,8 @@
                           name="offerPrice"
                           value="<%= coupon.offerPrice%>"
                         />
+                        <div id="offerPriceError" class="editError-message"></div>
+
                       </div>
                       <div class="mb-3">
                         <label for="MinimumPrice" class="form-label"
@@ -201,6 +219,7 @@
                           name="minimumPrice"
                           value="<%= coupon.minimumPrice%>"
                         />
+                        <div id="minimumPriceError" class="editError-message"></div>
                       </div>
 
                       <button type="submit" class="btn btn-primary">
@@ -217,6 +236,7 @@
       </div>
     </div>
   </div>
+
 </section>
 
 <!-- Add Coupon Modal -->
@@ -313,133 +333,248 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector("form").addEventListener("submit", function (event) {
-      if (!validateForm()) {
-        event.preventDefault(); // Prevent form submission if validation fails
-      }
-    });
-  });
+  // Set default start date when page loads
+  function setDefaultStartDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const day = today.getDate().toString().padStart(2, "0");
+    document.getElementById("startingDate").value = `${year}-${month}-${day}`;
+    document.getElementById("startingDate").min = `${year}-${month}-${day}`;
+  }
 
-  function validateForm() {
+  // Validate add coupon form
+  function validateAddCouponForm() {
     // Clear previous errors
-    document
-      .querySelectorAll(".error-message")
-      .forEach((element) => (element.innerHTML = ""));
+    document.querySelectorAll("#addCouponForm .error-message").forEach(element => {
+      element.textContent = "";
+    });
 
-    // Get values
-    const sDate = document.getElementsByName("startDate")[0].value;
-    const eDate = document.getElementsByName("endDate")[0].value;
-    const sDateObj = new Date(sDate);
-    const eDateObj = new Date(eDate);
-    const todayDateObj = new Date();
-    todayDateObj.setHours(0, 0, 0, 0);
+    // Get form elements
+    const form = document.getElementById("addCouponForm");
+    const couponName = form.elements["couponName"].value.trim();
+    const startDate = form.elements["startDate"].value;
+    const endDate = form.elements["endDate"].value;
+    const offerPrice = form.elements["offerPrice"].value;
+    const minimumPrice = form.elements["minimumPrice"].value;
 
     let isValid = true;
 
-    // Date validation
-    if (sDateObj > eDateObj) {
-      document.getElementById("error-end-date").innerHTML =
-        "End date should be after the start date";
-      isValid = false;
-    }
-
-    if (sDateObj < todayDateObj) {
-      document.getElementById("error-start-date").innerHTML =
-        "Start date should be today or later";
-      isValid = false;
-    }
-
     // Name validation
-    let name = document.getElementsByName("couponName")[0].value.trim();
-    const nameRegex = /^[A-Za-z0-9 ]{1,50}$/;
+    if (!couponName) {
+      document.getElementById("error-coupon-name").textContent = "Coupon name is required";
+      isValid = false;
+    } else if (!/^[A-Za-z0-9 ]{3,50}$/.test(couponName)) {
+      document.getElementById("error-coupon-name").textContent = "Coupon Name should be alphanumeric (3-50 characters)";
+      isValid = false;
+    }
 
-    if (!nameRegex.test(name)) {
-      document.getElementById("error-coupon-name").innerHTML =
-        "Coupon Name should be alphanumeric (1-50 characters)";
+    // Date validation
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    if (!startDate) {
+      document.getElementById("error-start-date").textContent = "Start date is required";
+      isValid = false;
+    } else if (startDateObj < today) {
+      document.getElementById("error-start-date").textContent = "Start date should be today or later";
+      isValid = false;
+    }
+
+    if (!endDate) {
+      document.getElementById("error-end-date").textContent = "End date is required";
+      isValid = false;
+    } else if (endDateObj <= startDateObj) {
+      document.getElementById("error-end-date").textContent = "End date should be after start date";
       isValid = false;
     }
 
     // Price validation
-    const offerPriceInput = document.getElementsByName("offerPrice")[0];
-    const minimumPriceInput = document.getElementsByName("minimumPrice")[0];
+    const offerPriceNum = parseFloat(offerPrice);
+    const minimumPriceNum = parseFloat(minimumPrice);
 
-    const offerPrice = parseFloat(offerPriceInput.value);
-    const minimumPrice = parseFloat(minimumPriceInput.value);
-
-    if (isNaN(offerPrice) || offerPrice <= 0) {
-      document.getElementById("error-offer-price").innerHTML =
-        "Please enter a valid positive offer price";
+    if (!offerPrice || isNaN(offerPriceNum)) {
+      document.getElementById("error-offer-price").textContent = "Valid offer price is required";
+      isValid = false;
+    } else if (offerPriceNum <= 0) {
+      document.getElementById("error-offer-price").textContent = "Offer price must be positive";
       isValid = false;
     }
 
-    if (isNaN(minimumPrice) || minimumPrice <= 0) {
-      document.getElementById("error-minimum-price").innerHTML =
-        "Please enter a valid positive minimum price";
+    if (!minimumPrice || isNaN(minimumPriceNum)) {
+      document.getElementById("error-minimum-price").textContent = "Valid minimum price is required";
+      isValid = false;
+    } else if (minimumPriceNum <= 0) {
+      document.getElementById("error-minimum-price").textContent = "Minimum price must be positive";
       isValid = false;
     }
 
-    if (
-      !isNaN(offerPrice) &&
-      !isNaN(minimumPrice) &&
-      offerPrice >= minimumPrice
-    ) {
-      document.getElementById("error-offer-price").innerHTML =
-        "Offer Price must be less than Minimum Price";
+    if (isValid && offerPriceNum >= minimumPriceNum) {
+      document.getElementById("error-offer-price").textContent = "Offer price must be less than minimum price";
       isValid = false;
     }
 
     return isValid;
   }
 
-  document.getElementById("addCouponForm").addEventListener("submit", function (event) {
-            event.preventDefault(); 
+  // Add coupon form submission
+  document.getElementById("addCouponForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    if (validateAddCouponForm()) {
+      const formData = new FormData(this);
+      fetch("/admin/coupon", {
+        method: "POST",
+        body: new URLSearchParams(formData),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({
+            title: "Success!",
+            text: "Coupon added successfully!",
+            icon: "success",
+            confirmButtonText: "Okay",
+            timer:1500,
+        timerProgressBar:true
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: data.message,
+            icon: "error",
+            confirmButtonText: "Ok",
+          timer:2000,
+        timerProgressBar:true})
+        }
+      })
+      .catch(error => {
+        console.error("Error adding coupon:", error);
+        document.getElementById("err-msg").textContent = "Error: Could not reach the server.";
+      });
+    }
+  });
 
-            const formData = new FormData(this);
-            fetch("/admin/coupon", {
-                method: "POST",
-                body: new URLSearchParams(formData), 
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-            Swal.fire({
-              title: "Success!",
-              text: "Coupon added successfully!",
-              icon: "success",
-              confirmButtonText: "Okay",
-            }).then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire({
-              title: "Error",
-              text: data.message,
-              icon: "error",
-              confirmButtonText: "Okay",
-            });
-          }
-                })
-                .catch(error => console.error("Error adding coupon:", error));
-        });
+  // Edit coupon form validation
+  function validateEditCouponForm(form) {
+
+    document.querySelectorAll('.editError-message').forEach(element => {
+        element.textContent = "";
+    });
 
 
+    // Get form values
+    const couponName = form.elements["name"].value.trim();
+    const createdOn = form.elements["createdOn"].value;
+    const expireOn = form.elements["expireOn"].value;
+    const offerPrice = form.elements["offerPrice"].value;
+    const minimumPrice = form.elements["minimumPrice"].value;
 
+    let isValid = true;
 
+    // Name validation
+    if (!couponName) {
+      const errorElement = document.getElementById('couponNameError');
+      if (errorElement) {
+        errorElement.textContent = "Coupon name is required";
+      }
+      isValid = false;
+    } else if (!/^[A-Za-z0-9 ]{3,50}$/.test(couponName)) {
+      const errorElement = document.getElementById('couponNameError');
+      if (errorElement) {
+        errorElement.textContent = "Coupon Name should be alphanumeric (3-50 characters)";
+      }
+      isValid = false;
+    }
 
+    // Date validation
+    const createdOnObj = new Date(createdOn);
+    const expireOnObj = new Date(expireOn);
+
+    if (!createdOn) {
+      const errorElement = document.getElementById('startDateError');
+      if (errorElement) {
+        errorElement.textContent = "Created date is required";
+      }
+      isValid = false;
+    }
+
+    if (!expireOn) {
+      const errorElement = document.getElementById('expireDateError');
+      if (errorElement) {
+        errorElement.textContent = "Expire date is required";
+      }
+      isValid = false;
+    } else if (expireOnObj <= createdOnObj) {
+      const errorElement = document.getElementById('expireDateError');
+      if (errorElement) {
+        errorElement.textContent = "Expire date should be after created date";
+      }
+      isValid = false;
+    }
+
+    // Price validation
+    const offerPriceNum = parseFloat(offerPrice);
+    const minimumPriceNum = parseFloat(minimumPrice);
+
+    if (!offerPrice || isNaN(offerPriceNum)) {
+      const errorElement = document.getElementById('offerPriceError');
+      if (errorElement) {
+        errorElement.textContent = "Valid offer price is required";
+      }
+      isValid = false;
+    } else if (offerPriceNum <= 0) {
+      const errorElement = document.getElementById('offerPriceError');
+      if (errorElement) {
+        errorElement.textContent = "Offer price must be positive";
+      }
+      isValid = false;
+    }
+
+    if (!minimumPrice || isNaN(minimumPriceNum)) {
+      const errorElement = document.getElementById('minimumPriceError');
+      if (errorElement) {
+        errorElement.textContent = "Valid minimum price is required";
+      }
+      isValid = false;
+    } else if (minimumPriceNum <= 0) {
+      const errorElement = document.getElementById('minimumPriceError');
+      if (errorElement) {
+        errorElement.textContent = "Minimum price must be positive";
+      }
+      isValid = false;
+    }
+
+    if (isValid && offerPriceNum >= minimumPriceNum) {
+      const errorElement = document.getElementById('offerPriceError');
+      if (errorElement) {
+        errorElement.textContent = "Offer price must be less than minimum price";
+      }
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  // Edit coupon form submission
   document.querySelectorAll(".edit-Coupon-form").forEach((form) => {
-    form.addEventListener("submit", function (event) {
+    form.addEventListener("submit", function(event) {
       event.preventDefault();
 
-      const couponId = this.getAttribute("data-id");
-      const formData = new FormData(this);
+      if (validateEditCouponForm(this)) {
+        const couponId = this.getAttribute("data-id");
+        const formData = new FormData(this);
 
-      fetch(`/admin/coupon?id=${couponId}`, {
-        method: "PUT",
-        body: new URLSearchParams(formData),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      })
+        fetch(`/admin/coupon?id=${couponId}`, {
+          method: "PUT",
+          body: new URLSearchParams(formData),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
@@ -464,9 +599,9 @@
           console.error("Error updating coupon:", error);
           alert("Error: Could not reach the server.");
         });
+      }
     });
   });
-
 
   function confirmDelete(couponId) {
     Swal.fire({
@@ -488,7 +623,7 @@
     $.ajax({
       url: `/admin/coupon?id=${couponId}`,
       method: "DELETE",
-      success: function () {
+      success: function() {
         Swal.fire({
           icon: "success",
           title: "Deleted!",
@@ -498,7 +633,7 @@
           window.location.reload();
         });
       },
-      error: function () {
+      error: function() {
         Swal.fire({
           icon: "error",
           title: "Error!",
@@ -508,14 +643,33 @@
     });
   }
 
-  function setDefaultStartDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, "0");
-    const day = today.getDate().toString().padStart(2, "0");
-    document.getElementById("startingDate").value = `${year}-${month}-${day}`;
-    document.getElementById("startingDate").min = `${year}-${month}-${day}`;
-  }
+  // Initialize default start date when page loads
+  document.addEventListener("DOMContentLoaded", function() {
+    setDefaultStartDate();
+    
+    // Add error message elements to edit forms if they don't exist
+    document.querySelectorAll(".edit-Coupon-form").forEach(form => {
+      // For each input field that needs validation, add an error message element
+      const fields = [
+        { id: "couponName", name: "name" },
+        { id: "startDate", name: "createdOn" },
+        { id: "couponExpireOn", name: "expireOn" },
+        { id: "offerPrice", name: "offerPrice" },
+        { id: "minimumPrice", name: "minimumPrice" }
+      ];
+      
+      fields.forEach(field => {
+        const input = form.querySelector(`[name="${field.name}"]`);
+        if (input && !input.nextElementSibling?.classList?.contains("error-message")) {
+          const errorElement = document.createElement("div");
+          errorElement.className = "error-message";
+          errorElement.style.color = "red";
+          errorElement.style.marginTop = "5px";
+          input.insertAdjacentElement("afterend", errorElement);
+        }
+      });
+    });
+  });
 </script>
 
-<%- include("../partials/admin/footer") %>
+<%- include("../partials/admin/footer") %>  

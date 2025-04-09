@@ -219,26 +219,26 @@
                                     <small class="text-muted">ORDER ID</small><br>
                                     #<%= order.orderId %>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <small class="text-muted">STATUS</small><br>
-                                    <span class="status-badge <%= 
-                                        order.status === 'delivered' ? 'bg-success' :
-                                        order.status === 'cancelled' ? 'bg-danger' :
-                                        order.status === 'shipped' ? 'bg-info' :
-                                        'bg-warning'
-                                    %>">
-                                        <%= order.status.toUpperCase() %>
-                                           
+                                    <span class="badge px-2 py-1 text-uppercase fw-semibold 
+                                        <%= order.status === 'delivered' ? 'bg-success text-white' :
+                                             order.status === 'cancelled' ? 'bg-danger text-white' :
+                                             order.status === 'shipped' ? 'bg-info text-dark' :
+                                             order.status === 'returned' ? 'bg-secondary text-white' :
+                                             'bg-warning text-dark' %>">
+                                        <%= order.status %>
                                     </span>
-                                    <%if(order.status === 'delivered'){%>
-                                        On
-                                        <%=new Date(order.deliveredAt).toLocaleDateString()%>
-                                    <%}%> 
-                                    <%if(order.status === 'returned'){%>
-                                        On
-                                        <%=new Date(order.updatedAt).toLocaleDateString()%>
-                                    <%}%>
+                                
+                                    <% if (order.status === 'delivered') { %>
+                                        <br><small class="text-muted">On <%= new Date(order.deliveredAt).toLocaleDateString() %></small>
+                                    <% } %>
+                                    
+                                    <% if (order.status === 'returned') { %>
+                                        <br><small class="text-muted">On <%= new Date(order.updatedAt).toLocaleDateString() %></small>
+                                    <% } %>
                                 </div>
+                                
                                 <div class="col-md-2">
                                     <small class="text-muted">PAYMENT METHOD</small><br>
                                     <% if (order.paymentMethod === 'cod') { %>
@@ -251,27 +251,32 @@
                                         UNKNOWN PAYMENT METHOD
                                     <% } %>
                                 </div>
-                                <div class="col-md-3 text-end d-flex">
+                                <div class="col-md-2 text-end d-flex flex-column gap-2">
                                     <a href="/orderDetails?orderId=<%= order.orderId %>" 
-                                       class="btn btn-outline-primary btn-sm mt-2" >View Details</a>
-                                    
+                                       class="btn btn-outline-primary btn-sm fw-semibold text-uppercase">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                
                                     <% if (order.status === 'delivered' && !order.returnReason && order.requestStatus !== "rejected") { %>
                                         <button onclick="initiateReturn('<%= order._id %>')" 
-                                                class="btn btn-warning btn-sm mt-2">
-                                            Request Return
+                                                class="btn btn-warning btn-sm fw-semibold text-uppercase text-dark">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Request Return
                                         </button>
+                                
                                     <% } else if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                         <button onclick="cancelReturn('<%= order._id %>')"
-                                                class="btn btn-danger btn-sm mt-2">
-                                            Cancel Return Request
+                                                class="btn btn-outline-danger btn-sm fw-semibold text-uppercase">
+                                            <i class="bi bi-x-circle"></i> Cancel Return Request
                                         </button>
+                                
                                     <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
                                         <button onclick="cancelOrder('<%= order._id %>')"
-                                                class="btn btn-outline-danger btn-sm mt-2">
-                                            Cancel Order
+                                                class="btn btn-outline-danger btn-sm fw-semibold text-uppercase">
+                                            <i class="bi bi-x-circle"></i> Cancel Order
                                         </button>
                                     <% } %>
                                 </div>
+                                
                             </div>
                         </div>
                         <%for(let i=0;i<order.orderedItems.length;i++){%>

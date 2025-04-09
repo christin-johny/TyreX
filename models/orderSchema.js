@@ -14,11 +14,23 @@ const orderSchema = new Schema({
         required: true,
   },
   orderedItems: [{
-      product: {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
+    product: {
+      _id: Schema.Types.ObjectId,
+      productName: String,
+      description: String,
+      categoryId: Schema.Types.ObjectId,
+      productNumber: String,
+      regularPrice: Number,
+      salePrice: Number,
+      productOffer: Number,
+      quantity: Number,
+      warranty: String,
+      isBlocked: Boolean,
+      productImage: [String],
+      status: String,
+      brandId: Schema.Types.ObjectId,
+      sizeId: Schema.Types.ObjectId,
+    },
       quantity: {
         type: Number,
         required: true,
@@ -40,11 +52,20 @@ const orderSchema = new Schema({
         type:Number,
         required:true
     },
-    address:{
-        type:Schema.Types.ObjectId,
-        ref:'Address',
-        required:true
-    },
+    address: {
+      addressType: { type: String, required: true },
+      name: { type: String, required: true },
+      apartment: { type: String, required: true },
+      building: { type: String, required: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      landmark: { type: String, required: true },
+      state: { type: String, required: true },
+      country: { type: String, required: true },
+      zip: { type: String, required: true },
+      phone: { type: String, required: true },
+      altPhone: { type: String, required: true },
+    },    
     invoiceDate:{
         type:Date
     },

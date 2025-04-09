@@ -102,21 +102,33 @@
               Download Sales Report
             </button>
           </div>
-        <form method="GET" action="/admin/salesReport" class="filter-form ">
-          <label for="range" class="form-label mb-0 me-0 fw-semibold text-primary" style="width: 150px; ">
-            Sort By:
-          </label>
-          <select 
-            name="range" 
-            id="range" 
-            class="form-select form-select-sm border-primary" 
-            onchange="this.form.submit()"
-          >
-            <option value="weekly" <%= range === 'weekly' ? 'selected' : '' %>>Weekly</option>
-            <option value="monthly" <%= range === 'monthly' ? 'selected' : '' %>>Monthly</option>
-            <option value="yearly" <%= range === 'yearly' ? 'selected' : '' %>>Yearly</option>
-          </select>
-        </form>
+          <form method="GET" action="/admin/salesReport" class="d-flex align-items-center bg-light p-2 rounded shadow-sm flex-wrap gap-2" id="filterForm">
+            <label for="range" class="form-label mb-0 me-2 fw-semibold text-primary">
+              Sort By:
+            </label>
+            <select 
+              name="range" 
+              id="range" 
+              class="form-select form-select-sm w-auto border-primary me-2" 
+              onchange="handleRangeChange()"
+            >
+              <option value="daily" <%= range === 'daily' ? 'selected' : '' %>>Daily</option>
+              <option value="weekly" <%= range === 'weekly' ? 'selected' : '' %>>Weekly</option>
+              <option value="monthly" <%= range === 'monthly' ? 'selected' : '' %>>Monthly</option>
+              <option value="yearly" <%= range === 'yearly' ? 'selected' : '' %>>Yearly</option>
+              <option value="custom" <%= range === 'custom' ? 'selected' : '' %>>Custom</option>
+            </select>
+          
+            <div id="customDateBlock" class="d-flex flex-column" style="display: none;">
+              <div class="d-flex flex-row gap-2">
+                <input type="date" name="from" id="fromDate" class="form-control form-control-sm" value="<%= from || '' %>">
+                <input type="date" name="to" id="toDate" class="form-control form-control-sm" value="<%= to || '' %>">
+                <button type="submit" class="btn btn-primary btn-sm" id="applyBtn">Apply</button>
+              </div>
+              <p id="dateError" class="text-danger mt-1 mb-0" style="display: none;"></p>
+            </div>
+          </form>
+          
       </div>
       
     <div id="salesReport" class="container p-4">
@@ -175,7 +187,7 @@
               <% orders.forEach(order => { %>
                 <tr>
                   <td class="order-id"><%= order.orderId %></td>
-                  <td><%= order.userId.name %></td>
+                  <td><%= order.user.name %></td>
                   <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
                   <td><%= order.paymentMethod.toUpperCase() %></td>
                   <td><%= order.status.toUpperCase() %></td>
@@ -183,6 +195,11 @@
                   <td>₹<%= order.finalAmount %></td>
                 </tr>
               <% }) %>
+              <tr class="table-dark fw-bold">
+                <td colspan="5" class="text-end">Grand Total</td>
+                <td>₹<%= totalDiscounts.toLocaleString() %></td>
+                <td>₹<%= totalSales.toLocaleString() %></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -210,7 +227,48 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-W7Ff1DhJ6+t4T9ZGH9YfMPG3p1pN+9KEe3KfG/m7sGn5i9cuG5XLwIob9BwvSldH" crossorigin="anonymous"></script>
+<script>
+  function handleRangeChange(autoLoad = false) {
+    const range = document.getElementById('range').value;
+    const from = document.getElementById('fromDate');
+    const to = document.getElementById('toDate');
+    const btn = document.getElementById('applyBtn');
+    const error = document.getElementById('dateError');
 
+    if (range === 'custom') {
+      from.style.display = 'block';
+      to.style.display = 'block';
+      btn.style.display = 'inline-block';
+      error.style.display = 'none';
+    } else {
+      from.style.display = 'none';
+      to.style.display = 'none';
+      btn.style.display = 'none';
+      error.style.display = 'none';
+      if (!autoLoad) {
+        document.getElementById('filterForm').submit();
+      }
+    }
+  }
+
+  document.getElementById('applyBtn').addEventListener('click', function (e) {
+    const from = document.getElementById('fromDate').value;
+    const to = document.getElementById('toDate').value;
+    const error = document.getElementById('dateError');
+
+    if (!from || !to) {
+      e.preventDefault();
+      error.textContent = 'Please select both From and To dates.';
+      error.style.display = 'block';
+    } else {
+      error.style.display = 'none';
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    handleRangeChange(true);
+  });
+</script>
 </body>
 
 </html>

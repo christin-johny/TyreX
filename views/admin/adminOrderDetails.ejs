@@ -55,6 +55,13 @@
         border-radius: 8px;
         padding: 20px;
     }
+
+    .badge-lg {
+        font-size: 0.95rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 0.375rem;
+     }
+                        
 </style>
 
 <div class="container-fluid px-4">
@@ -69,18 +76,18 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Order #<%= order.orderId %></h5>
-                        <span class="text-white badge bg-<%= 
-                            
-                            order.status === 'delivered' ? 'success' :
-                            order.status === 'cancelled' ? 'danger' :
-                            order.status === 'shipped' ? 'info' :
-                            order.status === 'return requested' ? 'warning' :
-                            order.status === 'returning' ? 'info' :
-                            order.status === 'returned' ? 'secondary' :
-                            'warning'
-                        %>">
-                            <%= order.status.toUpperCase() %>
+                                            
+                        <span class="badge badge-lg text-uppercase fw-semibold 
+                            <%= order.status === 'delivered' ? 'bg-success text-white' :
+                                 order.status === 'cancelled' ? 'bg-danger text-white' :
+                                 order.status === 'shipped' ? 'bg-info text-dark' :
+                                 order.status === 'return requested' ? 'bg-warning text-dark' :
+                                 order.status === 'returning' ? 'bg-info text-dark' :
+                                 order.status === 'returned' ? 'bg-secondary text-white' :
+                                 'bg-warning text-dark' %>">
+                            <%= order.status %>
                         </span>
+                        
                     </div>
                 </div>
                 <div class="card-body">
@@ -124,16 +131,6 @@
                                         </div>
                                     </div>
                                 <% } %>
-                                <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
-                                <div class="mt-4">
-                                    <button onclick="handleReturn('approved', '<%= order._id %>')" class="btn btn-success me-2">
-                                        Approve Return
-                                    </button>
-                                    <button onclick="handleReturn('rejected', '<%= order._id %>')" class="btn btn-danger">
-                                        Reject Return
-                                    </button>
-                                </div>
-                                <% }%>
                             </div>
                         </div>
                     <% } %>
@@ -225,28 +222,43 @@
                             <% if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
                                 <div class="mb-4">
                                     <h6>Return Request Actions</h6>
-                                    <button onclick="handleReturn('approved', '<%= order._id %>')" class="btn btn-success me-2">
-                                        Approve Return
+                                    <button onclick="handleReturn('approved', '<%= order._id %>')" 
+                                            class="btn me-2" 
+                                            style="background-color: #2ecc71; color: white; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: none; border-radius: 4px;">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Approve Return</span>
                                     </button>
-                                    <button onclick="handleReturn('rejected', '<%= order._id %>')" class="btn btn-danger">
-                                        Reject Return
+                                    <button onclick="handleReturn('rejected', '<%= order._id %>')" 
+                                            class="btn" 
+                                            style="background-color: #e74c3c; color: white; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: none; border-radius: 4px;">
+                                        <i class="fas fa-times-circle"></i>
+                                        <span>Reject Return</span>
                                     </button>
                                 </div>
                             <% } else if (order.requestStatus === 'approved' && order.status != 'returned') { %>
                                 <div class="mb-4">
                                     <h6>Update Return Status</h6>
-                                    <button onclick="updateReturnStatus('<%= order._id %>')" class="btn btn-primary">
-                                        Update Return Status
+                                    <button onclick="updateReturnStatus('<%= order._id %>')" 
+                                            class="btn" 
+                                            style="background-color: #1abc9c; color: white; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: none; border-radius: 4px;">
+                                        <i class="fas fa-sync-alt"></i>
+                                        <span>Update Return Status</span>
                                     </button>
                                 </div>
                             <% } else if (!['cancelled', 'returned', 'return requested', 'returning', 'delivered'].includes(order.status)) { %>
                                 <div class="mb-4">
                                     <h6>Order Status Actions</h6>
-                                    <button onclick="updateStatus('<%= order._id %>')" class="btn btn-primary me-2">
-                                        Update Status
+                                    <button onclick="updateStatus('<%= order._id %>')" 
+                                            class="btn me-2" 
+                                            style="background-color: #4169E1; color: white; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: none; border-radius: 4px;">
+                                        <i class="fas fa-sync-alt"></i>
+                                        <span>Update Status</span>
                                     </button>
-                                    <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">
-                                        Cancel Order
+                                    <button onclick="cancelOrder('<%= order._id %>')" 
+                                            class="btn" 
+                                            style="background-color: #e74c3c; color: white; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: none; border-radius: 4px;">
+                                        <i class="fas fa-ban"></i>
+                                        <span>Cancel Order</span>
                                     </button>
                                 </div>
                             <% } else if (order.requestStatus === 'rejected') { %>
@@ -307,13 +319,15 @@
                             </div>
                             <div class="mt-3">
                                 <span class="text-muted">Payment Method:</span>
-                                <span class="badge <%= 
-                                    order.paymentMethod === 'online' ? 'bg-success' :
-                                    order.paymentMethod === 'wallet' ? 'bg-info' :
-                                    'bg-warning'
-                                %>">
-                                    <%= order.paymentMethod.toUpperCase() %>
-                                </span>
+                                
+                                <span class="badge px-2 py-1 text-uppercase fw-semibold 
+    <%= order.paymentMethod === 'online' ? 'bg-success text-white' :
+         order.paymentMethod === 'wallet' ? 'bg-info text-dark' :
+         'bg-warning text-dark' %>">
+    <%= order.paymentMethod.toUpperCase() %>
+</span>
+
+                                
                             </div>
                         </div>
                     </div>

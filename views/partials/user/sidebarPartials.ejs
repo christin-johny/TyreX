@@ -1,80 +1,136 @@
 <!-- sidebar -->
-<aside id="sidebar"  >
+<aside id="sidebar" class="bg-light">
+    <!-- Toggle Button (Visible only on mobile) -->
+    <button class="navbar-toggler d-md-none w-100 py-2 border-0 bg-white rounded-0" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#sidebarContent"
+            aria-expanded="false" 
+            aria-label="Toggle sidebar">
+        <i class="fa fa-bars me-2"></i> Menu
+    </button>
 
+    <!-- Collapsible Content -->
+    <div class="collapse d-md-block" id="sidebarContent">
+        <!-- Profile Image -->
+        <div class="sidebar-profileImage text-center p-3">
+            <img src="uploads/reImage/<%= user.profileImage? user.profileImage : 'user.png' %>" alt="" class="profile-img">
+        </div>
+        
+        <!-- Username -->
+        <div class="sidebar-username text-center mb-3">
+            <h5 class="m-0">
+                <%=user.name%>
+            </h5>
+        </div>
 
-    <!-- sidebar Navigation -->
-     
-    <div class="sidebar-profileImage ">
-        <img src="uploads/reImage/<%= user.profileImage? user.profileImage : 'user.png' %>" alt="" class="profile-img">
-    </div>
-    <div class="sidebar-username mt-3">
-        <h5>
-            <%=user.name%>
-        </h5>
-    </div>
-    <ul class="sidebar-nav p-0">
+        <!-- Navigation -->
+        <ul class="sidebar-nav list-unstyled px-3">
+            <li class="sidebar-header small text-muted mb-2">
+                Orders
+            </li>
 
-        <li class="sidebar-header">
-            Orders
-        </li>
+            <li class="sidebar-item mb-1">
+                <a href="/profile" class="sidebar-link rounded p-2">
+                    <i class="fa-solid fa-house me-2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
 
-        <li class="sidebar-item">
-            <a href="/profile" class="sidebar-link">
-                <i class="fa-solid fa-house"></i>
-                <span> Dashboard </span>
+            <li class="sidebar-item mb-1">
+                <a href="/orders" class="sidebar-link rounded p-2">
+                    <i class="fa fa-shopping-cart me-2"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-item mb-1">
+                <a href="/wishlist" class="sidebar-link rounded p-2">
+                    <i class="fa fa-heart me-2"></i>
+                    <span>Wishlist</span>
+                </a>
+            </li>
+
+            <li class="sidebar-header small text-muted mt-3 mb-2">
+                Personal
+            </li>
+            
+            <li class="sidebar-item mb-1">
+                <a href="/wallet" class="sidebar-link rounded p-2">
+                    <i class="fa-solid fa-wallet me-2"></i>
+                    <span>Wallet</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item mb-1">
+                <a href="/address" class="sidebar-link rounded p-2">
+                    <i class="fa-solid fa-location-dot me-2"></i>
+                    <span>Address</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-item mb-1">
+                <a href="/profile" class="sidebar-link rounded p-2">
+                    <i class="fa fa-user me-2"></i>
+                    <span>My Profile</span>
+                </a>
+            </li>
+        </ul>
+
+        
+        <div class="sidebar-footer px-3 mb-3">
+            <a href="/logout" class="sidebar-link rounded p-2 d-block">
+                <i class="fa-solid fa-right-from-bracket me-2"></i>
+                <span>Logout</span>
             </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a href="/orders" class="sidebar-link">
-                <i class="fa fa-shopping-cart"></i>
-                <span> Orders</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="/wishlist" class="sidebar-link">
-                <i class="fa fa-heart"></i>
-                <span>Wishlist</span>
-            </a>
-        </li>
-
-        <li class="sidebar-header">
-            Personal
-        </li>
-        <li class="sidebar-item">
-            <a href="/wallet" class="sidebar-link">
-                <i class="fa-solid fa-wallet"></i>
-                <span>Wallet</span>
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a href="/address" class="sidebar-link">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Address</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="/profile" class="sidebar-link">
-                <i class="fa fa-user"></i>
-                <span>My Profile</span>
-            </a>
-        </li>
-
-    </ul>
-    <!-- Sidebar Navigation Ends -->
-
-    <div class="sidebar-footer">
-        <a href="" class="sidebar-link">
-            <i class="fa-solid fa-gear"></i>
-            <span>Setting</span>
-        </a>
-    </div>
-    <div class="sidebar-footer">
-        <a href="/logout" class="sidebar-link">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Logout</span>
-        </a>
+        </div>
     </div>
 </aside>
-<!-- Sidebar Ends -->
+
+<style>
+    /* Preserve original styling while making responsive */
+    #sidebar {
+        width: 280px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-link {
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .sidebar-link:hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+    
+    .sidebar-item.active .sidebar-link {
+        background-color: rgba(0,0,0,0.1);
+        font-weight: 500;
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 767.98px) {
+        #sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+        
+        .navbar-toggler {
+            background-color: #f8f9fa !important;
+        }
+    }
+</style>

@@ -10,21 +10,33 @@
       <div class="col-auto d-flex flex-wrap align-items-center gap-2">
         <a href="/admin/salesReport" class="btn btn-success" style="margin-right: 10px;">View Report</a>
   
-        <form method="GET" action="/admin/sales" class="d-flex align-items-center bg-light p-2 rounded shadow-sm">
+        <form method="GET" action="/admin/sales" class="d-flex align-items-center bg-light p-2 rounded shadow-sm flex-wrap gap-2" id="filterForm">
           <label for="range" class="form-label mb-0 me-2 fw-semibold text-primary">
             Sort By:
           </label>
           <select 
             name="range" 
             id="range" 
-            class="form-select form-select-sm w-auto border-primary" 
-            onchange="this.form.submit()"
+            class="form-select form-select-sm w-auto border-primary me-2" 
+            onchange="handleRangeChange()"
           >
+            <option value="daily" <%= range === 'daily' ? 'selected' : '' %>>Daily</option>
             <option value="weekly" <%= range === 'weekly' ? 'selected' : '' %>>Weekly</option>
             <option value="monthly" <%= range === 'monthly' ? 'selected' : '' %>>Monthly</option>
             <option value="yearly" <%= range === 'yearly' ? 'selected' : '' %>>Yearly</option>
+            <option value="custom" <%= range === 'custom' ? 'selected' : '' %>>Custom</option>
           </select>
+        
+          <div id="customDateBlock" class="d-flex flex-column" style="display: none;">
+            <div class="d-flex flex-row gap-2">
+              <input type="date" name="from" id="fromDate" class="form-control form-control-sm" value="<%= from || '' %>">
+              <input type="date" name="to" id="toDate" class="form-control form-control-sm" value="<%= to || '' %>">
+              <button type="submit" class="btn btn-primary btn-sm" id="applyBtn">Apply</button>
+            </div>
+            <p id="dateError" class="text-danger mt-1 mb-0" style="display: none;"></p>
+          </div>
         </form>
+
       </div>
     </div>
   </div>
@@ -247,6 +259,51 @@
       }
     });
   </script>
+<script>
+  function handleRangeChange(autoLoad = false) {
+    const range = document.getElementById('range').value;
+    const from = document.getElementById('fromDate');
+    const to = document.getElementById('toDate');
+    const btn = document.getElementById('applyBtn');
+    const error = document.getElementById('dateError');
+
+    if (range === 'custom') {
+      from.style.display = 'block';
+      to.style.display = 'block';
+      btn.style.display = 'inline-block';
+      error.style.display = 'none';
+    } else {
+      from.style.display = 'none';
+      to.style.display = 'none';
+      btn.style.display = 'none';
+      error.style.display = 'none';
+      if (!autoLoad) {
+        document.getElementById('filterForm').submit();
+      }
+    }
+  }
+
+  // Validate custom date before submitting
+  document.getElementById('applyBtn').addEventListener('click', function (e) {
+    const from = document.getElementById('fromDate').value;
+    const to = document.getElementById('toDate').value;
+    const error = document.getElementById('dateError');
+
+    if (!from || !to) {
+      e.preventDefault();
+      error.textContent = 'Please select both From and To dates.';
+      error.style.display = 'block';
+    } else {
+      error.style.display = 'none';
+    }
+  });
+
+  // Trigger UI setup on initial page load
+  window.addEventListener('DOMContentLoaded', () => {
+    handleRangeChange(true);
+  });
+</script>
+
   
 
 <%- include("../partials/admin/footer") %>

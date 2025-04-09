@@ -56,20 +56,9 @@ const viewOrderDetails = async (req, res) => {
     const id = req.params.id;
 
     const order = await Order.findById(id)
-      .populate("orderedItems.product")
-      .populate("userId")
       .lean();
-
+console.log(order)
     if (order) {
-      const userId = order.userId;
-      const addressDoc = await Address.findOne({ userId: userId }).lean();
-
-      const userAddress = addressDoc.address.find(
-        (addr) => addr._id.toString() === order.address.toString()
-      );
-
-      order.address = userAddress;
-
       res.render("adminOrderDetails", { order: order });
     } else {
       return res

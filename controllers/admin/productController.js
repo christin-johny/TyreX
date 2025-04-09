@@ -5,7 +5,6 @@ const Size = require("../../models/size");
 const User = require("../../models/userSchema");
 const fs = require("fs");
 const path = require("path");
-const sharp = require("sharp");
 const size = require("../../models/size");
 
 const loadAddProductPage = (req, res) => {
@@ -131,6 +130,7 @@ const loadAllproducts = async (req, res) => {
         totalPages: Math.ceil(count / limit),
         cat: category,
         brand: brand,
+        searchQuery:search
       });
     } else {
       res.render("pageerror");

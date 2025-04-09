@@ -1,144 +1,186 @@
 <%- include("../partials/user/profileHeader") %>
-          <!-- Nested Row within Card Body -->
-          <div class="row">
-            <div class="col-lg-6 d-none d-lg-block login-bg-color text-center">
-              <img src="/img/logo_white.svg" alt="" />
-              <h1 class="admin-login-h4">
-                <strong
-                  >New here<br />
-                  Create your Account</strong
-                >
-              </h1>
-            </div>
-            <div class="col-lg-6">
-              <div class="p-5">
-                <div class="text-center">
-                  <h1 class="h4 text-gray-900 mb-4">SignUp</h1>
-                </div>
-                <form class="user" action="/signup" method="post" id="signform">
-                    <% if (success_msg.length > 0) { %>
-                        <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
-                          <strong>✅</strong> <%= success_msg %>
-                        </div>
-                      <% } %>
-                      
-                      <% if (error_msg.length > 0) { %>
-                        <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
-                          <strong>❌</strong> <%= error_msg %>
-                        </div>
-                      <% } %>
-                  <div class="form-group">
-                    <input
-                      type="text"
-                      class="form-control form-control-user"
-                      id="name"
-                      name="name"
-                      placeholder="Full name"
-                    />
-                    <div id="error1" class="error-message"></div>
-                  </div>
-                  <div class="form-group">
-                    <input
-                      type="email"
-                      class="form-control form-control-user"
-                      id="email"
-                      name="email"
-                      placeholder="Email Address"
-                    />
-                    <div id="error2" class="error-message"></div>
-                  </div>
-                  <div class="form-group">
-                    <input
-                      type="text"
-                      class="form-control form-control-user"
-                      id="phone"
-                      name="phone"
-                      placeholder="Phone Number"
-                    />
-                    <div id="error3" class="error-message"></div>
-                  </div>
-                  <div class="form-group row">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
-                      <input
-                        type="password"
-                        class="form-control form-control-user"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                      />
-                      <div id="error4" class="error-message"></div>
-                    </div>
-                    <div class="col-sm-6">
-                      <input
-                        type="password"
-                        class="form-control form-control-user"
-                        id="cpassword"
-                        name="cpassword"
-                        placeholder="Repeat Password"
-                      />
-                      <div id="error5" class="error-message"></div>
-                    </div>
-                  </div>
-                  <!--refferal-->
-                  <div class="form-group">
-                    <input
-                      type="text"
-                      class="form-control form-control-user"
-                      id="referral"
-                      name="referral"
-                      placeholder="Referral Code (optioinal)"
-                    />
-                  </div>
+<style>
 
+  .input-group > .form-control:not(:last-child),
+  .input-group > .custom-select:not(:last-child) {
+    border-top-right-radius: 10rem;
+    border-bottom-right-radius: 10rem;
+  }
+  .input-group > .input-group-append:last-child > .input-group-text {
+    border-top-right-radius: 10rem;
+    border-bottom-right-radius: 10rem;
+  }
+  
+  .focus-group:focus-within,
+  .focus-group-single:focus-within {
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    border-radius: 10rem;
+    transition: all 0.3s;
+  }
+  .focus-group:focus-within .form-control,
+  .focus-group:focus-within .input-group-text,
+  .focus-group-single:focus-within .form-control {
+    border-color: #4e73df;
+    outline: none;
+  }
 
-                  <button type="submit" class="btn btn-primary btn-user btn-block">
-                    SignUp
-                </button>
-                  <hr />
-                  <a
-                    href="/auth/google"
-                    class="btn btn-google btn-user btn-block"
-                  >
-                    <i class="fab fa-google fa-fw"></i> Register with Google
-                  </a>
-                  
-                </form>
-                <hr />
-                <div class="text-center">
-                  <a class="small" href="/forgotPassword"
-                    >Forgot Password?</a
-                  >
-                </div>
-                <div class="text-center">
-                  <a class="small" href="/login"
-                    >Already have an account? Login!</a
-                  >
-                </div>
+  .focus-group-single {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+</style>
+<!-- Nested Row within Card Body -->
+<div class="row">
+  <div class="col-lg-6 d-none d-lg-block login-bg-color text-center">
+    <img src="/img/logo_white.svg" alt="" />
+    <h1 class="admin-login-h4">
+      <strong>New here<br />
+        Create your Account</strong>
+    </h1>
+  </div>
+  <div class="col-lg-6">
+    <div class="p-5">
+      <div class="text-center">
+        <h1 class="h4 text-gray-900 mb-4">SignUp</h1>
+      </div>
+      <form class="user" action="/signup" method="post" id="signform">
+        <% if (success_msg.length > 0) { %>
+          <div class="alert alert-success alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+            <strong>✅</strong> <%= success_msg %>
+          </div>
+        <% } %>
+        
+        <% if (error_msg.length > 0) { %>
+          <div class="alert alert-danger alert-dismissible fade show shadow rounded p-3 text-center" role="alert">
+            <strong>❌</strong> <%= error_msg %>
+          </div>
+        <% } %>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control form-control-user"
+            id="name"
+            name="name"
+            placeholder="Full name"
+          />
+          <div id="error1" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <input
+            type="email"
+            class="form-control form-control-user"
+            id="email"
+            name="email"
+            placeholder="Email Address"
+          />
+          <div id="error2" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control form-control-user"
+            id="phone"
+            name="phone"
+            placeholder="Phone Number"
+          />
+          <div id="error3" class="error-message"></div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-6 mb-3 mb-sm-0">
+            <div class="input-group focus-group">
+              <input
+                type="password"
+                class="form-control form-control-user"
+                id="password"
+                name="password"
+                placeholder="Password"
+                style="border-right: none;"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text bg-transparent" onclick="togglePassword('password', 'toggleIcon1')" style="cursor: pointer; border-left: none;">
+                  <i id="toggleIcon1" class="fas fa-eye"></i>
+                </span>
               </div>
             </div>
+            <div id="error4" class="error-message"></div>
+          </div>
+          <div class="col-sm-6 ms-0">
+            <div class="input-group focus-group">
+              <input
+                type="password"
+                class="form-control form-control-user"
+                id="cpassword"
+                name="cpassword"
+                placeholder="Repeat Password"
+                style="border-right: none;"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text bg-transparent" onclick="togglePassword('cpassword', 'toggleIcon2')" style="cursor: pointer; border-left: none;">
+                  <i id="toggleIcon2" class="fas fa-eye"></i>
+                </span>
+              </div>
+            </div>
+            <div id="error5" class="error-message"></div>
           </div>
         </div>
+        <!--refferal-->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control form-control-user"
+            id="referral"
+            name="referral"
+            placeholder="Referral Code (optional)"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-user btn-block">
+          SignUp
+        </button>
+        <hr />
+        <a
+          href="/auth/google"
+          class="btn btn-google btn-user btn-block"
+        >
+          <i class="fab fa-google fa-fw"></i> Register with Google
+        </a>
+        
+      </form>
+      <hr />
+      <div class="text-center">
+        <a class="small" href="/forgotPassword">Forgot Password?</a>
+      </div>
+      <div class="text-center">
+        <a class="small" href="/login">Already have an account? Login!</a>
       </div>
     </div>
+  </div>
+</div>
 
+<!-- Bootstrap core JavaScript-->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<!-- Core plugin JavaScript-->
+<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 
+<!-- Custom scripts for all pages-->
+<script src="/js/sb-admin-2.min.js"></script>
 
-    
-
-  
-    
-    <!-- Bootstrap core JavaScript-->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="/js/sb-admin-2.min.js"></script>
-    
-    <script src="/js/script.js"></script>
-    
-  </body>
-</html>
+<script src="/js/script.js"></script>
+<script>
+  function togglePassword(inputId, iconId) {
+    var passwordInput = document.getElementById(inputId);
+    var icon = document.getElementById(iconId);
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    }
+  }
+</script>

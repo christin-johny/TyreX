@@ -263,21 +263,45 @@
         Download Invoice
       </button>
     </div>
-    <script>
-      function downloadPDF() {
-        const element = document.getElementById("invoice");
-        const opt = {
-          margin: 0.5,
-          filename: "invoice.pdf",
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-        };
-
-        html2pdf().set(opt).from(element).save();
-      }
-    </script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+     function downloadPDF() {
+  const element = document.getElementById("invoice");
+  const opt = {
+    margin: 0.5,
+    filename: "invoice.pdf",
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      scrollY: 0,
+      allowTaint: true,
+      useCORS: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: "in", 
+      format: "a4",
+      orientation: "portrait" 
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'css', 'legacy'] 
+    }
+  };
+
+
+  element.style.overflow = "visible";
+  document.body.style.overflow = "visible";
+  
+  html2pdf()
+    .set(opt)
+    .from(element)
+    .save()
+    .then(() => {
+
+      element.style.overflow = "";
+      document.body.style.overflow = "";
+    });
+}
+    </script>
   </body>
 </html>

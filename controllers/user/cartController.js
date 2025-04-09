@@ -105,7 +105,9 @@ const loadCart = async (req, res) => {
             }]
         });
 
-       
+       if(cart.discount>0){
+        await Cart.findOneAndUpdate({userId},{$set:{discount:0}})
+       }
 
         
 

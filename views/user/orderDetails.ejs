@@ -191,15 +191,16 @@
                                         <p class="mb-1">Quantity: <%= order.orderedItems[i].quantity %></p>
                                         <p class="mb-1">Price: ₹<%= order.orderedItems[i].product.salePrice*order.orderedItems[i].quantity %></p>
                                         <p class="mb-0">Status: 
-                                            <span class="badge <%= 
-                                                order.status === 'delivered' ? 'bg-success' :
-                                                order.status === 'cancelled' ? 'bg-danger' :
-                                                order.status === 'shipped' ? 'bg-info' :
-                                                'bg-warning'
-                                            %>">
-                                                <%= order.status.toUpperCase() %>
+                                            <span class="badge px-2 py-1 text-uppercase fw-semibold 
+                                                <%= order.status === 'delivered' ? 'bg-success text-white' :
+                                                     order.status === 'cancelled' ? 'bg-danger text-white' :
+                                                     order.status === 'shipped' ? 'bg-info text-dark' :
+                                                     order.status === 'returned' ? 'bg-secondary text-white' :
+                                                     'bg-warning text-dark' %>">
+                                                <%= order.status %>
                                             </span>
                                         </p>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -240,22 +241,24 @@
                                 </div>
                                 <div class="mt-3">
                                     <span class="text-muted">Payment Method:</span>
-                                    <span class="badge <%= 
-                                        order.paymentMethod === 'online' ? 'bg-success' :
-                                        order.paymentMethod === 'wallet' ? 'bg-info' :
-                                        'bg-warning'
-                                    %>">
-                                    <% if (order.paymentMethod === 'cod') { %>
-                                        CASH ON DELIVERY
-                                    <% } else if (order.paymentMethod === 'online payment') { %>
-                                        ONLINE PAYMENT
-                                    <% } else if (order.paymentMethod === 'wallet') { %>
-                                        WALLET PAYMENT
-                                    <% } else { %>
-                                        UNKNOWN PAYMENT METHOD
-                                    <% } %>
+                                    <span class="badge px-2 py-1 text-uppercase fw-semibold 
+                                        <%= order.paymentMethod === 'online' || order.paymentMethod === 'online payment' ? 'bg-success text-white' :
+                                             order.paymentMethod === 'wallet' ? 'bg-info text-dark' :
+                                             order.paymentMethod === 'cod' ? 'bg-warning text-dark' :
+                                             'bg-secondary text-white' %>">
+                                        
+                                        <% if (order.paymentMethod === 'cod') { %>
+                                            CASH ON DELIVERY
+                                        <% } else if (order.paymentMethod === 'online' || order.paymentMethod === 'online payment') { %>
+                                            ONLINE PAYMENT
+                                        <% } else if (order.paymentMethod === 'wallet') { %>
+                                            WALLET PAYMENT
+                                        <% } else { %>
+                                            UNKNOWN PAYMENT METHOD
+                                        <% } %>
                                     </span>
                                 </div>
+                                
                             </div>
                         </div>
 
@@ -266,17 +269,22 @@
                         <!-- Order Actions -->
                         <div class="order-actions mt-4">
                             <% if (order.status === 'delivered' && !order.returnReason && order.requestStatus !== "rejected") { %>
+                                <!-- No action button here -->
                                 
                             <% } else if (order.status === 'return requested' && order.requestStatus === 'pending') { %>
-                                <button class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">
-                                    Cancel Return Request
+                                <button class="btn btn-outline-danger fw-semibold text-uppercase" 
+                                        onclick="cancelReturn('<%= order._id %>')">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel Return Request
                                 </button>
+                        
                             <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
-                                <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">
-                                    Cancel Order
+                                <button onclick="cancelOrder('<%= order._id %>')" 
+                                        class="btn btn-outline-danger fw-semibold text-uppercase">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel Order
                                 </button>
                             <% } %>
                         </div>
+                            
                     </div>
                 </div>
 

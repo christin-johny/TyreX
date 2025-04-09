@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 const walletSchema = new mongoose.Schema(
   {
@@ -11,6 +12,11 @@ const walletSchema = new mongoose.Schema(
     balance: { type: Number, default: 0 }, 
     transactions: [
       {
+        transactionId:{
+          type: String,
+              default: () => uuidv4(),
+              unique: true,
+        },
         amount: Number,
         type: { 
             type: String, 

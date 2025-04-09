@@ -9,7 +9,8 @@ const productController=require("../controllers/admin/productController");
 const bannerController = require("../controllers/admin/bannerController");
 const orderController = require("../controllers/admin/orderController");
 const couponController = require('../controllers/admin/couponController');
-const salesController = require('../controllers/admin/salesController')
+const salesController = require('../controllers/admin/salesController');
+const walletController = require('../controllers/admin/walletController')
 const multer = require("multer");
 const storage=require("../helpers/multer")
 const uploads=multer({storage:storage});
@@ -92,10 +93,12 @@ router.put('/coupon',adminAuth,couponController.editCoupon);
 router.delete('/coupon',adminAuth,couponController.deleteCoupon);
 
 //sales management
-
 router.get('/sales',salesController.loadSales);
 router.get('/salesReport',salesController.loadSalesReport);
 
+//wallet management
+router.get('/wallet',walletController.loadWallet);
+router.get('/walletTransaction',walletController.loadTransaction)
 
 
 

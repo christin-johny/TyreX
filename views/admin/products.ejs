@@ -1,10 +1,113 @@
-<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/header") %>
+<style>
+  /* Original styles */
+  .img-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+  
+  /* Card view for mobile */
+  .product-cards {
+    display: none;
+  }
+  
+  .product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .product-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .product-card .product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .product-card .card-body {
+    padding: 0.5rem 0;
+  }
+  
+  .product-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-detail-label {
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .product-card .card-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .product-card .offer-action {
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-card .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  /* Responsive breakpoint */
+  @media (max-width: 767px) {
+    .table-container {
+      display: none;
+    }
+    
+    .product-cards {
+      display: block;
+    }
+    
+    .content-header {
+      flex-direction: column;
+      align-items: flex-start !important;
+      gap: 1rem;
+    }
+    
+    .content-header .d-flex {
+      width: 100%;
+    }
+    
+    .content-header form {
+      width: 100%;
+      margin-right: 0 !important;
+      margin-bottom: 0.5rem;
+    }
+    
+    .content-header .d-flex.gap-2 {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>
 
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
       <div class="content-header d-flex justify-content-between align-items-center py-3 mt-5">
-        <h2 class="content-title fw-bold mb-0 text" >Products</h2>
+        <h2 class="content-title fw-bold mb-0 text">Products</h2>
         <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
           <form action="" method="get" class="me-md-3">
             <div class="input-group border border-1 rounded-pill overflow-hidden">
@@ -35,73 +138,139 @@
       
       <div class="card shadow-sm mt-4">
         <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead class="table-dark">
-                <tr>
-                  <th>Product</th>
-                  <th>Image</th>
-                  <th>Price</th>
-                  <th>Qty</th>
-                  <th>Offer</th>
-                  <th>Offer Actions</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%for(let i=0;i<data.length;i++){%>
+          <!-- Desktop Table View -->
+          <div class="table-container">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
                   <tr>
-                    <td>
-                      <h5 class="mb-1 text-dark"><%=data[i].productName%></h5>
-                      <span class="small text-muted"><%=data[i].brandId.brandName%></span>
-                    </td>
-                    <td>
-                    <img src="/uploads/reImage/<%=data[i].productImage[0]%>" alt="<%=data[i].productName%>" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
-                    </td>
-                    <td class="fw-bold">₹<%=data[i].salePrice%></td>
-                    <td><%=data[i].quantity%></td>
-                    <td class="fw-bold">
-                      <%if(locals.data[i].productOffer!=0){%>
-                        <span class="text-success"> Product Offer<br><%=data[i].productOffer%>%</span>
-                      <%}else if(locals.data[i].regularPrice != locals.data[i].salePrice){%>
-                        
-                        <span class="text-warning">Category Offer<br><%=((locals.data[i].regularPrice-locals.data[i].salePrice)/locals.data[i].regularPrice)*100%> %</span>
-                      <%}else{%>
-                        <span class="text-muted">0%</span>
+                    <th>Product</th>
+                    <th>Image</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Offer</th>
+                    <th>Offer Actions</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%for(let i=0;i<data.length;i++){%>
+                    <tr>
+                      <td>
+                        <h5 class="mb-1 text-dark"><%=data[i].productName%></h5>
+                        <span class="small text-muted"><%=data[i].brandId.brandName%></span>
+                      </td>
+                      <td>
+                      <img src="/uploads/reImage/<%=data[i].productImage[0]%>" alt="<%=data[i].productName%>" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                      </td>
+                      <td class="fw-bold">₹<%=data[i].salePrice%></td>
+                      <td><%=data[i].quantity%></td>
+                      <td class="fw-bold">
+                        <%if(locals.data[i].productOffer>locals.data[i].categoryOffer){%>
+                          <span class="text-success">Product Offer <%=data[i].productOffer%>%</span>
+                        <%}else if(locals.data[i].productOffer < locals.data[i].categoryOffer){%>
+                          <span class="text-warning">Category Offer <%=locals.data[i].categoryOffer%>%</span>
+                        <%}else{%>
+                          <span class="text-muted">0%</span>
                         <%}%>
 
-                    </td>
-                    <td>
-                      <%if(locals.data[i].productOffer===0){%>
-                        <button class="btn btn-sm btn-primary" onclick="addOffer('<%=data[i]._id%>')">
-                          <i class="fas fa-percent me-1"></i> Add Offer
-                        </button>
-                      <%}else{%>
-                        <button class="btn btn-sm btn-danger" onclick="removeOffer('<%=data[i]._id%>')">
-                          <i class="fas fa-times me-1"></i> Remove Offer
-                        </button>
-                      <%}%>
-                    </td>
-                    <td>
-                      <div class="d-flex">
-                        <a href="/admin/editProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-info text-white me-2" style="margin-right: 10px;">
-                          <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <%if(data[i].isBlocked===false){%>
-                          <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-danger">
-                            <i class="fas fa-ban"></i> Block
-                          </a>
+                      </td>
+                      <td>
+                        <%if(locals.data[i].productOffer===0){%>
+                          <button class="btn btn-sm btn-primary" onclick="addOffer('<%=data[i]._id%>')">
+                            <i class="fas fa-percent me-1"></i> Add Offer
+                          </button>
                         <%}else{%>
-                          <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-success">
-                            <i class="fas fa-check"></i> Unblock
-                          </a>
+                          <button class="btn btn-sm btn-danger" onclick="removeOffer('<%=data[i]._id%>')">
+                            <i class="fas fa-times me-1"></i> Remove Offer
+                          </button>
                         <%}%>
-                      </div>
-                    </td>
-                  </tr>
-                <%}%>
-              </tbody>
-            </table>
+                      </td>
+                      <td>
+                        <div class="d-flex">
+                          <a href="/admin/editProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-info text-white me-2" style="margin-right: 10px;">
+                            <i class="fas fa-edit"></i> Edit
+                          </a>
+                          <%if(data[i].isBlocked===false){%>
+                            <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-danger">
+                              <i class="fas fa-ban"></i> Block
+                            </a>
+                          <%}else{%>
+                            <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-success">
+                              <i class="fas fa-check"></i> Unblock
+                            </a>
+                          <%}%>
+                        </div>
+                      </td>
+                    </tr>
+                  <%}%>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Mobile Card View -->
+          <div class="product-cards">
+            <%for(let i=0;i<data.length;i++){%>
+              <div class="product-card">
+                <div class="card-header">
+                  <div>
+                    <h5 class="mb-1 text-dark"><%=data[i].productName%></h5>
+                    <span class="small text-muted"><%=data[i].brandId.brandName%></span>
+                  </div>
+                  <img src="/uploads/reImage/<%=data[i].productImage[0]%>" alt="<%=data[i].productName%>" class="product-image">
+                </div>
+                <div class="card-body">
+                  <div class="product-detail">
+                    <span class="product-detail-label">Price:</span>
+                    <span class="fw-bold">₹<%=data[i].salePrice%></span>
+                  </div>
+                  <div class="product-detail">
+                    <span class="product-detail-label">Quantity:</span>
+                    <span><%=data[i].quantity%></span>
+                  </div>
+                  <div class="product-detail">
+                    <span class="product-detail-label">Offer:</span>
+                    <span class="fw-bold">
+                      <%if(locals.data[i].productOffer>locals.data[i].categoryOffer){%>
+                        <span class="text-success">Product Offer <%=data[i].productOffer%>%</span>
+                      <%}else if(locals.data[i].productOffer < locals.data[i].categoryOffer){%>
+                        <span class="text-warning">Category Offer <%=locals.data[i].categoryOffer%>%</span>
+                      <%}else{%>
+                        <span class="text-muted">0%</span>
+                      <%}%>
+                    </span>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <div class="offer-action">
+                    <%if(locals.data[i].productOffer===0){%>
+                      <button class="btn btn-sm btn-primary w-100" onclick="addOffer('<%=data[i]._id%>')">
+                        <i class="fas fa-percent me-1"></i> Add Offer
+                      </button>
+                    <%}else{%>
+                      <button class="btn btn-sm btn-danger w-100" onclick="removeOffer('<%=data[i]._id%>')">
+                        <i class="fas fa-times me-1"></i> Remove Offer
+                      </button>
+                    <%}%>
+                  </div>
+                  <div class="action-buttons">
+                    <a href="/admin/editProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-info text-white flex-grow-1">
+                      <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <%if(data[i].isBlocked===false){%>
+                      <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-danger flex-grow-1">
+                        <i class="fas fa-ban"></i> Block
+                      </a>
+                    <%}else{%>
+                      <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="btn btn-sm btn-success flex-grow-1">
+                        <i class="fas fa-check"></i> Unblock
+                      </a>
+                    <%}%>
+                  </div>
+                </div>
+              </div>
+            <%}%>
           </div>
         </div>
       </div>
@@ -140,18 +309,33 @@
 <script>
     async function addOffer(productId) {
         const {value:amount}=await Swal.fire({
-          title:'Offer in percentage',
-          input:'number',
-          inputLabel:'percentage',
-          inputAttributes: {
-          min: 1,
-          max: 99,
-            },
-          inputPlaceholder:'%',
-          showCancelButton: true,
-          confirmButtonText: "Add Offer",
-          cancelButtonText: "Cancel",
-        })
+  title: 'Offer in percentage',
+  input: 'number',
+  inputLabel: 'percentage',
+  inputAttributes: {
+    min: 1,
+    max: 99,
+  },
+  inputPlaceholder: '%',
+  showCancelButton: true,
+  confirmButtonText: "Add Offer",
+  cancelButtonText: "Cancel",
+  customClass: {
+    validationMessage: 'my-validation-message'
+  },
+  didOpen: () => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .my-validation-message {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})
         $.ajax({
             url:"/admin/addProductOffer",
             method:'post',
@@ -164,7 +348,7 @@
                     location.reload();
                     Swal.fire('Offer added',"The offer has been added",'success')
                 }else{
-                    Swal.fire('Offer already exists',"Offer already applied in Category",'warning')
+                    Swal.fire('Offer already exists',response.message,'warning')
                 }
             }
         })

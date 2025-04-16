@@ -186,10 +186,10 @@
           </div>
           <div>
             <div class="section-title">Order Status</div>
-            <div class="status-badge">DELIVERED</div>
-            <div class="status-badge">
+            <div class="status-badge"><%=order.status.toUpperCase()%></div>
+            <!-- <div class="status-badge">
               <%= new Date(order.deliveredAt).toLocaleDateString() %>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -227,7 +227,11 @@
       <div class="total-section">
         <div class="total-row">
           <div class="total-label">Subtotal:</div>
-          <div class="total-value">₹<%= order.totalPrice.toFixed(2) %></div>
+          <div class="total-value">₹<%= (order.totalPrice-(order.totalPrice*.18)).toFixed(2) %></div>
+        </div>
+        <div class="total-row">
+          <div class="total-label">GST:</div>
+          <div class="total-value">₹<%= (order.totalPrice*.18).toFixed(2) %></div>
         </div>
         <% if (order.discount > 0) { %>
         <div class="total-row">
@@ -239,7 +243,7 @@
         <div class="total-row">
           <div class="total-label">Delivery Charge:</div>
           <%if(order.totalPrice<15000){%>
-          <div class="total-value">₹500</div>
+          <div class="total-value">₹500.00</div>
           <%}else{%>
             <div class="total-value">Free Shipping</div>
             <%}%>

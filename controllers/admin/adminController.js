@@ -1,7 +1,12 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const bcrypt = require("bcryptjs");
+const Brand = require("../../models/brandSchema");
 
+const Order = require("../../models/orderSchema");
+const Category = require("../../models/categorySchema");
+
+const mongoose = require("mongoose");
 
 const pageError=async(req,res)=>{
   res.render('pageError')
@@ -9,14 +14,118 @@ const pageError=async(req,res)=>{
 
 
 
-const loadHomepage = async (req, res) => {
+const getTopBrands = async (matchStage) => {
+  const brandStats = await Order.aggregate([
+    { $match: matchStage },
+    { $unwind: "$orderedItems" },
+    {
+      $group: {
+        _id: "$orderedItems.product.brandId",
+        totalQuantity: { $sum: "$orderedItems.quantity" },
+      },
+    },
+    { $sort: { totalQuantity: -1 } },
+    { $limit: 10 }
+  ]);
+
+  const populatedBrands = await Promise.all(
+    brandStats.map(async (brand) => {
+      const brandDoc = await Brand.findById(brand._id).lean();
+      return {
+        brandId: brand._id,
+        brandName: brandDoc?.brandName || "Unknown Brand",
+        totalQuantity: brand.totalQuantity,
+      };
+    })
+  );
+
+  return populatedBrands;
+};
+
+
+const loadHomepage = async (req, res, next) => {
   try {
-    return res.render("home");
+    const filter = req.query.filter || "monthly";
+
+    // Time range filtering
+    const matchStage = { status: "delivered" };
+    const now = new Date();
+
+    if (filter === "daily") {
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      matchStage.createdAt = { $gte: startOfDay };
+    } else if (filter === "weekly") {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday as start
+      startOfWeek.setHours(0, 0, 0, 0);
+      matchStage.createdAt = { $gte: startOfWeek };
+    } else if (filter === "monthly") {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      matchStage.createdAt = { $gte: startOfMonth };
+    } else if (filter === "yearly") {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      matchStage.createdAt = { $gte: startOfYear };
+    }
+
+    // Top Products
+    const topProducts = await Order.aggregate([
+      { $match: matchStage },
+      { $unwind: "$orderedItems" },
+      {
+        $group: {
+          _id: "$orderedItems.product._id",
+          totalSold: { $sum: "$orderedItems.quantity" },
+          name: { $first: "$orderedItems.product.productName" }
+        }
+      },
+      { $sort: { totalSold: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // Top Categories
+    const topCategories = await Order.aggregate([
+      { $match: matchStage },
+      { $unwind: "$orderedItems" },
+      {
+        $group: {
+          _id: "$orderedItems.product.categoryId",
+          totalSold: { $sum: "$orderedItems.quantity" }
+        }
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+      { $unwind: "$category" },
+      {
+        $project: {
+          name: "$category.name",
+          totalSold: 1
+        }
+      },
+      { $sort: { totalSold: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // Top Brands
+    const topBrands = await getTopBrands(matchStage);
+
+    res.render("home", {
+      filter,
+      topProducts,
+      topCategories,
+      topBrands
+    });
   } catch (error) {
-    console.error(error);
-    res.redirect("/admin/pagerror")
+    next(error);
   }
 };
+
+
 
 //login
 const loadLogin = async (req, res) => {

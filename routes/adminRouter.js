@@ -23,8 +23,8 @@ router.get("/pageerror", adminController.pageError);
 router.get("/login", redirectAuth, adminController.loadLogin);
 router.post("/login", redirectAuth, adminController.login);
 router.get("/logout", adminController.logout);
-// router.get("/forgotPassword", adminController.forgotPassword);
-router.get("/dashboard", adminAuth, adminController.loadHomepage);
+
+router.get("/dashboard", adminController.loadHomepage);
 
 
 
@@ -93,12 +93,12 @@ router.put('/coupon',adminAuth,couponController.editCoupon);
 router.delete('/coupon',adminAuth,couponController.deleteCoupon);
 
 //sales management
-router.get('/sales',salesController.loadSales);
-router.get('/salesReport',salesController.loadSalesReport);
+router.get('/sales',adminAuth,salesController.loadSales);
+router.get('/salesReport',adminAuth,salesController.loadSalesReport);
 
 //wallet management
-router.get('/wallet',walletController.loadWallet);
-router.get('/walletTransaction/:id',walletController.loadTransaction)
+router.get('/wallet',adminAuth,walletController.loadWallet);
+router.get('/walletTransaction/:id',adminAuth,walletController.loadTransaction)
 
 
 

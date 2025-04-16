@@ -1,4 +1,4 @@
-<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/header") %>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
 <style>
@@ -157,19 +157,7 @@
                       <div id="regularPrice-error" class="error-message"></div>
                     </div>
                   </div>
-                  <div class="col-md-6">
-                    <div class="mb-4">
-                      <label class="form-label text-dark">Sale price</label>
-                      <input
-                        placeholder="₹"
-                        name="salePrice"
-                        id="salePrice"
-                        type="text"
-                        class="form-control border"
-                      />
-                      <div id="salePrice-error" class="error-message"></div>
-                    </div>
-                  </div>
+                  
                   <div class="col-md-6">
                     <div class="mb-4">
                       <label class="form-label text-dark">Quantity</label>
@@ -374,7 +362,7 @@ saveButton.addEventListener('click', async function () {
           const brand= document.getElementById('brand').value;
           const size = document.getElementById('size').value;
           const regularPrice=document.getElementById('regularPrice').value;
-          const salePrice=document.getElementById('salePrice').value;
+          
           const warranty= document.getElementById('warranty').value;
           const quantity= document.getElementById('quantity').value;
           const images = document.getElementById('input1')
@@ -429,13 +417,7 @@ saveButton.addEventListener('click', async function () {
             isValid=false;
           }
     
-          if(salePrice.trim()===''|| !/^\d+(\.\d{1,2})?$/.test(salePrice)){
-            displayErrorMessage('salePrice-error', "Please enter a valid non-negative price.")
-            isValid=false;
-          }else if(parseFloat(regularPrice)<parseFloat(salePrice)){
-            displayErrorMessage('salePrice-error', "Sale price can't be greater than Regular price")
-            isValid=false;
-          }
+          
           
           if(quantity.trim()===''|| !/^\d+$/.test(quantity)){
             displayErrorMessage('quantity-error', "Please enter a valid number as quantity")

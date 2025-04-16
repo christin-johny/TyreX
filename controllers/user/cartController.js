@@ -105,17 +105,14 @@ const loadCart = async (req, res) => {
             }]
         });
 
-       if(cart.discount>0){
-        await Cart.findOneAndUpdate({userId},{$set:{discount:0}})
-       }
-
-        
-
 
         if (!cart || cart.items.length === 0) {
             return res.render("cart", { data: [], grandTotal: 0, user: req.session.user });
         }
-
+        if(cart.discount && cart.discount>0){
+            await Cart.findOneAndUpdate({userId},{$set:{discount:0}})
+           }
+    
         
         const cartData = cart.items.filter(item => item.productId && item.productId.isBlocked === false)
         .map(item => ({

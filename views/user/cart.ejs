@@ -609,8 +609,10 @@
                             icon: "success",
                             timer: 1500,
                             showConfirmButton: false
-                        });
-                        location.reload();
+                        }).then(()=>{
+                            location.reload();
+                        })
+                       
                     } else {
                         Swal.fire("Error", data.error || "Failed to remove product.");
                     }

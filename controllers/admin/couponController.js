@@ -2,6 +2,8 @@ const Coupon = require("../../models/couponSchema");
 
 const loadCoupon = async (req, res) => {
   try {
+    let page = parseInt(req.query.page) || 1;
+    const limit = 8;
     let coupons = await Coupon.find();
 
     for (let coupon of coupons) {
@@ -20,9 +22,18 @@ const loadCoupon = async (req, res) => {
       }
     }
 
-    const updatedCoupons = await Coupon.find();
+    const updatedCoupons = await Coupon.find()
+      .limit(limit)
+      .skip((page - 1) * limit)
 
-    return res.render("coupon", { coupons: updatedCoupons });
+    const count= await Coupon.countDocuments()
+    const totalPages = Math.ceil(count / limit);
+
+    return res.render("coupon", { 
+      coupons: updatedCoupons,
+      currentPage: page,
+      totalPages
+    });
   } catch (error) {
     console.error(error);
   }

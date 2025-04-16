@@ -1,139 +1,201 @@
-<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/header") %>
 
-<section class="content-main container-fluid">
-  <div class="content-header">
+<section class="content-main container-fluid px-3 px-md-4">
+  <!-- Header Section -->
+  <div class="content-header d-flex flex-column flex-md-row justify-content-between align-items-md-center py-3">
     <div>
-      <h2 class="content-title card-title p-3">Brands</h2>
+      <h2 class="content-title fw-bold mb-3 mb-md-0 text-dark">Brands</h2>
     </div>
-    <div class="p-3">
+    <div>
       <button
-        class="btn btn-primary "
+        class="btn btn-primary"
         data-bs-toggle="modal"
         data-bs-target="#addBrandModal"
-      ><i class="fas fa-plus"></i>
-
+      >
+        <i class="fas fa-plus me-1"></i>
         Add Brand
       </button>
     </div>
   </div>
-  <div class="card ">
-    <div class="card-body align-items-center">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="table-responsive">
-            <table class="table table-hover text-center " >
-              <thead class="text-center table-dark" >
-                <tr>
-                  <th>Brand</th>
-                  <th>Logo</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% data.reverse().forEach((brand, index) => { %>
-                <tr>
-                  <td class="text-start"><%= brand.brandName %></td>
-                  <td class="text-start">
-                    <div
-                      class="d-flex align-items-center justify-content-center"
-                      style="
-                        width: 80px;
-                        height: 80px;
-                        overflow: hidden;
-                      "
-                    >
-                      <img
-                        src="/uploads/reImage/<%= brand.brandImage[0] %>"
-                        alt="<%= brand.brandName %>"
-                        class="img-fluid "
-                        style="width: 100%; height: auto"
-                      />
-                    </div>
-                  </td>
-                  <td class="text-start">
-                    <% if (brand.isBlocked === true) { %>
-                    <span
-                      class="badge rounded-pill alert-danger"
-                      style="width: 60px"
-                      >Blocked</span
-                    >
-                    <% } else { %>
-                    <span
-                      class="badge rounded-pill alert-success"
-                      style="width: 60px"
-                      >Active</span
-                    >
-                    <% } %>
-                  </td>
-                  <td class="text-start">
+
+  <!-- Main Content -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0 p-md-3">
+      <!-- Table view (visible on md screens and up) -->
+      <div class="d-none d-md-block">
+        <div class="table-responsive">
+          <table class="table table-hover text-center">
+            <thead class="table-dark">
+              <tr>
+                <th class="text-start">Brand</th>
+                <th class="text-center">Logo</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.reverse().forEach((brand, index) => { %>
+              <tr>
+                <td class="text-start"><%= brand.brandName %></td>
+                <td>
+                  <div
+                    class="d-flex align-items-center justify-content-center mx-auto"
+                    style="width: 80px; height: 80px; overflow: hidden;"
+                  >
+                    <img
+                      src="/uploads/reImage/<%= brand.brandImage[0] %>"
+                      alt="<%= brand.brandName %>"
+                      class="img-fluid"
+                      style="width: 100%; height: auto"
+                    />
+                  </div>
+                </td>
+                <td>
+                  <% if (brand.isBlocked === true) { %>
+                    <span class="badge rounded-pill bg-danger" style="width: 60px;">Blocked</span>
+                  <% } else { %>
+                    <span class="badge rounded-pill bg-success" style="width: 60px;">Active</span>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="d-flex flex-wrap justify-content-center gap-2">
                     <% if (brand.isBlocked === false) { %>
                     <button
-                      class="btn btn-danger"
-                      style="width: 90px"
+                      class="btn btn-sm btn-danger"
                       onclick="confirmBlock('<%= brand._id %>')"
                     >
                       Block
                     </button>
                     <% } else { %>
                     <button
-                      class="btn btn-success"
-                      style="width: 90px"
+                      class="btn btn-sm btn-success"
                       onclick="confirmUnblock('<%= brand._id %>')"
                     >
                       Unblock
                     </button>
                     <% } %>
                     <button
-                      class="btn btn-danger"
-                      style="width: 90px"
+                      class="btn btn-sm btn-danger"
                       onclick="confirmDelete('<%= brand._id %>')"
                     >
                       Delete
                     </button>
-
                     <button
-                      class="btn btn-info"
-                      style="width: 90px"
+                      class="btn btn-sm btn-info text-white"
                       data-bs-toggle="modal"
                       data-bs-target="#editBrandModal"
                       onclick="loadEditBrand('<%= brand._id %>')"
                     >
                       Edit
                     </button>
-                  </td>
-                </tr>
-                <% }) %>
-              </tbody>
-            </table>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Card view (visible on small screens) -->
+      <div class="d-md-none">
+        <div class="row g-3">
+          <% data.reverse().forEach((brand, index) => { %>
+          <div class="col-12">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <h5 class="card-title mb-0 fw-bold text-dark"><%= brand.brandName %></h5>
+                  <% if (brand.isBlocked === true) { %>
+                    <span class="badge rounded-pill bg-danger">Blocked</span>
+                  <% } else { %>
+                    <span class="badge rounded-pill bg-success">Active</span>
+                  <% } %>
+                </div>
+                
+                <div class="d-flex justify-content-center mb-3">
+                  <div style="width: 100px; height: 100px; overflow: hidden;" class="d-flex align-items-center justify-content-center">
+                    <img
+                      src="/uploads/reImage/<%= brand.brandImage[0] %>"
+                      alt="<%= brand.brandName %>"
+                      class="img-fluid"
+                      style="width: 100%; height: auto"
+                    />
+                  </div>
+                </div>
+                
+                <div class="d-flex flex-column gap-2 mt-3">
+                  <% if (brand.isBlocked === false) { %>
+                  <button
+                    class="btn btn-danger"
+                    onclick="confirmBlock('<%= brand._id %>')"
+                  >
+                    <i class="fas fa-ban me-1"></i> Block
+                  </button>
+                  <% } else { %>
+                  <button
+                    class="btn btn-success"
+                    onclick="confirmUnblock('<%= brand._id %>')"
+                  >
+                    <i class="fas fa-check me-1"></i> Unblock
+                  </button>
+                  <% } %>
+                  
+                  <div class="d-flex gap-2">
+                    <button
+                      class="btn btn-danger flex-grow-1"
+                      onclick="confirmDelete('<%= brand._id %>')"
+                    >
+                      <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                    <button
+                      class="btn btn-info text-white flex-grow-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editBrandModal"
+                      onclick="loadEditBrand('<%= brand._id %>')"
+                    >
+                      <i class="fas fa-edit me-1"></i> Edit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+          <% }) %>
         </div>
       </div>
     </div>
   </div>
-  <div class="pagination-container d-flex justify-content-center mt-4">
+
+  <!-- Pagination Section -->
+  <div class="pagination-container d-flex justify-content-center mt-4 mb-4">
     <nav aria-label="Page navigation">
       <ul class="pagination pagination-sm flex-wrap">
         <% if (currentPage > 1) { %>
         <li class="page-item">
-          <a href="?page=<%= currentPage - 1 %>" class="page-link"
-            >&laquo; Previous</a
-          >
+          <a href="?page=<%= currentPage - 1 %>" class="page-link">
+            &laquo; <span class="d-none d-sm-inline">Previous</span>
+          </a>
         </li>
-        <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
-        currentPage) { %>
-        <li class="page-item active">
-          <span class="page-link"><%= i %></span>
-        </li>
-        <% } else { %>
+        <% } %>
+        
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <% if (i === currentPage) { %>
+          <li class="page-item active">
+            <span class="page-link"><%= i %></span>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+            <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+          </li>
+          <% } %>
+        <% } %>
+        
+        <% if (currentPage < totalPages) { %>
         <li class="page-item">
-          <a href="?page=<%= i %>" class="page-link"><%= i %></a>
-        </li>
-        <% } %> <% } %> <% if (currentPage < totalPages) { %>
-        <li class="page-item">
-          <a href="?page=<%= currentPage + 1 %>" class="page-link"
-            >Next &raquo;</a
-          >
+          <a href="?page=<%= currentPage + 1 %>" class="page-link">
+            <span class="d-none d-sm-inline">Next</span> &raquo;
+          </a>
         </li>
         <% } %>
       </ul>
@@ -141,8 +203,10 @@
   </div>
 </section>
 
+<!-- Note: This code assumes the existing modals (#addBrandModal and #editBrandModal) 
+     are defined elsewhere in your code and are not part of this section -->
 
-<!--editBrand modal-->
+<!-- Edit Brand Modal -->
 <div
   class="modal fade"
   id="editBrandModal"
@@ -162,12 +226,11 @@
         ></button>
       </div>
       <div class="modal-body">
-        <form id="editBrandForm"
-        >
+        <form id="editBrandForm">
           <input type="hidden" id="brand_id" name="brandId" />
 
-          <div class="mb-4">
-            <label for="edit_brand_name" class="form-label">Brand Name</label>
+          <div class="mb-3">
+            <label for="editBrandName" class="form-label">Brand Name</label>
             <input
               type="text"
               id="editBrandName"
@@ -177,46 +240,57 @@
             />
             <div
               id="editBrandNameError"
-              class="error-message"
-              style="display: none; color: red"
+              class="error-message text-danger mt-1"
+              style="display: none;"
             >
               Please enter a valid brand name (no numbers allowed).
             </div>
           </div>
 
-          <label for="edit_brand_image" class="form-label">Brand Image</label>
-          <div class="input-upload">
-            <img
-              src=""
-              alt="Brand Image"
-              id="editPreviewImage"
-              style="max-width: 150px; display: none"
-            />
+          <div class="mb-3">
+            <label for="edit_brand_image" class="form-label">Brand Image</label>
+            <div class="mb-2 text-center">
+              <img
+                src=""
+                alt="Brand Image"
+                id="editPreviewImage"
+                class="img-thumbnail"
+                style="max-width: 150px; display: none;"
+              />
+            </div>
             <input
               type="file"
               id="edit_brand_image"
               name="image"
-              class="form-control border"
+              class="form-control"
               accept="image/*"
             />
             <div
               id="editBrandImageError"
-              class="error-message"
-              style="display: none; color: red"
+              class="error-message text-danger mt-1"
+              style="display: none;"
             >
               Please upload a valid image file (JPEG, PNG, etc.).
             </div>
           </div>
-          </form>
-          <div class="d-grid">
-            <button type="button"
+        </form>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
             class="btn btn-primary"
-            onclick="submitEditBrandForm()">
-              Update Brand
-            </button>
-            <a href="/admin/brands" class="btn btn-secondary ">Cancel</a>
-          </div>
-        
+            onclick="submitEditBrandForm()"
+          >
+            Update Brand
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -228,8 +302,7 @@
 
 
 
-
-<!--addbrand modal-->
+<!-- Add Brand Modal -->
 <div
   class="modal fade"
   id="addBrandModal"
@@ -255,7 +328,7 @@
           enctype="multipart/form-data"
           onsubmit="return validateForm()"
         >
-          <div class="mb-4">
+          <div class="mb-3">
             <label for="brand_name" class="form-label">Brand Name</label>
             <input
               type="text"
@@ -266,37 +339,49 @@
             />
             <div
               id="brandNameError"
-              class="error-message"
-              style="display: none; color: red"
+              class="error-message text-danger mt-1"
+              style="display: none;"
             >
               Please enter a valid brand name (no numbers allowed).
             </div>
           </div>
-          <label for="brand_image" class="form-label">Brand Image</label>
-          <div class="input-upload">
-            <img
-              src=""
-              alt=""
-              id="previewImage"
-              style="max-width: 150px; display: none"
-            />
+
+          <div class="mb-3">
+            <label for="brand_image" class="form-label">Brand Image</label>
+            <div class="mb-2 text-center">
+              <img
+                src=""
+                alt="Preview"
+                id="previewImage"
+                class="img-thumbnail"
+                style="max-width: 150px; display: none;"
+              />
+            </div>
             <input
               type="file"
               id="brand_image"
               name="image"
-              class="form-control border"
+              class="form-control"
               accept="image/*"
             />
             <div
               id="brandImageError"
-              class="error-message"
-              style="display: none; color: red"
+              class="error-message text-danger mt-1"
+              style="display: none;"
             >
               Please upload a valid image file (JPEG, PNG, etc.).
             </div>
           </div>
-          <div class="d-grid">
-            <button class="btn btn-primary mt-20" type="submit">
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary" type="submit">
               Add Brand
             </button>
           </div>
@@ -305,6 +390,7 @@
     </div>
   </div>
 </div>
+
 
 <script>
   function validateForm() {

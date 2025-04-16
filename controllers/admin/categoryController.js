@@ -104,10 +104,10 @@ const addCategoryOffer = async (req, res) => {
     );
 
     for (const product of products) {
-      const discountAmount = (product.regularPrice * percentage) / 100;
-      product.salePrice = product.regularPrice - discountAmount;
+      const discountAmount =Math.round((product.regularPrice * percentage) / 100);
+      product.salePrice = Math.round(product.regularPrice - discountAmount);
     if(product.productOffer<percentage){
-      product.productOffer = percentage;
+      product.categoryOffer = percentage;
     }
       await product.save();
     }
@@ -149,8 +149,15 @@ const removeCategoryOffer = async (req, res) => {
     const products = await Product.find({ categoryId: category._id });
 
     for (const product of products) {
-      product.salePrice = product.regularPrice;
-
+      if(product.productOffer>0){
+        const discountAmount =   Math.round( (product.regularPrice * product.productOffer) / 100);
+      product.salePrice = Math.round(product.regularPrice - discountAmount);
+      product.categoryOffer=0;
+      }else{
+        product.salePrice = Math.round(product.regularPrice);
+        product.categoryOffer=0;
+      }
+      
       await product.save();
     }
 
@@ -237,7 +244,6 @@ const editCategory = async (req, res) => {
         .status(404)
         .json({ status: false, message: "Category not found" });
     }
-
     return res
       .status(200)
       .json({ status: true, message: "Category updated successfully" });

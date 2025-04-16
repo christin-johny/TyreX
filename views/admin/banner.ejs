@@ -1,73 +1,176 @@
-<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/header") %>
 
 <section class="content-main container-fluid">
-    <div class="content-header d-flex justify-content-between align-items-center p-3 mt-5">
-      <h2 class="content-title card-title text-dark">Banners</h2>
-      <a href="/admin/addBanner">
-        <button class="btn btn-primary">
-          <i class="fas fa-plus"></i> Add Banner
-        </button>
-      </a>
-    </div>
-  
-    <div class="card">
-      <div class="card-body align-items-center">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-hover text-center">
-                <thead  class="text-center table-dark ">
-                  <tr>
-                    <th>Image</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% if (locals.data) { %>
-                    <% data.reverse().forEach((banner) => { %>
-                      <tr>
-                        <td>
-                          <div class="d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; overflow: hidden;">
-                            <img src="/uploads/reImage/<%= banner.image %>"
-                              alt="Banner Image"
-                              class="img-fluid"
-                              style="width: 100%; height: auto;">
-                          </div>
-                        </td>
-                        <td class="text-start"><%= banner.title %></td>
-                        <td class="text-start"><%= banner.description %></td>
-                        <td class="text-start">
-                          <% if (banner.startDate < Date.now() && banner.endDate > Date.now()) { %>
-                            <span class="badge rounded-pill alert-success">Active</span>
-                          <% } else { %>
-                            <span class="badge rounded-pill alert-danger">Inactive</span>
-                          <% } %>
-                        </td>
-                        <td class="text-start">
-                          <button class="btn btn-danger" style="width: 90px"
-                            onclick="deleteBanner('<%= banner._id %>')">
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    <% }); %>
-                  <% } else { %>
+  <div class="content-header d-flex flex-column flex-sm-row justify-content-between align-items-center p-3 mt-5">
+    <h2 class="content-title card-title text-dark mb-3 mb-sm-0">Banners</h2>
+    <a href="/admin/addBanner">
+      <button class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add Banner
+      </button>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-12">
+          <!-- For medium-large screens - traditional table -->
+          <div class="table-responsive d-none d-md-block">
+            <table class="table table-hover text-center">
+              <thead class="text-center table-dark">
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (locals.data) { %>
+                  <% data.reverse().forEach((banner) => { %>
                     <tr>
-                      <td colspan="5" class="text-center">No Banner Found</td>
+                      <td>
+                        <div class="d-flex align-items-center justify-content-center"
+                          style="width: 80px; height: 80px; overflow: hidden;">
+                          <img src="/uploads/reImage/<%= banner.image %>"
+                            alt="Banner Image"
+                            class="img-fluid"
+                            style="width: 100%; height: auto;">
+                        </div>
+                      </td>
+                      <td class="text-start"><%= banner.title %></td>
+                      <td class="text-start"><%= banner.description %></td>
+                      <td class="text-start">
+                        <% if (banner.startDate < Date.now() && banner.endDate > Date.now()) { %>
+                          <span class="badge rounded-pill bg-success">Active</span>
+                        <% } else { %>
+                          <span class="badge rounded-pill bg-danger">Inactive</span>
+                        <% } %>
+                      </td>
+                      <td class="text-start">
+                        <button class="btn btn-danger" style="width: 90px"
+                          onclick="deleteBanner('<%= banner._id %>')">
+                          Delete
+                        </button>
+                      </td>
                     </tr>
-                  <% } %>
-                </tbody>
-              </table>
-            </div>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="5" class="text-center">No Banner Found</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- For small screens only (mobile) - card layout -->
+          <div class="d-md-none">
+            <% if (locals.data && data.length > 0) { %>
+              <div class="banner-cards">
+                <% data.reverse().forEach((banner) => { %>
+                  <div class="banner-card mb-4">
+                    <div class="card shadow-sm">
+                      <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="card-title mb-0 text-truncate"><%= banner.title %></h5>
+                        <% if (banner.startDate < Date.now() && banner.endDate > Date.now()) { %>
+                          <span class="badge rounded-pill bg-success">Active</span>
+                        <% } else { %>
+                          <span class="badge rounded-pill bg-danger">Inactive</span>
+                        <% } %>
+                      </div>
+                      <div class="card-body">
+                        <div class="row align-items-center">
+                          <div class="col-4">
+                            <div style="width: 100%; aspect-ratio: 1/1; overflow: hidden;">
+                              <img src="/uploads/reImage/<%= banner.image %>"
+                                alt="Banner Image"
+                                class="img-fluid rounded"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                          </div>
+                          <div class="col-8">
+                            <p class="card-text mb-2" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                              <%= banner.description %>
+                            </p>
+                            <button class="btn btn-danger w-100 mt-2"
+                              onclick="deleteBanner('<%= banner._id %>')">
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } else { %>
+              <div class="alert alert-info text-center">No Banner Found</div>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<style>
+  /* Responsive styles for banner section */
+  @media (max-width: 767.98px) {
+    .content-header {
+      padding: 1rem !important;
+    }
+    
+    .card-body {
+      padding: 0.75rem;
+    }
+    
+    .banner-card .card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .banner-card .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .banner-card .card-header {
+      padding: 0.75rem;
+    }
+    
+    .banner-card .card-title {
+      font-size: 1rem;
+      max-width: 70%;
+    }
+    
+    .banner-card .card-text {
+      font-size: 0.9rem;
+    }
+    
+    .banner-card .btn {
+      font-size: 0.875rem;
+      padding: 0.375rem 0.75rem;
+    }
+  }
+  
+  /* Table responsive styles for medium and large screens */
+  @media (min-width: 768px) {
+    .table td, .table th {
+      padding: 0.75rem;
+      vertical-align: middle;
+    }
+    
+    .table th {
+      white-space: nowrap;
+    }
+    
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>
   
 <script>
    function deleteBanner(bannerId) {

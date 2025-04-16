@@ -313,7 +313,7 @@ const cancelOrder = async (req, res) => {
     }));
 
     for (let i = 0; i < orderedItems.length; i++) {
-      await Product.findByIdAndUpdate(orderedItems[i].product, {
+      await Product.findByIdAndUpdate(orderedItems[i].product._id, {
         $inc: { quantity: orderedItems[i].quantity },
       });
     }
@@ -382,9 +382,7 @@ const orderSearch = async (req, res) => {
     const user = await User.findById(userId);
     const search = req.body.query;
 
-    const orders = await Order.find({ orderId: search }).populate(
-      "orderedItems.product"
-    );
+    const orders = await Order.find({ orderId: search })
     if (orders) {
       return res.render("viewOrders", {
         user: user,

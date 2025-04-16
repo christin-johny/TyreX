@@ -57,7 +57,7 @@ const viewOrderDetails = async (req, res) => {
 
     const order = await Order.findById(id)
       .lean();
-console.log(order)
+
     if (order) {
       res.render("adminOrderDetails", { order: order });
     } else {
@@ -219,6 +219,17 @@ const updateReturnStatus = async (req, res) => {
       });
 
       await wallet.save();
+  
+      const orderedItems = order.orderedItems.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+      }));
+  
+      for (let i = 0; i < orderedItems.length; i++) {
+        await Product.findByIdAndUpdate(orderedItems[i].product._id, {
+          $inc: { quantity: orderedItems[i].quantity },
+        });
+      }
 
       if (order) {
         return res

@@ -133,7 +133,7 @@ const loadSales = async (req, res, next) => {
 
 const loadSalesReport = async (req, res, next) => {
   try {
-    const range = req.query.range || "daily"; // default to daily
+    const range = req.query.range || "daily";
     const now = new Date();
     let startDate, endDate;
 
@@ -174,7 +174,7 @@ const loadSalesReport = async (req, res, next) => {
       },
       {
         $lookup: {
-          from: "users", // adjust if your users collection has a different name
+          from: "users", 
           localField: "userId",
           foreignField: "_id",
           as: "user",

@@ -25,7 +25,6 @@ const loadCheckoutPage = async (req, res) => {
         },
       ],
     });
-
     const coupons = await Coupon.find({ isListed: true });
 
     const wallet = await Wallet.findOne({ userId: userId });
@@ -69,12 +68,14 @@ const loadCheckoutPage = async (req, res) => {
       0
     );
     let grandTotal = 0;
+    
     if (subtotal < 15000) {
       grandTotal = subtotal + 500;
     } else {
       grandTotal = subtotal;
     }
 
+    if(cartItems.length>0){
     res.render("checkout", {
       user,
       cartItems,
@@ -83,7 +84,10 @@ const loadCheckoutPage = async (req, res) => {
       grandTotal,
       userAddress: addressData,
       wallet: wallet || { balance: 0 },
-    });
+    })}else{
+      res.redirect('/cart')
+    }
+
   } catch (error) {
     console.error("Error in loadCheckoutPage:", error);
     res.redirect("/pageNotFound");
@@ -179,7 +183,7 @@ const applyCoupon = async (req, res, next) => {
     if (!coupon) {
       return res.json({ success: false, message: "Invalid coupon code" });
     }
-    if (coupon.minimumPrice > subtotal) {
+    if (coupon.minimumPrice > (subtotal)) {
       return res
         .status(400)
         .json({

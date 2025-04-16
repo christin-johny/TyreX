@@ -32,10 +32,10 @@ const addproduct = async (req, res) => {
       brand,
       size,
       regularPrice,
-      salePrice,
       warranty,
       quantity,
     } = req.body;
+
     if (!req.files || req.files.length === 0) {
       return res.json({
         success: false,
@@ -49,31 +49,32 @@ const addproduct = async (req, res) => {
     }
     const imagePaths = req.files.map((file) => file.filename);
     
-    let productOffer;
-    if(regularPrice>salePrice){
-      productOffer = ((regularPrice - salePrice) / regularPrice) * 100;
-    productOffer = Math.round(productOffer);
-    }
-
     const sizeId = await Size.findOne({ name: size }, { _id: 1 });
     const brandId = await Brand.findOne({ brandName: brand }, { _id: 1 });
-    const categoryId = await Category.findOne({ name: category }, { _id: 1 });
+    const categoryData = await Category.findOne({ name: category }, { _id: 1,categoryOffer:1 });
+    let discountAmount;
+    if(categoryData.categoryOffer>0){
+    discountAmount = regularPrice-((regularPrice*categoryData.categoryOffer)/100);
+    }else{
+      discountAmount = regularPrice;
+    }
     const newProduct = new Product({
       productName: productName,
       description,
       productNumber,
-      categoryId,
+      categoryId:categoryData._id,
       brandId,
       sizeId,
       regularPrice,
-      salePrice,
+      salePrice:discountAmount,
       warranty,
       quantity,
-      productOffer,
+      categoryOffer:categoryData.categoryOffer,
       productImage: imagePaths,
     });
 
     await newProduct.save();
+
     res.json({ success: true, message: "Product added successfully!" });
   } catch (error) {
     console.error("Error adding product:", error);
@@ -152,14 +153,14 @@ const addProductOffer = async (req, res) => {
     if (!findCategory)
       return res.json({ status: false, message: "Category not found" });
 
-    if (findCategory.categoryOffer > percentage) {
+    if (findCategory.categoryOffer >= percentage) {
       return res.json({
         status: false,
-        message: "This product already has a higher category offer",
+        message: `This product already has a ${findCategory.categoryOffer}% category offer`,
       });
     }
 
-    findProduct.salePrice = Math.floor(
+    findProduct.salePrice = Math.round(
       findProduct.regularPrice * (1 - percentage / 100)
     );
     findProduct.productOffer = parseInt(percentage);
@@ -186,7 +187,7 @@ const removeProductOffer = async (req, res) => {
     const category = await Category.findById(product.categoryId);
     
     if (category && category.categoryOffer > 0) {
-      product.salePrice = Math.floor(
+      product.salePrice = Math.round(
         product.regularPrice * (1 - category.categoryOffer / 100)
       );
     } else {
@@ -267,7 +268,8 @@ const editProduct = async (req, res) => {
 
     if (existingProduct) {
       return res.status(400).json({
-        error:
+        success:false,
+        message:
           "Product with this name already exists. Please try another name.",
       });
     }
@@ -276,31 +278,34 @@ const editProduct = async (req, res) => {
     const existingImages = product.productImage;
     const images = [...existingImages, ...updatedImages];
 
-    const catId = await Category.findOne({ name: data.category }, { _id: 1,categoryOffe:1 });
+   
     const brandId = await Brand.findOne({ brandName: data.brand }, { _id: 1 });
     const sizeId = await Size.findOne({ name: data.size }, { _id: 1 });
-    let productOffer;
-    
-  
-    
-    if(data.regularPrice>data.salePrice){
-      productOffer = ((data.regularPrice - data.salePrice) / data.regularPrice) * 100;
-    productOffer = Math.round(productOffer);
-    }
 
+    const categoryData = await Category.findOne({ name: data.category }, { _id: 1,categoryOffer:1 });
+
+    let discountAmount;
+    if(categoryData.categoryOffer>0&&categoryData.categoryOffer > product.productOffer){
+    discountAmount = data.regularPrice-((data.regularPrice*categoryData.categoryOffer)/100);
+    }else if(product.productOffer>0){
+      discountAmount = data.regularPrice-((data.regularPrice*product.productOffer)/100);
+    }else{
+      discountAmount= data.regularPrice
+    }
 
     const updateFields = {
       productName: data.productName,
       description: data.description,
       productNumber: data.productNumber,
-      categoryId: catId._id,
+      categoryId: categoryData._id,
       brandId: brandId,
       sizeId: sizeId,
       regularPrice: data.regularPrice,
-      salePrice: data.salePrice,
+      salePrice: discountAmount,
       quantity: data.quantity,
       warranty: data.warranty,
-      productOffer:productOffer,
+      categoryOffer:categoryData.categoryOffer,
+      productOffer:product.productOffer,
     };
 
     if (images.length > 0) {

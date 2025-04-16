@@ -53,10 +53,6 @@ router.get('/changePassword',userAuth,profileController.loadChangePassPage);
 router.post('/changePassword',userAuth,profileController.changePassword);
 
 
-// router.get('/forgotPassword',profileController.loadForgotPasswordPage);
-// router.post('/forgotEmailValid', profileController.forgotEmailValid);
-// router.put('/changeEmail',userAuth,profileController.changeEmail);
-// router.post('/EmailValid', userAuth, profileController.emailValid);
 
 
 //Address Management

@@ -218,8 +218,9 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal:</span>
-                                    <span>₹<%= order.totalPrice %></span>
+                                    <span>₹<%= order.totalPrice.toFixed(2) %></span>
                                 </div>
+                                
                                 <% if (order.discount > 0) { %>
                                     <div class="d-flex justify-content-between mb-2 text-success">
                                         <span>Coupon Discount:</span>
@@ -229,7 +230,7 @@
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Delivery Charge:</span>
                                     <%if(order.totalPrice<15000){%>
-                                    <span>₹ 500</span>
+                                    <span>₹ 500.00</span>
                                     <%}else{%>
                                         <span class="text-success">Free Shipping</span> 
                                     <%}%>
@@ -262,9 +263,9 @@
                             </div>
                         </div>
 
-                        <%if(order.status === 'delivered'){%>
+                        
                             <a href="/downloadInvoice?orderId=<%= order.orderId %>" class="btn btn-primary mt-2">View Invoice</a>
-                        <%}%>
+                        
 
                         <!-- Order Actions -->
                         <div class="order-actions mt-4">

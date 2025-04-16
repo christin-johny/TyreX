@@ -1,10 +1,11 @@
-<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/header") %>
 <style>
   .quantity-container {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-direction: row;
+    flex-wrap: wrap;
   }
   .quantity-wrapper {
     display: flex;
@@ -38,6 +39,7 @@
     gap: 1rem;
     margin-bottom: 1.5rem;
     width: 100%;
+    padding: 0 15px;
   }
   
   @media (min-width: 768px) {
@@ -62,8 +64,23 @@
   }
   
   @media (max-width: 767px) {
+    .card-header h2 {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    
     .quantity-wrapper {
       min-width: auto;
+      width: 100%;
+    }
+    
+    .quantity-container {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .quantity-input {
+      width: calc(50% - 10px);
     }
     
     th:nth-child(5),
@@ -75,6 +92,47 @@
       height: 60px !important;
       width: 60px !important;
     }
+    
+    /* Improve mobile table layout */
+    .table thead {
+      display: none;
+    }
+    
+    .table tbody tr {
+      display: block;
+      border: 1px solid #dee2e6;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+    }
+    
+    .table tbody td {
+      display: flex;
+      padding: 0.5rem 0.25rem;
+      text-align: right;
+      border-top: none;
+    }
+    
+    .table tbody td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      margin-right: auto;
+      text-align: left;
+    }
+    
+    .table tbody td:first-child {
+      display: flex;
+      justify-content: center;
+      padding-top: 1rem;
+    }
+    
+    .table tbody td:first-child::before {
+      display: none;
+    }
+    
+    .table tbody td:last-child {
+      border-bottom: none;
+    }
   }
 </style>
 
@@ -83,7 +141,7 @@
     <div class="card-header">
       <h2>Inventory Management</h2>
     </div>
-    <div class="search-container m">
+    <div class="search-container">
       <form action="" method="get" class="search-form mt-3">
         <div class="input-group border border-1 rounded-pill overflow-hidden">
             <input
@@ -125,7 +183,7 @@
           <tbody>
             <% product.forEach(product => { %>
             <tr>
-              <td>
+              <td data-label="">
                 <img
                   src="/uploads/reImage/<%= product.productImage[0] %>"
                   alt="Product Image"
@@ -133,10 +191,10 @@
                   style="height: 80px; width: 80px"
                 />
               </td>
-              <td><%= product.productName %></td>
-              <td><%= product.categoryId.name %></td>
-              <td class="current-quantity"><%= product.quantity %></td>
-              <td>
+              <td data-label="Product Name"><%= product.productName %></td>
+              <td data-label="Category"><%= product.categoryId.name %></td>
+              <td data-label="Current Quantity" class="current-quantity"><%= product.quantity %></td>
+              <td data-label="Update Quantity">
                 <form data-valid="true">
                   <div class="quantity-wrapper">
                     <div class="quantity-container">
@@ -164,6 +222,8 @@
       </div>
     </div>
   </div>
+</div>
+
   <div class="pagination-container d-flex justify-content-center mt-4 mb-4">
     <nav aria-label="Page navigation">
       <ul class="pagination pagination-sm flex-wrap">

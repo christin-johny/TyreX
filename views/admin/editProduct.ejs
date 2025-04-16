@@ -1,4 +1,4 @@
-<%- include("../partials/admin/sidebar") %>
+<%- include("../partials/admin/header") %>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
 <style>
@@ -158,6 +158,7 @@
                         type="text"
                         class="form-control border"
                         value="<%=product.salePrice%>"
+                        disabled
                       />
                       <div id="salePrice-error" class="error-message"></div>
                     </div>

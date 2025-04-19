@@ -5,6 +5,14 @@
     <link rel="icon" type="image/svg" sizes="20x20" href="/img/favicon.svg" />
     <meta charset="utf-8" />
     <title>Invoice #<%= order.orderId %></title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
     <style>
       .button-container {
         text-align: center;
@@ -132,16 +140,19 @@
       }
     </style>
   </head>
+  
   <body>
     <div class="invoice-container" id="invoice">
-      
       <div class="invoice-header">
         <div>
           <div class="invoice-title">INVOICE</div>
-          <div>Invoice #<%= order.orderId %></div>
+          <div>Invoice No: <%= order.orderId.slice(3,7) %></div>
           <div>
             Date: <%= new Date(order.invoiceDate ||
             order.createdAt).toLocaleDateString() %>
+          </div>
+          <div>
+            Order Id: <%=order.orderId%>
           </div>
         </div>
         <div class="company-details">
@@ -179,17 +190,21 @@
             <div class="section-title">Payment Method</div>
             <div>
               <% if (order.paymentMethod === 'cod') { %> Cash On Delivery <% }
-              else if (order.paymentMethod === 'online') { %> Online Payment <%
+              else if (order.paymentMethod === 'online payment') { %> Online Payment <%
               } else if (order.paymentMethod === 'wallet') { %> Wallet Payment
               <% } %>
             </div>
           </div>
           <div>
             <div class="section-title">Order Status</div>
-            <div class="status-badge"><%=order.status.toUpperCase()%></div>
-            <!-- <div class="status-badge">
-              <%= new Date(order.deliveredAt).toLocaleDateString() %>
-            </div> -->
+            <div>
+              <span
+                class="badge px-2 py-1 text-uppercase fw-semibold <%= order.status === 'delivered' ? 'bg-success text-white' : order.status === 'cancelled' ? 'bg-danger text-white' : order.status === 'shipped' ? 'bg-info text-dark' : order.status === 'returned' ? 'bg-secondary text-white' : 'bg-warning text-dark' %>"
+              >
+                <%=order.status.toUpperCase()%>
+              </span>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -217,8 +232,8 @@
             </td>
             <td><%= item.product.productName %></td>
             <td><%= item.quantity %></td>
+            <td>₹<%= (item.product.salePrice).toFixed(2) %></td>
             <td>₹<%= item.price.toFixed(2) %></td>
-            <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
           </tr>
           <% }); %>
         </tbody>
@@ -227,11 +242,15 @@
       <div class="total-section">
         <div class="total-row">
           <div class="total-label">Subtotal:</div>
-          <div class="total-value">₹<%= (order.totalPrice-(order.totalPrice*.18)).toFixed(2) %></div>
+          <div class="total-value">
+            ₹<%= (order.totalPrice-(order.totalPrice*.18)).toFixed(2) %>
+          </div>
         </div>
         <div class="total-row">
           <div class="total-label">GST:</div>
-          <div class="total-value">₹<%= (order.totalPrice*.18).toFixed(2) %></div>
+          <div class="total-value">
+            ₹<%= (order.totalPrice*.18).toFixed(2) %>
+          </div>
         </div>
         <% if (order.discount > 0) { %>
         <div class="total-row">
@@ -239,14 +258,14 @@
           <div class="total-value">-₹<%= order.discount.toFixed(2) %></div>
         </div>
         <% } %>
-        
+
         <div class="total-row">
           <div class="total-label">Delivery Charge:</div>
           <%if(order.totalPrice<15000){%>
           <div class="total-value">₹500.00</div>
           <%}else{%>
-            <div class="total-value">Free Shipping</div>
-            <%}%>
+          <div class="total-value">Free Shipping</div>
+          <%}%>
         </div>
         <div class="total-row grand-total">
           <div class="total-label">Grand Total:</div>
@@ -263,49 +282,54 @@
       </div>
     </div>
     <div class="button-container">
+      <a href="/orderDetails?orderId=<%=order.orderId%>" class="btn btn-warning">Go Back</a>
       <button onclick="downloadPDF()" class="download-btn">
         Download Invoice
       </button>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
-     function downloadPDF() {
-  const element = document.getElementById("invoice");
-  const opt = {
-    margin: 0.5,
-    filename: "invoice.pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      scrollY: 0,
-      allowTaint: true,
-      useCORS: true,
-      letterRendering: true
-    },
-    jsPDF: { 
-      unit: "in", 
-      format: "a4",
-      orientation: "portrait" 
-    },
-    pagebreak: { 
-      mode: ['avoid-all', 'css', 'legacy'] 
-    }
-  };
+      function downloadPDF() {
+        const element = document.getElementById("invoice");
+        const opt = {
+          margin: 0.5,
+          filename: "invoice.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            scrollY: 0,
+            allowTaint: true,
+            useCORS: true,
+            letterRendering: true,
+          },
+          jsPDF: {
+            unit: "in",
+            format: "a4",
+            orientation: "portrait",
+          },
+          pagebreak: {
+            mode: ["avoid-all", "css", "legacy"],
+          },
+        };
 
+        element.style.overflow = "visible";
+        document.body.style.overflow = "visible";
 
-  element.style.overflow = "visible";
-  document.body.style.overflow = "visible";
-  
-  html2pdf()
-    .set(opt)
-    .from(element)
-    .save()
-    .then(() => {
-
-      element.style.overflow = "";
-      document.body.style.overflow = "";
-    });
-}
+        html2pdf()
+          .set(opt)
+          .from(element)
+          .save()
+          .then(() => {
+            element.style.overflow = "";
+            document.body.style.overflow = "";
+          });
+      }
     </script>
+    <!-- Bootstrap JS Bundle -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-vVo2L+6BwDkUHE8nRVnkUZZRMTqxTQGVQXjHC2r03smGp6H6c3+FiYkI7cE6UcH+"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

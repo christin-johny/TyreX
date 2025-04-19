@@ -35,7 +35,11 @@ const addproduct = async (req, res) => {
       warranty,
       quantity,
     } = req.body;
-
+    if (!file.mimetype.startsWith("image/")) {
+      return res
+        .status(400)
+        .json({ error: "Only image files are allowed." });
+    }
     if (!req.files || req.files.length === 0) {
       return res.json({
         success: false,
@@ -326,18 +330,18 @@ const deleteSingleImage = async (req, res) => {
     const product = await Product.findByIdAndUpdate(productIdToServer, {
       $pull: { productImage: imageNameToServer },
     });
-    const imagePath = path.join(
-      "public",
-      "uploads",
-      "reImage",
-      imageNameToServer
-    );
-    if (fs.existsSync(imagePath)) {
-    fs.unlinkSync(imagePath);
-      console.log(`Image ${imageNameToServer} deleted`);
-    } else {
-      console.log(`image ${imageNameToServer} not found`);
-    }
+    // const imagePath = path.join(
+    //   "public",
+    //   "uploads",
+    //   "reImage",
+    //   imageNameToServer
+    // );
+    // if (fs.existsSync(imagePath)) {
+    // fs.unlinkSync(imagePath);
+    //   console.log(`Image ${imageNameToServer} deleted`);
+    // } else {
+    //   console.log(`image ${imageNameToServer} not found`);
+    // }
     res.send({ status: true });
   } catch (error) {
     console.error(error);

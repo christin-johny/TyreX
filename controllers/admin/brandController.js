@@ -1,7 +1,9 @@
 const Brand = require("../../models/brandSchema");
 const Product = require("../../models/productSchema");
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
-const loadBrandPage = async (req, res) => {
+const loadBrandPage = async (req, res,next) => {
   try {
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
@@ -26,23 +28,19 @@ const loadBrandPage = async (req, res) => {
       searchQuery: search,
     });
   } catch (error) {
-    res.redirect("/pageerror");
-    console.error(error);
+    next(error)
   }
 };
 
-
-
-const addBrand = async (req, res) => {
+const addBrand = async (req, res,next) => {
   try {
     const brandName = req.body.name;
     const image = req.file.filename;
 
-    const existingBrand = await Brand.findOne({ brandName: brandName });
+    const existingBrand = await Brand.findOne({ brandName: new RegExp(`^${brandName}$`, 'i') });
+
     if (existingBrand) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Brand already exists." });
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.BRAND_ALREADY_EXISTS });
     }
 
     const newBrand = new Brand({
@@ -51,51 +49,37 @@ const addBrand = async (req, res) => {
     });
 
     await newBrand.save();
+    res.status(StatusCodes.SUCCESS).json({ success: true, message: Messages.BRAND_ADDED });
 
-    res
-      .status(200)
-      .json({ success: true, message: "Brand added successfully!" });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while adding the brand.",
-      });
+    next(error)    
   }
 };
 
 
-
-
-const blockBrand = async (req, res) => {
+const blockBrand = async (req, res,next) => {
     try {
       const id = req.query.id;
       await Brand.updateOne({ _id: id }, { $set: { isBlocked: true } });
       req.session.message = { type: 'success', text: 'Brand blocked successfully!' };
       res.redirect('/admin/brands');
     } catch (error) {
-      console.error(error);
-      req.session.message = { type: 'error', text: 'An error occurred while blocking the brand.' };
-      res.redirect('/pageerror');
+      next(error)
     }
   };
   
-  const unblockBrand = async (req, res) => {
+  const unblockBrand = async (req, res,next) => {
     try {
       const id = req.query.id;
       await Brand.updateOne({ _id: id }, { $set: { isBlocked: false } });
       req.session.message = { type: 'success', text: 'Brand unblocked successfully!' };
       res.redirect('/admin/brands');
     } catch (error) {
-      console.error(error);
-      req.session.message = { type: 'error', text: 'An error occurred while unblocking the brand.' };
-      res.redirect('/pageerror');
+      next(error)
     }
   };
   
-  const deleteBrand = async (req, res) => {
+  const deleteBrand = async (req, res,next) => {
     try {
       const id = req.query.id;
       if (!id) {
@@ -106,13 +90,11 @@ const blockBrand = async (req, res) => {
       req.session.message = { type: 'success', text: 'Brand deleted successfully!' };
       res.redirect('/admin/brands');
     } catch (error) {
-      console.error(error);
-      req.session.message = { type: 'error', text: 'An error occurred while deleting the brand.' };
-      res.status(500).redirect('/pageerror');
+      next(error)
     }
   };
 
-  const loadEditBrand = async (req, res) => {
+  const loadEditBrand = async (req, res,next) => {
     try {
       const id = req.query.id;
       const brand = await Brand.findOne({ _id: id });
@@ -123,23 +105,26 @@ const blockBrand = async (req, res) => {
   
       return res.status(200).json({ status: true, brand });
     } catch (error) {
-      console.error("Error loading brand:", error);
-      return res.status(500).json({ status: false, message: "Internal server error" });
+      next(error)
     }
   };
   
-  const editBrand = async (req, res) => {
+  const editBrand = async (req, res,next) => {
     try {
       const { id } = req.params;
       const { name } = req.body;
       const brand = await Brand.findById(id);
   
       if (!brand) {
-        return res.status(404).json({ status: false, message: "Brand not found" });
+        return res.status(StatusCodes.NOT_FOUND).json({ status: false, message: Messages.BRAND_NOT_FOUND });
       }
-     const existingBrand= await Brand.findOne({brandName:name,_id:{$ne:id}});
+      const existingBrand = await Brand.findOne({
+        brandName: new RegExp(`^${name}$`, 'i'),
+        _id: { $ne: id }
+      });
+            
      if(existingBrand){
-      return res.status(400).json({ status: false, message: "Brand name already exists" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ status: false, message: Messages.BRAND_NAME_EXISTS });
      }
      
       const updatedImage = req.file ? [req.file.filename] : brand.brandImage;
@@ -151,10 +136,10 @@ const blockBrand = async (req, res) => {
   
       const updatedBrand = await Brand.findByIdAndUpdate(id, updateData, { new: true });
   
-      return res.json({ status: true, message: "Brand updated successfully!", brand: updatedBrand });
+      return res.status(StatusCodes.SUCCESS).json({ status: true, message: Messages.BRAND_UPDATED, brand: updatedBrand });
+
     } catch (error) {
-      console.error("Error updating brand:", error);
-      return res.status(500).json({ status: false, message: "Internal server error" });
+      next(error)
     }
   };
   

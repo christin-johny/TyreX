@@ -6,8 +6,11 @@ const Cart = require("../../models/cartSchema");
 const mongoose = require("mongoose");
 const Coupon = require("../../models/couponSchema");
 const Wallet = require("../../models/walletSchema");
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
-const loadCheckoutPage = async (req, res) => {
+
+const loadCheckoutPage = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
@@ -32,7 +35,7 @@ const loadCheckoutPage = async (req, res) => {
     const addressData = await Address.findOne({ userId: userId });
 
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(StatusCodes.NOT_FOUND).json({ status: false, message: Messages.USER_NOT_FOUND });
     }
 
     for (let item of cart.items) {
@@ -89,22 +92,21 @@ const loadCheckoutPage = async (req, res) => {
     }
 
   } catch (error) {
-    console.error("Error in loadCheckoutPage:", error);
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
-const addAddressCheckout = async (req, res) => {
+const addAddressCheckout = async (req, res,next) => {
   try {
     const user = req.session.user;
 
     res.render("addAddressCheckout", { user: user });
   } catch (error) {
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
-const saveAddressCheckout = async (req, res) => {
+const saveAddressCheckout = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
 
@@ -164,12 +166,10 @@ const saveAddressCheckout = async (req, res) => {
         });
         await userAddress.save();
       }
-
       res.redirect("/checkout");
     }
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
@@ -178,12 +178,15 @@ const applyCoupon = async (req, res, next) => {
     const userId = req.session.user._id;
     const { couponCode, subtotal } = req.body;
 
+
     const coupon = await Coupon.findOne({ name: couponCode, isListed: true });
 
     if (!coupon) {
-      return res.json({ success: false, message: "Invalid coupon code" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.INVALID_COUPON_CODE });
     }
-    if (coupon.minimumPrice > (subtotal)) {
+
+
+    if (coupon.minimumPrice > subtotal) {
       return res
         .status(400)
         .json({
@@ -191,6 +194,7 @@ const applyCoupon = async (req, res, next) => {
           message: `You need to have items worth ${coupon.minimumPrice} to apply this coupon`,
         });
     }
+
     if (coupon.usedBy.includes(userId)) {
       return res
         .status(400)
@@ -199,9 +203,26 @@ const applyCoupon = async (req, res, next) => {
           message: "You have already used this coupon.",
         });
     }
+
+    let discount = 0;
+
+    if (coupon.offerPrice) {
+      discount = coupon.offerPrice;
+    }
+
+    else if (coupon.discountPercentage) {
+      discount = (subtotal * coupon.discountPercentage) / 100;
+
+
+      if (coupon.maxDiscountAmount && discount > coupon.maxDiscountAmount) {
+        discount = coupon.maxDiscountAmount;
+      }
+    }
+
+
     await Cart.findOneAndUpdate(
       { userId: userId },
-      { $set: { discount: coupon.offerPrice } },
+      { $set: { discount: discount } },
       { new: true }
     );
 
@@ -210,6 +231,7 @@ const applyCoupon = async (req, res, next) => {
     next(error);
   }
 };
+
 
 const removeCoupon = async (req, res, next) => {
   try {

@@ -2,7 +2,8 @@ const Banner = require("../../models/bannerSchema");
 const path = require('path');
 const fs = require('fs');
 const { title } = require("process");
-
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
 const loadBannerPage = async (req,res)=>{
     try {
@@ -14,7 +15,6 @@ const loadBannerPage = async (req,res)=>{
     }
 }
 
-
 const loadAddBannerPage = async (req,res) => {
     try {
         res.render("addBanner");
@@ -23,7 +23,6 @@ const loadAddBannerPage = async (req,res) => {
         res.redirect('/admin/pageerror'); 
     }
 }
-
 
 const addBanner = async (req,res)=>{
     try {
@@ -46,13 +45,12 @@ const addBanner = async (req,res)=>{
     }
 }
 
-
 const deleteBanner = async (req,res) => {
     try {
     const id = req.query.id;
 
     await Banner.findByIdAndDelete(id)
-    res.status(200).json({ success: true, message: "Banner deleted successfully" });
+    res.status(StatusCodes.SUCCESS).json({ success: true, message: Messages.BANNER_DELETED });
     
     } catch (error) {
         console.error(error);
@@ -60,7 +58,6 @@ const deleteBanner = async (req,res) => {
     }
     
 }
-
 
 module.exports={
     loadBannerPage,

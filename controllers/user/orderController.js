@@ -7,8 +7,10 @@ const Coupon = require("../../models/couponSchema")
 const Wallet = require("../../models/walletSchema");
 const razorpay = require("../../config/razorpay");
 const crypto = require("crypto");
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
-const placeOrder = async (req, res) => {
+const placeOrder = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const { addressId, paymentMethod,couponCode } = req.body;
@@ -43,9 +45,8 @@ const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalPrice - cart.discount;
 
 if(finalAmount>15000){
-  return res
-      .status(400)
-      .json({ success: false, message: "Cash on delivery is not applicable for amount above ₹15000! " });
+  return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.COD_LIMIT_EXCEEDED });
+
 }
 
     const invoiceDate = new Date();
@@ -90,10 +91,11 @@ if(finalAmount>15000){
 
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [],discount:0} });
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Order placed successfully" });
-  } catch (error) {}
+    return res.status(StatusCodes.SUCCESS).json({ success: true, message: Messages.ORDER_PLACED});
+
+  } catch (error) {
+    next(error)
+  }
 };
 
 const placeWalletOrder = async (req, res, next) => {
@@ -135,22 +137,20 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
     let wallet = await Wallet.findOne({ userId: userId });
 
     if (wallet.balance < finalAmount) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: `you only have ₹ ${wallet.balance} in your wallet!`,
-        });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.INSUFFICIENT_WALLET_BALANCE(wallet.balance),
+      });
+      
     }
 
     if (!wallet) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Wallet not Found" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.WALLET_NOT_FOUND,
+      });
+      
     }
-
-    
-
     const orderSchema = new Order({
       userId: userId,
       orderedItems: cartItems,
@@ -202,16 +202,18 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
 
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [],discount:0 } });
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Order placed successfully" });
+    return res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.ORDER_PLACED,
+    });
+    
 
   } catch (error) {
     next(error);
   }
 };
 
-const loadConfirmation = async (req, res) => {
+const loadConfirmation = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
 
@@ -226,12 +228,11 @@ const loadConfirmation = async (req, res) => {
     const orderId = data[0].orderId;
     res.render("orderConfirmation", { orderId: orderId });
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+next(error)
   }
 };
 
-const orders = async (req, res) => {
+const orders = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
@@ -254,12 +255,11 @@ const orders = async (req, res) => {
       totalPages: totalPages,
     });
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+next(error)
   }
 };
 
-const orderDetails = async (req, res) => {
+const orderDetails = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
@@ -272,12 +272,11 @@ const orderDetails = async (req, res) => {
       user: user,
     });
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+next(error)
   }
 };
 
-const cancelOrder = async (req, res) => {
+const cancelOrder = async (req, res,next) => {
   try {
     const user = req.session.user;
     const { orderId, reason } = req.body;
@@ -318,17 +317,16 @@ const cancelOrder = async (req, res) => {
       });
     }
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Order cancelled successfully" });
+    return res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.ORDER_CANCELLED,
+    });    
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
-
-const downloadInvoice = async (req, res) => {
+const downloadInvoice = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
@@ -340,12 +338,11 @@ const downloadInvoice = async (req, res) => {
 
     res.render("invoice", { order: order, user: user });
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
-const requestReturn = async (req, res) => {
+const requestReturn = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const { orderId, returnReason, returnDescription } = req.body;
@@ -364,19 +361,22 @@ const requestReturn = async (req, res) => {
         },
       });
     } else {
-      return res
-        .status(400)
-        .json({ success: false, message: "Order not Found" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.ORDER_NOT_FOUND,
+      });      
     }
 
-    return res.status(200).json({ success: true, message: "returned" });
+    return res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.RETURNED,
+    });    
   } catch (error) {
-    console.error(error);
-    res.render("/pageNotFound");
+    next(error)
   }
 };
 
-const orderSearch = async (req, res) => {
+const orderSearch = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
@@ -394,12 +394,11 @@ const orderSearch = async (req, res) => {
       return res.render("viewOrders", { user: {}, orders: {} });
     }
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
-const cancelReturnRequest = async (req, res) => {
+const cancelReturnRequest = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
     const { orderId } = req.body;
@@ -417,17 +416,19 @@ const cancelReturnRequest = async (req, res) => {
         },
       });
     } else {
-      return res
-        .status(400)
-        .json({ success: false, message: "Order not Found" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.ORDER_NOT_FOUND,
+      });      
     }
 
-    return res
-      .status(200)
-      .json({ success: true, message: "return request cancelled" });
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: Messages.RETURN_REQUEST_CANCELLED,
+    });
+    
   } catch (error) {
-    console.error(error);
-    res.render("/pageNotFound");
+    next(error)
   }
 };
 
@@ -483,12 +484,16 @@ const verifyPayment = async (req, res, next) => {
       .digest("hex");
 
     if (generatedSignature !== razorpay_signature) {
-      return res.status(400).json({ success: false, error: "Invalid payment signature" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        error: Messages.INVALID_PAYMENT_SIGNATURE,
+      });
+      
     }
 
     const addressData = await Address.findOne(
       { userId: userId, "address._id": addressId },
-      { "address.$": 1 } // Project only the matching address in the array
+      { "address.$": 1 } 
     ).lean();
     
     if (!addressData || !addressData.address || addressData.address.length === 0) {
@@ -558,13 +563,15 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [],discount:0 } });
 
 
-    res.status(200).json({ success: true, message: "Payment successful" });
+    res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.PAYMENT_SUCCESSFUL,
+    });
+    
   } catch (error) {
     next(error);
   }
 };
-
-
 
 module.exports = {
   loadConfirmation,

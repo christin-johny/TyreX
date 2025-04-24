@@ -574,54 +574,91 @@
         }
 
         async function confirmRemove(productId) {
+    const result = await Swal.fire({
+        title: "Remove Item?",
+        text: "This product will be removed from your cart",
+        icon: "warning",
+        position: 'center',
+        toast: false,
+        backdrop: true,
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, remove it!"
+    });
 
-
-            const result = await Swal.fire({
-                title: "Remove Item?",
-                text: "This product will be removed from your cart",
-                icon: "warning",
-                position: 'center',
-                toast: false,
-                backdrop: true,
-                showCancelButton: true,
-                confirmButtonColor: "#dc3545",
-                cancelButtonColor: "#6c757d",
-                confirmButtonText: "Yes, remove it!"
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/cart?productId=${productId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                }
             });
 
-            if (result.isConfirmed) {
-                try {
+            const data = await response.json();
 
+            if (response.ok) {
+                await Swal.fire({
+                    title: "Removed!",
+                    text: data.message,
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
 
-                    const response = await fetch(`/cart?productId=${productId}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
+                const productRow = $(`tr:has(button[onclick="confirmRemove('${productId}')"]):first`);
+                if (productRow.length) {
+                    productRow.fadeOut(300, function() {
+                        $(this).remove();
                     });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        await Swal.fire({
-                            title: "Removed!",
-                            text: data.message,
-                            icon: "success",
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(()=>{
-                            location.reload();
-                        })
-                       
-                    } else {
-                        Swal.fire("Error", data.error || "Failed to remove product.");
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    Swal.fire("Something went wrong. Please try again.");
                 }
+                const mobileProductRow = $(`.mobile-cart-item:has(button[onclick="confirmRemove('${productId}')"]):first`);
+                if (mobileProductRow.length) {
+                    mobileProductRow.fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }
+                
+
+                $("#total").text(data.grandTotal || 0);
+                
+
+                if ($('tbody tr').length <= 1) { 
+                    setTimeout(function() {
+                        if ($('tbody tr').length === 0) {
+                            showEmptyCart();
+                        }
+                    }, 350);
+                }
+            } else {
+                Swal.fire("Error", data.error || "Failed to remove product.");
             }
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire("Something went wrong. Please try again.");
         }
+    }
+}
+
+
+function showEmptyCart() {
+    const emptyCartHtml = `
+        <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <h4>Your cart is empty</h4>
+            <p>Looks like you haven't added any products to your cart yet.</p>
+            <a href="/shop" class="continue-shopping">
+                <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+            </a>
+        </div>
+    `;
+    
+    $('.table-responsive').html(emptyCartHtml);
+    $('.d-md-none.p-3').html(emptyCartHtml);
+    
+    $('.checkout-btn').hide();
+}
     </script>
 </body>
 </html>

@@ -1,139 +1,200 @@
-<%- include("../partials/user/cartHeader") %>
-<link rel="stylesheet" href="/css/userprofile_style.css">
-<div class="page-header breadcrumb-wrap">
-    <div class="container">
-        <div class="breadcrumb">
-            <a href="/home" rel="nofollow" class="no-style">Home &nbsp; > &nbsp;</a>
-            <a href="/profile" rel="nofollow" class="no-style">Profile&nbsp; > &nbsp;</a>
-            <a href="/editProfile" rel="nofollow" class="no-style">Edit Profile &nbsp; > &nbsp;</a>
+<%- include("../partials/user/profileHeader") %>
+    <style>
+      /* Additional styles for the profile edit page */
+      .edit-profile-content {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+      }
+      
+      .form-control {
+        border-radius: 6px;
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+      }
+      
+      .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+        border-color: #3a86ff;
+      }
+      
+      .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      
+      .profile-image-section {
+        border-left: 1px solid #dee2e6;
+        padding-left: 2rem;
+      }
+      
+      @media (max-width: 767.98px) {
+        .profile-image-section {
+          border-left: none;
+          border-top: 1px solid #dee2e6;
+          padding-left: 0;
+          padding-top: 2rem;
+          margin-top: 1.5rem;
+        }
+      }
+      
+      .btn-change-password {
+        background-color: #3a86ff;
+        color: white;
+        border-radius: 6px;
+        padding: 0.5rem 1.25rem;
+        border: none;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      
+      .btn-change-password:hover {
+        background-color: #2563eb;
+        color: white;
+      }
+      
+      .btn-upload {
+        background-color: #6c757d;
+        color: white;
+        border-radius: 6px;
+        padding: 0.5rem 1.25rem;
+        border: none;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      
+      .btn-upload:hover {
+        background-color: #495057;
+        color: white;
+      }
+      
+      /* Fix the sidebar issues */
+      @media (max-width: 991.98px) {
+        .main-content {
+          width: 100%;
+          margin-left: 0;  /* Reset margin for mobile */
+        }
+        
+        .sidebar-expanded .main-content {
+          margin-left: 0;  /* Don't shift content when sidebar is open on mobile */
+        }
+        
+        /* Adjust sidebar positioning for mobile */
+        #sidebar {
+          position: fixed;
+          left: -280px;
+          transition: left 0.3s ease;
+          top: 110px;
+          height: calc(100vh - 110px);
+          overflow-y: auto;
+          z-index: 1020;
+        }
+        
+        .sidebar-expanded #sidebar {
+          left: 0;
+        }
+      }
+      
+      /* Make sure the overlay covers the entire screen */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1010;
+      }
+      
+      .sidebar-expanded .sidebar-overlay {
+        display: block;
+      }
+    </style>
+
+      
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="container">
+        <div class="section-header">
+          <h4>Edit Profile</h4>
         </div>
+        
+        <div class="edit-profile-content">
+          <div class="row">
+            <!-- Profile Details Section -->
+            <div class="col-md-7">
+              <div class="mb-3">
+                <label for="userName" class="form-label">Username</label>
+                <input type="text" class="form-control" id="name" value="<%= user.name %>" readonly>
+              </div>
+              
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" value="<%= user.email %>" readonly>
+              </div>
+              
+              <div class="mb-3">
+                <label for="phone" class="form-label">Phone No</label>
+                <input type="text" class="form-control" id="phone" value="<%= user.phone %>" placeholder="N/A" readonly>
+              </div>
+              
+              <div class="text-end mt-4">
+                <a href="/changePassword" class="btn btn-change-password">
+                  <i class="fas fa-key me-2"></i>Change Password
+                </a>
+              </div>
+            </div>
+            
+            <!-- Profile Image Section -->
+            <div class="col-md-5">
+              <div class="profile-image-section">
+                <h5 class="mb-4">Update Profile Picture</h5>
+                
+                <div class="text-center mb-4">
+                  <img src="uploads/reImage/<%= user.profileImage? user.profileImage : 'user.png' %>" alt="Profile" 
+                       class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #eee;">
+                </div>
+                
+                <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
+                  <div class="mb-3">
+                    <input type="file" class="form-control" name="profileImage" required>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-upload">
+                      <i class="fa-solid fa-upload me-2"></i>Upload
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-    <section>
-
-        <body>
-            <div class="d-flex ">
-                <%- include("../partials/user/sidebarPartials") %>
-                   
-                    <div class="main container-fluid">
-                        <div class="content ">
-                            <h4 class="pb-3">Edit Profile</h4>
-                    
-                            <div class="container">
-                                <div class="row align-items-center">
-                                    
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="userName" class="form-label">Username</label>
-                                            <input type="text" class="form-control" id="name" value="<%= user.name %>" readonly>
-                                        </div>
-                    
-                                        <div class="mb-3">
-                                            <label for="email" class="form-label">Email</label>
-                                            <input type="text" class="form-control" id="email" value="<%= user.email %>" readonly>
-                                        </div>
-                    
-                                        <div class="mb-3">
-                                            <label for="phone" class="form-label">Phone No</label>
-                                            <input type="text" class="form-control" id="phone" value="<%= user.phone %>" placeholder="N/A"  readonly>
-                                        </div>
-                                        <div class="col-md-6 text-center">
-                                            <div class="sidebar-profileImage">
-                                                <form action="/uploadProfile" method="POST" enctype="multipart/form-data">
-                                                    <label class="form-label">Update Profile Picture</label>
-                                                    <input type="file" class="form-control mb-2" name="profileImage" required>
-                                                    <button type="submit" class="btn btn-secondary">
-                                                        <i class="fa-solid fa-upload"></i> Upload
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            <div class="text-end mt-3">
-                                                <a href="/changePassword" class="btn btn-primary btn-sm">Change Password</a>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                    
-                           
-
-                                </div>
-                    
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
-                    
-
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="emailChangeModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Change Email</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="emailUpdateForm">
-                                        <div class="mb-3">
-                                            <label for="currentEmail" class="form-label">Current Email</label>
-                                            <input type="email" class="form-control" id="currentEmail"
-                                                name="currentEmail" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newEmail" class="form-label">New Email</label>
-                                            <input type="email" class="form-control" id="newEmail" name="newEmail"
-                                                required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Update Email</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-    </section>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        document.querySelector("#emailUpdateForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const currentEmail = document.querySelector("#currentEmail").value.trim();
-            const newEmail = document.querySelector("#newEmail").value.trim();
-
-            //form validation
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!currentEmail || !newEmail) {
-                Swal.fire("Both emails are required");
-                return;
-            }
-
-            if (!emailRegex.test(currentEmail) || !emailRegex.test(newEmail)) {
-                Swal.fire("Enter a valid email address");
-                return;
-            }
-            if (currentEmail === newEmail) {
-                Swal.fire("Enter a new email other than the current email");
-                return;
-            }
-            const response = await fetch('/changeEmail', {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ currentEmail, newEmail }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                Swal.fire("Success", data.message, "success").then(() => {
-                    location.reload();
-                });
-            } else {
-                Swal.fire(data.error);
-            }
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Form submission handling with SweetAlert2 (optional)
+    $(document).ready(function() {
+      $('form').on('submit', function() {
+        // Show loading indicator
+        Swal.fire({
+          title: 'Uploading...',
+          text: 'Please wait while we upload your profile picture',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
         });
-    </script>
+      });
+    });
+  </script>
 
-<%- include("../partials/user/footer") %>
+</body>
+</html>

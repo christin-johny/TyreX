@@ -324,18 +324,27 @@
                         name="selectedCoupon"
                         id="coupon_<%= coupon._id %>"
                         value="<%= coupon._id %>"
-                        <%if(coupon.minimumPrice>subtotal){%>
-                        disabled
-                        <%}%>
+                        <% if(coupon.minimumPrice > subtotal) { %>
+                          disabled
+                        <% } %>
                       />
                       <label class="form-check-label w-100" for="coupon_<%= coupon._id %>">
                         <h6 class="text-primary fw-bold mb-1"><%= coupon.name %></h6>
                         <p class="text-muted mb-1 small">
-                         <span class="text-success"> <strong><%= coupon.offerPrice %> Off</strong></span> On Orders Above <%= coupon.minimumPrice %>
-                          <br>Expires on <span class="text-warning"><%= new Date(coupon.expireOn).toDateString() %></span><br>
-                          <%if(coupon.minimumPrice>subtotal){%>
-                            <span>Add Items worth <strong class="text-danger"><%=coupon.minimumPrice-subtotal%></strong> to avail this Offer</span>
-                          <%}%>
+                          <% if (coupon.offerPrice) { %>
+                            <span class="text-success"> <strong><%= coupon.offerPrice %> Off</strong></span> On Orders Above <%= coupon.minimumPrice %>
+                          <% } else if (coupon.discountPercentage) { %>
+                            <span class="text-success"> <strong><%= coupon.discountPercentage %>% Off</strong></span> On Orders Above <%= coupon.minimumPrice %>
+                          <% } %>
+                          <br>Expires on <span class="text-warning"><%= new Date(coupon.expireOn).toDateString() %></span>
+                          
+                          <% if (coupon.minimumPrice > subtotal) { %>
+                            <br><span>Add Items worth <strong class="text-danger"><%= coupon.minimumPrice - subtotal %></strong> to avail this Offer</span>
+                          <% } %>
+
+                          <% if (coupon.discountPercentage && coupon.maxDiscountAmount) { %>
+                            <br><span >Max Discount: <strong class="text-danger"><%= coupon.maxDiscountAmount %></strong></span>
+                          <% } %>
                         </p>
                       </label>
                     </div>
@@ -359,9 +368,6 @@
     </div>
   </div>
 </div>
-
-
-
 
   <!-- Wallet Payment Modal -->
   <div
@@ -517,28 +523,40 @@ document.getElementById("applyCouponBtn").addEventListener("click", function () 
 }
 
 
-    function updateOrderSummary() {
-       const subtotalElement = document.getElementById('subtotal');
-       const couponDiscountElement = document.getElementById('couponDiscount');
-       const grandTotalElement = document.getElementById('grandTotal');
+function updateOrderSummary() {
+    const subtotalElement = document.getElementById('subtotal');
+    const couponDiscountElement = document.getElementById('couponDiscount');
+    const grandTotalElement = document.getElementById('grandTotal');
 
-       const subtotal = parseFloat(subtotalElement.textContent);
-       let discount = 0;
+    const subtotal = parseFloat(subtotalElement.textContent);
+    let discount = 0;
 
-       if (appliedCoupon) {
-           discount = appliedCoupon.offerPrice;
-       }
-       let grandTotal
-        if(subtotal<15000){
-          grandTotal = subtotal - discount+500;
-        }else{
-          grandTotal = subtotal - discount
+    if (appliedCoupon) {
+
+        if (appliedCoupon.discountPercentage) {
+
+            discount = (subtotal * appliedCoupon.discountPercentage) / 100;
+
+            if (appliedCoupon.maxDiscountAmount && discount > appliedCoupon.maxDiscountAmount) {
+                discount = appliedCoupon.maxDiscountAmount;
+            }
+        } else {
+
+            discount = appliedCoupon.offerPrice;
         }
-       
-
-       couponDiscountElement.textContent = discount.toFixed(2);
-       grandTotalElement.textContent = grandTotal.toFixed(2);
     }
+
+    let grandTotal;
+
+    if (subtotal < 15000) {
+        grandTotal = subtotal - discount + 500;
+    } else {
+        grandTotal = subtotal - discount;
+    }
+
+    couponDiscountElement.textContent = discount.toFixed(2);
+    grandTotalElement.textContent = grandTotal.toFixed(2);
+}
 
     async function placeOrder() {
        try {
@@ -627,31 +645,6 @@ document.getElementById("applyCouponBtn").addEventListener("click", function () 
                confirmButtonText: 'OK'
            });
        }
-
-
-
-
-    //    function checkWalletBalance() {
-    //    const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
-    //    const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
-
-    //    document.getElementById('payableAmount').textContent = payableAmount.toFixed(2);
-
-    //    const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
-    //    const insufficientFunds = document.getElementById('insufficientFunds');
-    //    const confirmWalletPayment = document.getElementById('confirmWalletPayment');
-
-    //    if (walletBalance < payableAmount) {
-    //        insufficientFunds.style.display = 'block';
-    //        confirmWalletPayment.style.display = 'none';
-    //    } else {
-    //        insufficientFunds.style.display = 'none';
-    //        confirmWalletPayment.style.display = 'block';
-    //    }
-
-    //    walletPaymentModal.show();
-    // }
-
 
 
     function processWalletOrder(orderData) {
@@ -769,14 +762,6 @@ document.getElementById("applyCouponBtn").addEventListener("click", function () 
     const paymentObject = new Razorpay(options);
     paymentObject.open();
     }
-
-
-
-
-
-    
-
-
 
     document.getElementById('confirmWalletPayment').addEventListener('click', async () => {
        const selectedAddress = document.getElementById('existingAddress');

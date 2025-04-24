@@ -4,8 +4,10 @@ const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
-const loadOrders = async (req, res) => {
+const loadOrders = async (req, res,next) => {
   try {
     let search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
@@ -46,12 +48,11 @@ const loadOrders = async (req, res) => {
       status: req.query.status || "all",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+    next(error)
   }
 };
 
-const viewOrderDetails = async (req, res) => {
+const viewOrderDetails = async (req, res ,next) => {
   try {
     const id = req.params.id;
 
@@ -61,14 +62,18 @@ const viewOrderDetails = async (req, res) => {
     if (order) {
       res.render("adminOrderDetails", { order: order });
     } else {
-      return res
-        .status(400)
-        .json({ success: false, message: "order not found" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.ORDER_NOT_FOUND,
+      });
+      
     }
-  } catch (error) {}
+  } catch (error) {
+    next(error)
+  }
 };
 
-const updateStatus = async (req, res) => {
+const updateStatus = async (req, res,next) => {
   try {
     const { orderId, status } = req.body;
 
@@ -78,25 +83,45 @@ const updateStatus = async (req, res) => {
       { new: true }
     );
     if (order) {
-      return res
-        .status(200)
-        .json({ success: true, message: "order updated successfully" });
+      return res.status(StatusCodes.SUCCESS).json({
+        success: true,
+        message: Messages.ORDER_UPDATED_SUCCESSFULLY,
+      });
+      
     } else {
-      return res
-        .status(400)
-        .json({ success: false, message: "order not found" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.ORDER_NOT_FOUND,
+      });
+      
     }
   } catch (error) {
-    console.error(error);
-    res.render("pageerror");
+  next(error)
   }
 };
 
-const orderCancel = async (req, res) => {
+const orderCancel = async (req, res,next) => {
   try {
     const { orderId } = req.body;
 
     const order = await Order.findById(orderId);
+        if(order.paymentMethod!='cod'){
+          let wallet = await Wallet.findOne({ userId: order.userId });
+    
+          if (!wallet) {
+            wallet = new Wallet({ userId:order.userId, balance: 0, transactions: [] });
+          }
+    
+          wallet.balance += parseInt(order.finalAmount);
+        wallet.transactions.push({
+          amount:order.finalAmount,
+          type: "credit",
+          description: "Order cancellation Refund",
+          orderId:order._id,
+        });
+        await wallet.save();
+    
+        }
 
     await Order.findOneAndUpdate(
       { _id: orderId },
@@ -110,17 +135,18 @@ const orderCancel = async (req, res) => {
     }));
 
     for (let i = 0; i < orderedItems.length; i++) {
-      await Product.findByIdAndUpdate(orderedItems[i].product, {
+      await Product.findByIdAndUpdate(orderedItems[i].product._id, {
         $inc: { quantity: orderedItems[i].quantity },
       });
     }
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Order cancelled successfully" });
+    return res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.ORDER_CANCELLED_SUCCESSFULLY,
+    });
+    
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error)
   }
 };
 
@@ -174,7 +200,7 @@ const handleReturn = async (req, res) => {
   }
 };
 
-const updateReturnStatus = async (req, res) => {
+const updateReturnStatus = async (req, res,next) => {
   try {
     const { orderId, status } = req.body;
     if (status === "returning") {
@@ -184,13 +210,17 @@ const updateReturnStatus = async (req, res) => {
         { new: true }
       );
       if (order) {
-        return res
-          .status(200)
-          .json({ success: true, message: "returning successfully" });
+        return res.status(StatusCodes.SUCCESS).json({
+          success: true,
+          message: Messages.RETURN_SUCCESSFUL,
+        });
+        
       } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "order not found" });
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: Messages.ORDER_NOT_FOUND,
+        });
+        
       }
     } else if (status === "returned") {
       const order = await Order.findByIdAndUpdate(
@@ -232,18 +262,20 @@ const updateReturnStatus = async (req, res) => {
       }
 
       if (order) {
-        return res
-          .status(200)
-          .json({ success: true, message: "returned successfully" });
+        return res.status(StatusCodes.SUCCESS).json({
+          success: true,
+          message: Messages.RETURNED_SUCCESSFULLY,
+        });
+        
       } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "order not found" });
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: Messages.ORDER_NOT_FOUND,
+        });        
       }
     }
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageerror");
+    next(error)
   }
 };
 

@@ -51,14 +51,42 @@
         object-fit: cover;
         border-radius: 5px;
     }
+    
+    /* Responsive styles for sidebar integration */
+    .container-wrapper {
+        transition: all 0.3s ease;
+        padding: 1.5rem;
+    }
+    
+    /* For desktop view */
+    @media (min-width: 992px) {
+        body:not(.sidebar-collapsed) .container-wrapper {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+        }
+        
+        body.sidebar-collapsed .container-wrapper {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+    
+    /* For mobile view */
+    @media (max-width: 991.98px) {
+        .container-wrapper {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        body.sidebar-expanded .container-wrapper {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+        }
+    }
 </style>
 
-
-
-<div class="container-wrapper ">
-
-
-    <div class="order-details-card container-fluid">
+<div class="container-wrapper">
+    <div class="order-details-card">
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <div class="d-flex justify-content-between align-items-center">
@@ -83,15 +111,12 @@
                 </div>
 
                 <%if(order.status === "delivered" || order.status === "returned"){%>
-
                 <div class="card mt-4">
                     <div class="card-header">
-                        <h5 class="mb-0">Delivered On: <%= new Date(order.deliveredOn).toLocaleDateString() %></h5>
+                        <h5 class="mb-0">Delivered On: <%= new Date(order.deliveredAt).toLocaleDateString() %></h5>
                     </div>
                 </div>
                 <%}%>
-
-
 
                 <% if (order.status === 'delivered' && !order.returnReason && order.requestStatus !== "rejected") { %>
                     <div class="card mt-4">
@@ -105,15 +130,6 @@
                         </div>
                     </div>
                 <% } %>
-
-                <!-- <% if (order.requestStatus === 'rejected') { %>
-                    <div class="alert alert-danger mt-3">
-                        <h6 class="alert-heading">Return Request Rejected</h6>
-                        
-                        <p><strong>Reason:</strong> <%= order.rejectionReason %></p>
-                        
-                    </div>
-                <% } %> -->
                 
                 <% if (['return requested', 'returning', 'returned'].includes(order.status)) { %>
                     <div class="card mt-4">
@@ -166,8 +182,6 @@
                     </div>
                 <% } %>
 
-
-                
                 <br>
                 <!-- Product Details -->
                 <div class="row mb-4">
@@ -176,10 +190,10 @@
                         <%for(let i=0;i<order.orderedItems.length;i++){%>
                         <div class="card mb-2">
                             <div class="card-body">
-                                <div class="d-flex">
+                                <div class="d-flex flex-column flex-sm-row">
                                     <img src="uploads/reImage/<%= order.orderedItems[i].product.productImage[0] %>" 
                                          alt="<%= order.orderedItems[i].product.productName %>"
-                                         class="product-image me-3">
+                                         class="product-image me-3 mb-3 mb-sm-0">
                                     <div>
                                         <h6><%= order.orderedItems[i].product.productName %></h6>
                                         <p class="mb-1">Quantity: <%= order.orderedItems[i].quantity %></p>
@@ -194,16 +208,12 @@
                                                 <%= order.status %>
                                             </span>
                                         </p>
-                                        
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
                         <%}%>
                     </div>
-
-                    
 
                     <div class="col-md-4">
                         <!-- Order Summary -->
@@ -253,13 +263,10 @@
                                         <% } %>
                                     </span>
                                 </div>
-                                
                             </div>
                         </div>
 
-                        
-                            <a href="/downloadInvoice?orderId=<%= order.orderId %>" class="btn btn-primary mt-2">View Invoice</a>
-                        
+                        <a href="/downloadInvoice?orderId=<%= order.orderId %>" class="btn btn-primary mt-2">View Invoice</a>
 
                         <!-- Order Actions -->
                         <div class="order-actions mt-4">
@@ -279,7 +286,6 @@
                                 </button>
                             <% } %>
                         </div>
-                            
                     </div>
                 </div>
 
@@ -530,5 +536,3 @@ async function cancelReturn(orderId) {
     }
 }
 </script>
-</body>
-</html>

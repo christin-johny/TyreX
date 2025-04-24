@@ -1,14 +1,14 @@
 {
   "name": "tyrex",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "nodemon app.js"
   },
   "keywords": [],
   "author": "Christin johny",
   "license": "ISC",
-  "description": "",
+  "description": "TyreX is an e-commerce platform for selling vehicle tires and accessories.",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",

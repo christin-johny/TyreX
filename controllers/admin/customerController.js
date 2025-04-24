@@ -1,7 +1,6 @@
 const User=require('../../models/userSchema')
 
-
-const customerInfo = async (req, res) => {
+const customerInfo = async (req, res,next) => {
     try {
         let search = req.query.search || "";
         let page = parseInt(req.query.page) || 1;
@@ -35,38 +34,34 @@ const customerInfo = async (req, res) => {
             searchQuery: search
         });
     } catch (error) {
-        console.error("Error fetching customers:", error);
-        res.status(500).send("Internal Server Error");
+        next(error)
     }
 };
 
-const customerBlocked= async(req,res)=>{
+const customerBlocked= async(req,res,next)=>{
     try {
         let id=req.query.id;
         await User.updateOne({_id:id},{$set:{isBlocked:true}});
             res.redirect("/admin/users");
         
     } catch (error) {
-        res.redirect("/pageerror")
+    next(error);
     }
 }
 
-
-
-
-const customerUnblocked=async (req,res) => {
+const customerUnblocked=async (req,res,next) => {
     try {
         let id=req.query.id;
         await User.updateOne({_id:id},{$set:{isBlocked:false}});
         res.redirect("/admin/users")
     } catch (error) {
-        res.redirect("/pageerror")
+        next(error)
     }
     
 }
 
-
-
 module.exports={
-    customerInfo,customerUnblocked,customerBlocked
+    customerInfo,
+    customerUnblocked,
+    customerBlocked
 }

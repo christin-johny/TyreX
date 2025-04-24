@@ -5,8 +5,10 @@ const Category = require("../../models/categorySchema");
 const Size = require("../../models/size");
 const Brand = require("../../models/brandSchema");
 const Cart = require("../../models/cartSchema"); 
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
-const addToCart = async (req, res) => {
+const addToCart = async (req, res,next) => {
     try {
         
         const userId = req.session.user._id; 
@@ -20,7 +22,9 @@ const addToCart = async (req, res) => {
         const product = await Product.findOne({ _id: productId, isBlocked: false }).populate("categoryId",'isListed')
 
         if (!product||!product.categoryId.isListed) {
-            return res.status(404).json({ message: "Product not currently available" });
+            return res.status(StatusCodes.NOT_FOUND).json({
+                message: Messages.PRODUCT_NOT_AVAILABLE,
+              });              
         }
 
         
@@ -33,10 +37,16 @@ const addToCart = async (req, res) => {
             if (itemIndex > -1) {
                 if((cart.items[itemIndex].quantity + quantity)>product.quantity){
                     
-                    return res.status(400).json({ success: false, message: `we have only ${product.quantity} in stock`});
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        success: false,
+                        message: Messages.ONLY_STOCK_AVAILABLE(product.quantity),
+                    });                      
                 }
                 if(cart.items[itemIndex].quantity + quantity>5){
-                    return res.status(400).json({ success: false, message: "You have reached the maximum limit for this product in your cart." });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        success: false,
+                        message: Messages.MAX_CART_LIMIT_REACHED,
+                      });                      
                 }
                 else{
                 cart.items[itemIndex].quantity += quantity;
@@ -74,21 +84,18 @@ const addToCart = async (req, res) => {
         if (!userCart || userCart.cart.length === 0) {
             await User.findByIdAndUpdate(userId, { $set: { cart: [cart._id] } }, { new: true });
         }
-        
-
-
-        
-
-        res.status(200).json({ success: true, message: "Product added to cart", cart });
+        res.status(StatusCodes.SUCCESS).json({
+            success: true,
+            message: Messages.PRODUCT_ADDED_TO_CART,
+            cart,
+          });          
 
     } catch (error) {
-        console.error("Error adding to cart:", error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error)
     }
 };
 
-
-const loadCart = async (req, res) => {
+const loadCart = async (req, res,next) => {
     try {
         const userId = req.session.user._id; 
 
@@ -130,13 +137,11 @@ const loadCart = async (req, res) => {
 
 
     } catch (error) {
-        console.error("Error fetching cart:", error);
-        res.status(500).send("Server Error");
+        next(error)
     }
 };
 
-
-const changeQuantity = async (req, res) => {
+const changeQuantity = async (req, res,next) => {
     try {
         const userId = req.session.user._id;
         const { productId, count } = req.body;
@@ -150,7 +155,9 @@ const changeQuantity = async (req, res) => {
         });
 
         if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({
+                message: Messages.CART_NOT_FOUND,
+              });              
         }
 
      
@@ -159,7 +166,9 @@ const changeQuantity = async (req, res) => {
         );
 
         if (!specificItem) {
-            return res.status(404).json({ message: "Product not found in cart" });
+            return res.status(StatusCodes.NOT_FOUND).json({
+                message: Messages.PRODUCT_NOT_IN_CART,
+              });              
         }
 
      
@@ -181,20 +190,19 @@ const changeQuantity = async (req, res) => {
             return acc + ((item.productId?.salePrice || 0) * item.quantity);
         }, 0);
 
-        res.status(200).json({
+        res.status(StatusCodes.SUCCESS).json({
             success: true,
-            message: "Updated successfully",
+            message: Messages.CART_UPDATED,
             cartData,
-            grandTotal
-        });
+            grandTotal,
+          });          
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error)
     }
 };
 
-const removeFromCart= async(req,res,next)=>{
+const removeFromCart = async(req, res, next) => {
     try {
         const productId = req.query.productId;
         const userId = req.session.user._id;  
@@ -208,7 +216,7 @@ const removeFromCart= async(req,res,next)=>{
         });
 
         if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: Messages.CART_NOT_FOUND });
         }
 
         const specificItem = cart.items.find(item =>
@@ -216,19 +224,34 @@ const removeFromCart= async(req,res,next)=>{
         );
 
         if (!specificItem) {
-            return res.status(404).json({ message: "Product not found in cart" });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: Messages.PRODUCT_NOT_IN_CART });
         }
 
         await Cart.updateOne(
             { userId }, 
             { $pull: { items: { productId: productId } } }
         );
-        
 
-        
-        return res.status(200).json({success:true,message:'Product removed successfully'})
+        const updatedCart = await Cart.findOne({ userId }).populate({
+            path: "items.productId",
+            populate: [
+                { path: "brandId", model: "Brand" },
+                { path: "categoryId", model: "Category" }
+            ]
+        });
+
+        let grandTotal = 0;
+        if (updatedCart && updatedCart.items.length > 0) {
+            grandTotal = updatedCart.items.reduce((acc, item) => {
+                return acc + ((item.productId?.salePrice || 0) * item.quantity);
+            }, 0);
+        }
+        return res.status(StatusCodes.SUCCESS).json({ 
+            success: true, 
+            message: Messages.PRODUCT_REMOVED,
+            grandTotal
+        });
     } catch (error) {
-        console.error("Error deleting product from wishlist", error);
         next(error);
     }
 }

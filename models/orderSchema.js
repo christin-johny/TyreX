@@ -72,8 +72,20 @@ const orderSchema = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','returned','returning']
+        enum:['Pending','Processing','Shipped','delivered','cancelled','return requested','returned','returning'],
+        default: 'Pending'
     },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Success', 'Failed'],
+      default: 'Failed'
+    },
+    razorpayOrderId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
     cancelReason:{
       Type:String,
     },

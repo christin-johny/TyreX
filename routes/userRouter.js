@@ -7,6 +7,7 @@ const wishlistController=require('../controllers/user/wishlistController.js')
 const checkoutController = require('../controllers/user/checkoutController.js')
 const orderController=require('../controllers/user/orderController.js')
 const walletController= require('../controllers/user/walletController.js')
+const retryPaymentController = require('../controllers/user/retryPaymentController.js')
 const {userAuth,redirectAuth,checkBlockedUser}=require('../middlewares/userAuth.js')
 const passport = require('passport');
 const multer = require("multer");
@@ -112,6 +113,12 @@ router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 router.post("/order/createOrder",userAuth,orderController.createOrder)
 router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
 
-
+//retry payment
+router.get("/paymentFailure",userAuth,retryPaymentController .loadPaymentFailure)
+router.get("/retryPayment",userAuth,retryPaymentController .loadRetryPayment)
+router.put("/retryPayment/cod",userAuth,retryPaymentController .retryPaymentCod)
+router.put('/retryPayment/wallet',userAuth,retryPaymentController.retryPaymentWallet)
+router.post('/retryPayment/online',userAuth,retryPaymentController.retryPaymentOnline)
+router.post('/retryPayment/verifyPayment',userAuth,retryPaymentController.verifyPayment)
 
 module.exports = router;

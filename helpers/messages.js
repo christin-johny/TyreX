@@ -85,6 +85,7 @@ const Messages = {
     RETURN_REQUEST_CANCELLED: "Return request cancelled",
     INVALID_PAYMENT_SIGNATURE: "Invalid payment signature",
     PAYMENT_SUCCESSFUL: "Payment successful",
+    PAYMENT_FAILED:'Payment failed'
 
 
   };

@@ -47,7 +47,7 @@ const loadHome = async (req, res) => {
 
     if (user) {
       const userData = await User.findOne({ _id: user });
-      return res.render("homePage", {
+      return res.render("homepage", {
         user: userData,
         products: productData,
         brand: brand,

@@ -167,11 +167,9 @@
   </section>
 </main>
 
-
 <script>
   async function confirmToRemove(productId) {
-    console.log("Deleting product ID:", productId);
-
+    
     const result = await Swal.fire({
       title: "Remove from wishlist?",
       text: "This item will be removed from your wishlist",
@@ -188,7 +186,7 @@
 
     if (result.isConfirmed) {
       try {
-        console.log("Deleting product ID just above fetch:", productId);
+     
 
         const response = await fetch(`/wishlist?productId=${productId}`, {
           method: "DELETE",

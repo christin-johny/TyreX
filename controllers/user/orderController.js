@@ -10,6 +10,19 @@ const crypto = require("crypto");
 const StatusCodes = require("../../helpers/stausCodes");
 const Messages = require("../../helpers/messages");
 
+const generateOrderId = () => {
+  const randomNumber = Math.floor(100000 + Math.random() * 900000);
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+
+  const dateString = `${yyyy}${mm}${dd}`;
+  return `ORD${dateString}-${randomNumber}`;
+};
+
+
 const placeOrder = async (req, res,next) => {
   try {
     const userId = req.session.user._id;
@@ -28,18 +41,31 @@ const placeOrder = async (req, res,next) => {
 
     const userData = await User.findById(userId);
 
-    const cart = await Cart.findOne({ userId });
 
-const cartItems = await Promise.all(cart.items.map(async (item) => {
-  const product = await Product.findById(item.productId).lean(); 
-  return {
-    product: product, 
-    quantity: item.quantity,
-    price: item.totalPrice,
-  };
-}));
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
 
-
+    if (!cart || !cart.items.length) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+    }
+    
+    let cartItems = [];
+    for (let item of cart.items) {
+      const product = item.productId;
+    
+      if (!product || product.isBlocked || product.quantity < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+        });
+      }
+    
+      cartItems.push({
+        product: product,
+        quantity: item.quantity,
+        price: item.totalPrice,
+      });
+    }
+    
 const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
 let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalPrice - cart.discount;
@@ -51,8 +77,10 @@ if(finalAmount>15000){
 
     const invoiceDate = new Date();
     const status = "Processing";
+    const orderId = generateOrderId();
 
     const orderSchema = new Order({
+      orderId,
       userId: userId,
       orderedItems: cartItems,
       totalPrice: totalPrice,
@@ -80,8 +108,8 @@ if(finalAmount>15000){
       { new: true }
     );
 
-    const orderedItems = orderData.orderedItems.map((item) => ({
-      product: item.product,
+    const orderedItems = cart.items.map((item) => ({
+      product: item.productId,
       quantity: item.quantity,
     }));
     for (let i = 0; i < orderedItems.length; i++) {
@@ -117,16 +145,29 @@ const placeWalletOrder = async (req, res, next) => {
 
     const userData = await User.findById(userId);
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
 
-const cartItems = await Promise.all(cart.items.map(async (item) => {
-  const product = await Product.findById(item.productId).lean(); 
-  return {
-    product: product, 
-    quantity: item.quantity,
-    price: item.totalPrice,
-  };
-}));
+    if (!cart || !cart.items.length) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+    }
+    
+    let cartItems = [];
+    for (let item of cart.items) {
+      const product = item.productId;
+    
+      if (!product || product.isBlocked || product.quantity < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+        });
+      }
+    
+      cartItems.push({
+        product: product,
+        quantity: item.quantity,
+        price: item.totalPrice,
+      });
+    }
 
 
 const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
@@ -152,7 +193,11 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
       });
       
     }
+
+    const orderId = generateOrderId();
+
     const orderSchema = new Order({
+      orderId,
       userId: userId,
       orderedItems: cartItems,
       totalPrice: totalPrice,
@@ -284,16 +329,23 @@ const cancelOrder = async (req, res,next) => {
     const { orderId, reason } = req.body;
 
     const order = await Order.findById(orderId);
-    if(order.paymentMethod!='cod'){
+
+    const items = order.orderedItems;
+
+    let refundAmount = items
+      .filter(item => item.productStatus != 'cancelled') 
+      .reduce((acc, curr) => acc + curr.price, 0); 
+
+    if(order.paymentMethod !='cod' && order.paymentStatus != 'Failed'){
       let wallet = await Wallet.findOne({ userId: user._id });
 
       if (!wallet) {
         wallet = new Wallet({ userId:user._id, balance: 0, transactions: [] });
       }
 
-      wallet.balance += parseInt(order.finalAmount);
+      wallet.balance += parseInt(refundAmount);
     wallet.transactions.push({
-      amount:order.finalAmount,
+      amount:refundAmount,
       type: "credit",
       description: "Order cancellation Refund",
       orderId:order._id,
@@ -314,14 +366,16 @@ const cancelOrder = async (req, res,next) => {
     }));
 
     for (let i = 0; i < orderedItems.length; i++) {
+      if(order.orderedItems[i].productStatus != 'cancelled'){
       await Product.findByIdAndUpdate(orderedItems[i].product._id, {
         $inc: { quantity: orderedItems[i].quantity },
       });
     }
+    }
 
     return res.status(StatusCodes.SUCCESS).json({
       success: true,
-      message: Messages.ORDER_CANCELLED,
+      message: Messages.ORDER_CANCELLED_SUCCESSFULLY,
     });    
   } catch (error) {
     next(error)
@@ -441,17 +495,34 @@ const createOrder = async (req, res, next) => {
 
 
     const userData = await User.findById(userId);
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
 
-    const cartItems = cart.items.map((item) => ({
-      product: item.productId,
-      quantity: item.quantity,
-      price: item.totalPrice,
-    }));
+    if (!cart || !cart.items.length) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+    }
+    
+    let cartItems = [];
+    for (let item of cart.items) {
+      const product = item.productId;
+    
+      if (!product || product.isBlocked || product.quantity < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
+        });
+      }
+    
+      cartItems.push({
+        product: product,
+        quantity: item.quantity,
+        price: item.totalPrice,
+      });
+    }
+
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
     let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount: totalPrice - cart.discount;
-
+ 
     const options = {
       amount: finalAmount * 100, 
       currency: "INR",
@@ -475,8 +546,6 @@ const createOrder = async (req, res, next) => {
       })
     );
 
-
-
     const order = await razorpay.orders.create(options);
 
     const addressData = await Address.findOne(
@@ -491,8 +560,10 @@ const createOrder = async (req, res, next) => {
     const selectedAddress = addressData.address[0]; 
 
     const invoiceDate = new Date();
+    const orderId = generateOrderId();
 
     const orderSchema = new Order({
+      orderId,
       userId: userId,
       orderedItems: orderedItems,
       totalPrice: totalPrice,
@@ -504,7 +575,6 @@ const createOrder = async (req, res, next) => {
       razorpayOrderId:order.id
     });
     await orderSchema.save();
-
     if(couponCode){
       await Coupon.findOneAndUpdate(
         { name: couponCode },
@@ -520,21 +590,27 @@ const createOrder = async (req, res, next) => {
 
 
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [],discount:0 } });
-
-
-    
     
     res.status(200).json({
-      
       id: order.id, 
       amount: options.amount, 
       currency: options.currency,
     });
   } catch (error) {
-    next(error);
+    if (error.statusCode && error.statusCode >= 500) {
+      return res.status(StatusCodes.SERVICE_UNAVAILABLE).json({
+        success: false,
+        message: Messages.PAYMENT_SERVICE_UNAVAILABLE,
+      });
+    }
+  
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: error.message || "Failed to create order",
+    });
   }
 };
-
+  
 
 const verifyPayment = async (req, res, next) => {
   try {
@@ -585,7 +661,64 @@ const verifyPayment = async (req, res, next) => {
     res.status(500).json({ success: false });
   }
 };
+const cancelProduct = async (req,res,next) => {
+  try {
+   
+    const {orderId,reason,index} = req.body;
+    const userId = req.session.user._id;
 
+    const order = await Order.findById(orderId);
+
+    let canceledProduct = order.orderedItems[index];
+    
+    if(order.paymentMethod!='cod'){
+      let wallet = await Wallet.findOne({ userId });
+
+      if (!wallet) {
+        wallet = new Wallet({ userId:userId, balance: 0, transactions: [] });
+      }
+
+      wallet.balance += parseInt(canceledProduct.price);
+    wallet.transactions.push({
+      amount:canceledProduct.price,
+      type: "credit",
+      description: "Product cancellation Refund",
+      orderId:order._id,
+    });
+    await wallet.save();
+    }
+    canceledProduct.productStatus = 'cancelled';
+
+    const productId =canceledProduct.product._id;
+    const quantity = canceledProduct.quantity;
+
+    await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
+
+
+    order.orderedItems[index] = canceledProduct;
+    
+    let count=0 
+    for(let item of order.orderedItems){
+      if(item.productStatus === 'cancelled'){
+        count++;
+      }
+    }
+    if(count === order.orderedItems.length){
+      order.status = 'cancelled'
+    }
+    await order.save();
+    
+    return res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.PRODUCT_CANCELLED_SUCCESSFULLY,
+    });
+
+
+    
+  } catch (error) {
+    next(error);
+  }
+}
 module.exports = {
   loadConfirmation,
   placeOrder,
@@ -599,5 +732,6 @@ module.exports = {
   placeWalletOrder,
   createOrder,
   verifyPayment,
+  cancelProduct
 
 };

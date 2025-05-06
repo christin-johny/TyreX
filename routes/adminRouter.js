@@ -24,7 +24,7 @@ router.get("/login", redirectAuth, adminController.loadLogin);
 router.post("/login", redirectAuth, adminController.login);
 router.get("/logout", adminController.logout);
 
-router.get("/dashboard", adminController.loadHomepage);
+router.get("/dashboard", adminAuth, adminController.loadHomepage);
 
 
 

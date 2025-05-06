@@ -230,7 +230,11 @@
                 class="product-image"
               />
             </td>
-            <td><%= item.product.productName %></td>
+            <td><%= item.product.productName %>
+            <%if(item.productStatus === 'cancelled' && order.status != 'cancelled'){%>
+             <br> <span class="badge bg-danger text-white">CANCELLED</span>
+            <%}%>
+            </td>
             <td><%= item.quantity %></td>
             <td>₹<%= (item.product.salePrice).toFixed(2) %></td>
             <td>₹<%= item.price.toFixed(2) %></td>

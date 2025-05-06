@@ -105,7 +105,7 @@ const orderCancel = async (req, res,next) => {
     const { orderId } = req.body;
 
     const order = await Order.findById(orderId);
-        if(order.paymentMethod!='cod'){
+        if(order.paymentMethod!='cod' && order.paymentStatus != 'Failed'){
           let wallet = await Wallet.findOne({ userId: order.userId });
     
           if (!wallet) {
@@ -150,7 +150,7 @@ const orderCancel = async (req, res,next) => {
   }
 };
 
-const handleReturn = async (req, res) => {
+const handleReturn = async (req, res,next) => {
   try {
     const { action } = req.body;
     if (action === "approved") {
@@ -162,13 +162,16 @@ const handleReturn = async (req, res) => {
         { new: true }
       );
       if (order) {
-        return res
-          .status(200)
-          .json({ success: true, message: "return approved successfully" });
+        return res.status(StatusCodes.OK).json({
+          success: true,
+          message: Messages.RETURN_APPROVED_SUCCESSFULLY,
+        });
+        
       } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "order not found" });
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: Messages.ORDER_NOT_FOUND,
+        });        
       }
     } else if (action === "rejected") {
       const { orderId, category, message } = req.body;
@@ -185,18 +188,21 @@ const handleReturn = async (req, res) => {
         { new: true }
       );
       if (order) {
-        return res
-          .status(200)
-          .json({ success: true, message: "return request rejected" });
+        return res.status(StatusCodes.OK).json({
+          success: true,
+          message: Messages.RETURN_REQUEST_REJECTED,
+        });
+        
       } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "order not found" });
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: Messages.ORDER_NOT_FOUND,
+        });
+        
       }
     }
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageerror");
+    next(error)
   }
 };
 

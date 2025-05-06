@@ -101,7 +101,7 @@
                 <!-- Order Status Timeline -->
                 <div class="status-timeline">
                     <div class="status-line"></div>
-                    <% const statuses = ['pending', 'confirmed', 'shipped', 'delivered']; %>
+                    <% const statuses = ['Pending', 'confirmed', 'Shipped', 'delivered']; %>
                     <% statuses.forEach(status => { %>
                         <div class="status-point">
                             <div class="status-dot <%= order.status === status || statuses.indexOf(order.status) > statuses.indexOf(status) ? 'status-active' : 'status-inactive' %>"></div>
@@ -199,6 +199,9 @@
                                         <p class="mb-1">Quantity: <%= order.orderedItems[i].quantity %></p>
                                         <p class="mb-1">Price: ₹<%= order.orderedItems[i].product.salePrice*order.orderedItems[i].quantity %></p>
                                         <p class="mb-0">Status: 
+                                            <%if(order.orderedItems[i].productStatus === 'cancelled'){%>
+                                                <span class="badge bg-danger text-white">CANCELLED</span>
+                                            <%}else{%>
                                             <span class="badge px-2 py-1 text-uppercase fw-semibold 
                                                 <%= order.status === 'delivered' ? 'bg-success text-white' :
                                                      order.status === 'cancelled' ? 'bg-danger text-white' :
@@ -207,6 +210,7 @@
                                                      'bg-warning text-dark' %>">
                                                 <%= order.status %>
                                             </span>
+                                            <%}%>
                                         </p>
                                     </div>
                                 </div>
@@ -283,7 +287,7 @@
                                     <i class="bi bi-x-circle me-1"></i> Cancel Return Request
                                 </button>
                         
-                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned','Pending'].includes(order.status)) { %>
+                            <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
                                 <button onclick="cancelOrder('<%= order._id %>')" 
                                         class="btn btn-outline-danger fw-semibold text-uppercase">
                                     <i class="bi bi-x-circle me-1"></i> Cancel Order

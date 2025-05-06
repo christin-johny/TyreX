@@ -279,11 +279,13 @@
                                          </button>
                                      <% } else if (!['cancelled', 'delivered', 'returned', 'return requested', 'returning'].includes(order.status)) { %>
                                          <div class="action-buttons" style="display: flex; flex-direction: column; width: 100%; gap: 8px; margin-top: 10px;">
+                                            <%if(order.status !='Pending'){%>
                                              <button onclick="updateStatus('<%= order._id %>')" 
                                                      class="btn btn-info btn-sm" style="display: flex; align-items: center; justify-content: center;">
                                                  <i class="fas fa-sync-alt" style="margin-right: 8px; color: white;"></i>
                                                  <span style="color: white;">Update Status</span>
                                              </button>
+                                             <%}%>
                                              <button onclick="cancelOrder('<%= order._id %>')" 
                                                      class="btn btn-danger btn-sm" style="display: flex; align-items: center; justify-content: center;">
                                                  <i class="fas fa-ban" style="margin-right: 8px; color: white;"></i>
@@ -372,6 +374,7 @@
                              <span>Update Return Status</span>
                          </button>
                      <% } else if (!['cancelled', 'delivered', 'returned', 'return requested', 'returning'].includes(order.status)) { %>
+                       
                          <div class="d-flex flex-column gap-2 mt-2">
                              <button onclick="updateStatus('<%= order._id %>')" 
                                      class="btn btn-info btn-sm d-flex align-items-center justify-content-center">
@@ -384,6 +387,7 @@
                                  <span>Cancel</span>
                              </button>
                          </div>
+                         
                      <% } %>
                  </div>
              </div>
@@ -391,32 +395,71 @@
      </div>
      
      <div class="pagination-container d-flex justify-content-center mt-4 mb-4">
-         <nav aria-label="Page navigation">
-           <ul class="pagination pagination-sm flex-wrap">
-             <% if (currentPage > 1) { %>
-             <li class="page-item">
-               <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
-             </li>
-             <% } %>
-             <% for (let i = 1; i <= totalPages; i++) { %>
-               <% if (i === currentPage) { %>
-                 <li class="page-item active">
-                   <span class="page-link"><%= i %></span>
-                 </li>
-               <% } else { %>
-                 <li class="page-item">
-                   <a href="?page=<%= i %>" class="page-link"><%= i %></a>
-                 </li>
-               <% } %>
-             <% } %>
-             <% if (currentPage < totalPages) { %>
-             <li class="page-item">
-               <a href="?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
-             </li>
-             <% } %>
-           </ul>
-         </nav>
-       </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm flex-wrap">
+            <% if (currentPage > 1) { %>
+            <li class="page-item">
+              <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+            </li>
+            <% } %>
+            
+            <% /* Always show first page */ %>
+            <li class="page-item <%= currentPage === 1 ? 'active' : '' %>">
+              <% if (currentPage === 1) { %>
+                <span class="page-link">1</span>
+              <% } else { %>
+                <a class="page-link" href="?page=1">1</a>
+              <% } %>
+            </li>
+            
+            <% /* Show ellipsis after page 1 if necessary */ %>
+            <% if (currentPage > 2 && totalPages > 3) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+            <% } %>
+            
+            <% /* Show current page if it's not 1 and not the last page */ %>
+            <% if (currentPage !== 1 && currentPage !== totalPages) { %>
+              <li class="page-item active">
+                <span class="page-link"><%= currentPage %></span>
+              </li>
+            <% } else if (totalPages > 1 && currentPage !== 2) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=2">2</a>
+              </li>
+            <% } else if (totalPages > 1) { %>
+              <li class="page-item active">
+                <span class="page-link">2</span>
+              </li>
+            <% } %>
+            
+            <% /* Show ellipsis before last page if necessary */ %>
+            <% if (currentPage < totalPages - 1 && totalPages > 3) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+            <% } %>
+            
+            <% /* Show last page if total pages > 1 */ %>
+            <% if (totalPages > 1) { %>
+              <li class="page-item <%= currentPage === totalPages ? 'active' : '' %>">
+                <% if (currentPage === totalPages) { %>
+                  <span class="page-link"><%= totalPages %></span>
+                <% } else { %>
+                  <a class="page-link" href="?page=<%= totalPages %>"><%= totalPages %></a>
+                <% } %>
+              </li>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a href="?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
  </div>
 
 <!-- Rejection Modal -->
@@ -464,7 +507,7 @@ async function updateStatus(orderId) {
         title: 'Update Order Status',
         input: 'select',
         inputOptions: {
-            'pending': 'Pending',
+            'Pending': 'Pending',
             'confirmed': 'Confirmed',
             'shipped': 'Shipped',
             'delivered': 'delivered'

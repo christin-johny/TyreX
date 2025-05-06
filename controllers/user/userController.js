@@ -13,7 +13,6 @@ const pageNotFound = async (req, res) => {
   try {
     return res.render("pageNotFound");
   } catch (error) {
-    console.log("Home page not found");
     res.status(500).send("Server error");
   }
 };
@@ -143,7 +142,6 @@ const loadSignup = async (req, res) => {
   }
 };
 
-//function to generate otp
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
@@ -229,6 +227,7 @@ const verifyOtp = async (req, res) => {
       const passwordHash = await bcrypt.hash(user.password, 10);
 
       let referral = req.session.userData.referral;
+      
       referral = referral.toUpperCase();
       let referredUser;
       if (referral && referral.trim()) {
@@ -268,6 +267,26 @@ const verifyOtp = async (req, res) => {
 
       await saveUserData.save();
 
+      if (referral && referral.trim()) {
+        let wallet = await Wallet.findOne({ userId: saveUserData._id });
+        if (!wallet) {
+          wallet = new Wallet({
+            userId: saveUserData._id,
+            balance: 0,
+            transactions: [],
+          });
+        }
+
+        wallet.balance += 200;
+
+        wallet.transactions.push({
+          amount: 200,
+          type: "credit",
+          description: "Referral Reward",
+        });
+
+        await wallet.save();
+      }
       req.session.user = saveUserData;
       res.json({ success: true, redirectUrl: "/home" });
     } else {

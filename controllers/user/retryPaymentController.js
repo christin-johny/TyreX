@@ -49,6 +49,16 @@ const retryPaymentCod = async (req, res, next) => {
       product: item.product,
       quantity: item.quantity,
     }));
+    
+    for (let item of orderedItems) {
+      const product = await Product.findById(item.product._id);
+      if (!product || product.isBlocked || product.quantity < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          status: false,
+          message: Messages.INSUFFICIENT_STOCK(product?.productName || 'Unknown', product.quantity),
+        });        
+      }
+    }
 
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product._id, {
@@ -85,12 +95,26 @@ const retryPaymentWallet = async (req, res, next) => {
   try {
     const userId = req.session.user._id;
     const orderId = req.query.orderId;
-    console.log(orderId);
     const orderData = await Order.findOne({ orderId: orderId });
     const userData = await User.findById(userId);
 
     let wallet = await Wallet.findOne({ userId: userId });
     const finalAmount = orderData.finalAmount;
+    const orderedItems = orderData.orderedItems.map((item) => ({
+      product: item.product,
+      quantity: item.quantity,
+    }));
+
+    for (let item of orderedItems) {
+      const product = await Product.findById(item.product._id);
+      if (!product || product.isBlocked || product.quantity < item.quantity) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          status: false,
+          message: Messages.INSUFFICIENT_STOCK(product?.productName || 'Unknown', product.quantity),
+        });        
+      }
+    }
+
     if (wallet.balance < finalAmount) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -114,10 +138,7 @@ const retryPaymentWallet = async (req, res, next) => {
     });
     await wallet.save();
 
-    const orderedItems = orderData.orderedItems.map((item) => ({
-      product: item.product,
-      quantity: item.quantity,
-    }));
+    
 
     for (let i = 0; i < orderedItems.length; i++) {
       await Product.findByIdAndUpdate(orderedItems[i].product._id, {
@@ -156,6 +177,7 @@ const retryPaymentOnline = async (req, res, next) => {
       const { orderId } = req.body;
   
       const orderData = await Order.findOne({ orderId: orderId });
+      
   
       const options = {
         amount: orderData.finalAmount * 100,

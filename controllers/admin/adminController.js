@@ -18,34 +18,40 @@ const getTopBrands = async (matchStage) => {
   const brandStats = await Order.aggregate([
     { $match: matchStage },
     { $unwind: "$orderedItems" },
+    { $match: { "orderedItems.product.brandId": { $exists: true, $ne: null } } },
     {
       $group: {
         _id: "$orderedItems.product.brandId",
         totalQuantity: { $sum: "$orderedItems.quantity" },
       },
     },
+    {
+      $lookup: {
+        from: "brands",
+        localField: "_id",
+        foreignField: "_id",
+        as: "brand",
+      },
+    },
+    { $unwind: { path: "$brand", preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        brandId: "$_id",
+        brandName: { $ifNull: ["$brand.brandName", "Unknown Brand"] },
+        totalQuantity: 1,
+      },
+    },
     { $sort: { totalQuantity: -1 } },
-    { $limit: 10 }
+    { $limit: 10 },
   ]);
 
-  const populatedBrands = await Promise.all(
-    brandStats.map(async (brand) => {
-      const brandDoc = await Brand.findById(brand._id).lean();
-      return {
-        brandId: brand._id,
-        brandName: brandDoc?.brandName || "Unknown Brand",
-        totalQuantity: brand.totalQuantity,
-      };
-    })
-  );
-
-  return populatedBrands;
+  return brandStats;
 };
 
 
 const loadHomepage = async (req, res, next) => {
   try {
-    const filter = req.query.filter || "monthly";
+    const filter = req.query.filter || "weekly";
 
     // Time range filtering
     const matchStage = { status: "delivered" };
@@ -56,7 +62,7 @@ const loadHomepage = async (req, res, next) => {
       matchStage.createdAt = { $gte: startOfDay };
     } else if (filter === "weekly") {
       const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday as start
+      startOfWeek.setDate(now.getDate() - now.getDay()); 
       startOfWeek.setHours(0, 0, 0, 0);
       matchStage.createdAt = { $gte: startOfWeek };
     } else if (filter === "monthly") {
@@ -67,7 +73,6 @@ const loadHomepage = async (req, res, next) => {
       matchStage.createdAt = { $gte: startOfYear };
     }
 
-    // Top Products
     const topProducts = await Order.aggregate([
       { $match: matchStage },
       { $unwind: "$orderedItems" },
@@ -189,19 +194,6 @@ const logout = async (req, res) => {
   }
 };
 
-
-
-
-
-
-// const forgotPassword = async (req, res) => {
-//   try {
-//     return res.render("forgotPassword");
-//   } catch (error) {
-//     console.error(error);
-//     res.redirect("/admin/pagerror")
-//   }
-// };
 
 const loadAddProduct = async (req, res) => {
   try {

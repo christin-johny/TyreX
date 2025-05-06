@@ -256,4 +256,32 @@ const removeFromCart = async(req, res, next) => {
     }
 }
 
-module.exports = { addToCart,loadCart,changeQuantity,removeFromCart};
+const validateCheckout = async (req, res, next) => {
+    try {
+      const userId = req.session.user._id;
+      const cart = await Cart.findOne({ userId }).populate("items.productId");
+  
+      if (!cart || !cart.items.length) {
+        return res.status(400).json({ status: false, message: "Your cart is empty." });
+      }
+  
+      for (let item of cart.items) {
+        const product = item.productId;
+        if (!product || product.isBlocked || product.quantity < item.quantity) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            message: Messages.INSUFFICIENT_STOCK(product?.productName || 'Unknown', product.quantity),
+          });
+          
+        }
+      }
+  
+      return res.status(200).json({ status: true });
+  
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+
+module.exports = { addToCart,loadCart,changeQuantity,removeFromCart,validateCheckout};

@@ -203,8 +203,7 @@
   </div>
 </section>
 
-<!-- Note: This code assumes the existing modals (#addBrandModal and #editBrandModal) 
-     are defined elsewhere in your code and are not part of this section -->
+
 
 <!-- Edit Brand Modal -->
 <div
@@ -551,7 +550,7 @@
     const response = await fetch(`/admin/editbrand?id=${brandId}`);
     const data = await response.json();
 
-    console.log("Brand Data Received:", data); 
+
 
     if (data.status === true) {
       document.getElementById("brand_id").value = brandId;

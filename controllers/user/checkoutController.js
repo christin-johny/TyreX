@@ -187,21 +187,18 @@ const applyCoupon = async (req, res, next) => {
 
 
     if (coupon.minimumPrice > subtotal) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: `You need to have items worth ${coupon.minimumPrice} to apply this coupon`,
-        });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.COUPON_MINIMUM_PRICE_REQUIRED(coupon.minimumPrice),
+      });
     }
 
     if (coupon.usedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "You have already used this coupon.",
-        });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: Messages.COUPON_ALREADY_USED,
+      });
+      
     }
 
     let discount = 0;

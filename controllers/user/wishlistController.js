@@ -54,7 +54,6 @@ const addToWishlist = async (req, res) => {
         { path: "categoryId", model: "Category" },
       ],
     });
-
     const specificItem = cart.items.find(
       (item) =>
         item.productId && item.productId._id.toString() === productId.toString()
@@ -63,14 +62,13 @@ const addToWishlist = async (req, res) => {
 
     if (specificItem) {
       return res
-        .status(400)
+        .status(200)
         .json({ status: false, message: "Product already in cart!" });
     } else if (user.wishlist.includes(productId)) {
       return res
-        .status(400)
+        .status(200)
         .json({ status: false, message: "Product already in wishlist!" });
     }
-
     user.wishlist.push(productId);
     await user.save();
 

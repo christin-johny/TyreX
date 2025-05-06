@@ -392,7 +392,7 @@
                     <span class="text-break">#<%= order.orderId %></span>
                   </div>
                   <div class="col-6 col-md-2">
-                    <small class="text-muted">STATUS</small><br>
+                    <small class="text-muted">ORDER STATUS</small><br>
                     <span class="badge px-2 py-1 text-uppercase fw-semibold 
                         <%= order.status === 'delivered' ? 'bg-success text-white' :
                             order.status === 'cancelled' ? 'bg-danger text-white' :
@@ -419,9 +419,11 @@
                       ONLINE PAYMENT
                     <% } else if (order.paymentMethod === 'wallet') { %>
                       WALLET PAYMENT
-                    <% } else if(order.paymentStatus === "Failed"){ %>
+                    <% } else if(order.paymentStatus === "Failed" && order.status != 'cancelled'){ %>
                       <a href="/retryPayment?orderId=<%=order.orderId%>" class="btn btn-primary">Retry Payment</a>
-                    <% } %>
+                    <% }else{ %>
+                      PAYMENT FAILED
+                      <%}%>
                   </div>
                   <div class="col-12 col-md-2 mt-2 mt-md-0 d-flex flex-row flex-md-column gap-2">
                     <a href="/orderDetails?orderId=<%= order.orderId %>" 
@@ -439,7 +441,7 @@
                             class="btn btn-outline-danger btn-sm fw-semibold text-uppercase">
                         <i class="bi bi-x-circle"></i> Cancel Return Request
                       </button>
-                    <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned','Pending'].includes(order.status)) { %>
+                    <% } else if (!['delivered', 'cancelled', 'return requested', 'returning', 'returned'].includes(order.status)) { %>
                       <button onclick="cancelOrder('<%= order._id %>')"
                             class="btn btn-outline-danger btn-sm fw-semibold text-uppercase">
                         <i class="bi bi-x-circle"></i> Cancel Order
@@ -463,6 +465,12 @@
                     </a>
                     <p class="text-muted mb-0">Quantity: <%= order.orderedItems[i].quantity %></p>
                     <p class="text-muted mb-0">Price: ₹<%= order.orderedItems[i].product.salePrice*order.orderedItems[i].quantity %></p>
+                    <%if( ['Processing','Pending'].includes(order.status) && order.orderedItems.length > 1 &&  order.orderedItems[i].productStatus === 'active' && order.paymentStatus != 'Failed'){%>
+                    <button class="btn btn-outline-danger btn-sm fw-semibold text-uppercase" onclick="cancelProduct('<%=order._id %>','<%= i%>')">cancel Product</button>
+                    <%}%>
+                    <%if(order.orderedItems[i].productStatus === 'cancelled'){%>
+                      <span class="badge bg-danger text-white">PRODUCT CANCELLED</span>
+                      <%}%>
                   </div>
                 </div>
               </div>
@@ -480,23 +488,50 @@
           </div>
         <% } %>
         
-        <!-- Pagination -->
-        <% if (orders && orders.length > 0) { %>
-        <div class="pagination d-flex justify-content-center flex-wrap mb-4 gap-1">
-          <% if (currentPage > 1) { %>
-            <a class="btn btn-secondary" href="/orders?page=<%= currentPage - 1 %>">Prev</a>
-          <% } %>
-          
-          <% for (let i = 1; i <= totalPages; i++) { %>
-            <a class="btn <%= currentPage === i ? 'btn-primary active' : 'btn-outline-secondary' %>" 
-               href="/orders?page=<%= i %>"><%= i %></a>
-          <% } %>
-          
-          <% if (currentPage < totalPages) { %>
-            <a class="btn btn-secondary" href="/orders?page=<%= currentPage + 1 %>">Next</a>
-          <% } %>
-        </div>
+<!-- Pagination -->
+<% if (orders && orders.length > 0) { %>
+  <div class="pagination d-flex justify-content-center flex-wrap mb-4 gap-1">
+    <% if (currentPage > 1) { %>
+      <a class="btn btn-secondary" href="/orders?page=<%= currentPage - 1 %>">Prev</a>
+    <% } %>
+    
+    <!-- Always show first page -->
+    <a class="btn <%= currentPage === 1 ? 'btn-primary active' : 'btn-outline-secondary' %>" 
+       href="/orders?page=1">1</a>
+    
+    <!-- Show ellipsis after page 1 if necessary -->
+    <% if (currentPage > 2 && totalPages > 3) { %>
+      <span class="btn btn-outline-secondary disabled">...</span>
+    <% } %>
+    
+    <!-- Show current page if it's not 1 and not the last page -->
+    <% if (currentPage !== 1 && currentPage !== totalPages && totalPages > 2) { %>
+      <a class="btn btn-primary active" href="/orders?page=<%= currentPage %>"><%= currentPage %></a>
+    <% } %>
+    
+    <!-- Show middle pages or page 2 if appropriate -->
+    <% if (totalPages === 2) { %>
+      <a class="btn <%= currentPage === 2 ? 'btn-primary active' : 'btn-outline-secondary' %>" 
+         href="/orders?page=2">2</a>
+    <% } else if (totalPages > 2 && currentPage !== 2 && currentPage !== totalPages - 1) { %>
+      <!-- This condition avoids duplicate buttons when on first or last page -->
+      <% if (totalPages > 3 || (currentPage !== 1 && currentPage !== totalPages)) { %>
+        <% if (currentPage < totalPages - 1 && totalPages > 3) { %>
+          <span class="btn btn-outline-secondary disabled">...</span>
         <% } %>
+      <% } %>
+    <% } %>
+
+    <% if (totalPages > 2) { %>
+      <a class="btn <%= currentPage === totalPages ? 'btn-primary active' : 'btn-outline-secondary' %>" 
+         href="/orders?page=<%= totalPages %>"><%= totalPages %></a>
+    <% } %>
+    
+    <% if (currentPage < totalPages) { %>
+      <a class="btn btn-secondary" href="/orders?page=<%= currentPage + 1 %>">Next</a>
+    <% } %>
+  </div>
+<% } %>
       </div>
     </div>
   </div>
@@ -545,7 +580,9 @@
 
 <!-- SweetAlert2 for dialogs -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-Gn5384xqQ1aoWXA+058RXPXfg6Nv6JCzF5ZC8EG5fAwIQ9k/rwZV+YFf5Xq5drFQ" crossorigin="anonymous"></script>
+
 <script>
 let currentOrderId = null;
 
@@ -706,7 +743,7 @@ async function cancelOrder(orderId) {
   }
 
   try {
-    const response = await fetch('cancelOrder', {
+    const response = await fetch('/cancelOrder', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -733,6 +770,80 @@ async function cancelOrder(orderId) {
       icon: 'error',
       title: 'Error',
       text: error.message || 'Failed to cancel order'
+    });
+  }
+}
+
+
+
+
+async function cancelProduct(orderId,index){
+
+  const { value: reasonOption } = await Swal.fire({
+    title: 'Cancel Order',
+    input: 'select',
+    inputLabel: 'Select a reason for cancellation',
+    inputOptions: {
+      'Ordered by mistake': 'Ordered by mistake',
+      'Found a better price': 'Found a better price',
+      'Item no longer needed': 'Item no longer needed',
+      'Changed my mind': 'Changed my mind',
+      'Wrong item ordered': 'Wrong item ordered',
+      'Other': 'Other'
+    },
+    showCancelButton: true
+  });
+
+  if (!reasonOption) return;
+
+  let finalReason = reasonOption;
+
+  if (reasonOption === 'Other') {
+    const { value: otherReason } = await Swal.fire({
+      title: 'Cancel Order',
+      input: 'textarea',
+      inputLabel: 'Please provide a reason for cancellation',
+      inputPlaceholder: 'Type your reason here...',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to provide a reason!';
+        }
+      }
+    });
+
+    if (!otherReason) return;
+    finalReason = otherReason;
+  }
+
+  try {
+    const response = await fetch('/cancelProduct', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ orderId, index,reason: finalReason }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      await Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Product cancelled successfully',
+        timer: 1500
+      });
+      location.reload();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    await Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: error.message || 'Failed to cancel Product'
     });
   }
 }

@@ -41,7 +41,8 @@ const userSchema = new Schema({
     },
 referralCode: {
   type: String,
-  unique: true
+  unique: true,
+  sparse:true
 },
 referredBy: {
   type: String,

@@ -10,16 +10,16 @@ const loadSales = async (req, res, next) => {
       startDate = new Date(now.setHours(0, 0, 0, 0));
       endDate = new Date(now.setHours(23, 59, 59, 999));
     } else if (range === "weekly") {
-      const dayOfWeek = now.getDay();
-      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() + diffToMonday);
-      startDate.setHours(0, 0, 0, 0);
+      const now = new Date();
 
-      endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
+      endDate = new Date(now);
       endDate.setHours(23, 59, 59, 999);
-    } else if (range === "monthly") {
+
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - 6);
+      startDate.setHours(0, 0, 0, 0);
+    }
+     else if (range === "monthly") {
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       endDate.setHours(23, 59, 59, 999);
@@ -130,7 +130,6 @@ const loadSales = async (req, res, next) => {
   }
 };
 
-
 const loadSalesReport = async (req, res, next) => {
   try {
     const range = req.query.range || "daily";
@@ -141,15 +140,14 @@ const loadSalesReport = async (req, res, next) => {
       startDate = new Date(now.setHours(0, 0, 0, 0));
       endDate = new Date(now.setHours(23, 59, 59, 999));
     } else if (range === "weekly") {
-      const dayOfWeek = now.getDay();
-      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() + diffToMonday);
-      startDate.setHours(0, 0, 0, 0);
+      const now = new Date();
 
-      endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
+      endDate = new Date(now);
       endDate.setHours(23, 59, 59, 999);
+
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - 6);
+      startDate.setHours(0, 0, 0, 0);
     } else if (range === "monthly") {
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);

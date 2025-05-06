@@ -393,6 +393,7 @@ const loadInventory = async (req, res,next) => {
       .skip((page - 1) * limit)
       .populate("brandId")
       .populate("categoryId")
+      .sort({createdAt:-1})
       .exec();
 
     const count = await Product.find({

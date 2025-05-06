@@ -31,12 +31,15 @@ const Messages = {
     COUPON_TYPE_CONFLICT: "Choose either fixed or percentage discount, not both",
     COUPON_DATE_INVALID: "Expire date must be after created date",
     INVALID_COUPON_DATA: "All required fields must be filled correctly",
+    OFFER_PRICE_OR_DISCOUNT_REQUIRED: "Either offerPrice or discountPercentage is required.",
+    MAX_DISCOUNT_REQUIRED: "maxDiscountAmount is required when discountPercentage is provided.",
 
     
     //admin order controller
     ORDER_NOT_FOUND: "Order not found",
     ORDER_UPDATED_SUCCESSFULLY: "Order updated successfully",
     ORDER_CANCELLED_SUCCESSFULLY: "Order cancelled successfully",
+    PRODUCT_CANCELLED_SUCCESSFULLY: "Product cancelled successfully",
     RETURN_SUCCESSFUL: "Returning successfully",
     ORDER_NOT_FOUND: "Order not found",
     RETURNED_SUCCESSFULLY: "Returned successfully",
@@ -73,7 +76,9 @@ const Messages = {
 
     //checkout controller
     INVALID_COUPON_CODE: "Invalid coupon code",
-
+    COUPON_MINIMUM_PRICE_REQUIRED: (price) => `You need to have items worth ${price} to apply this coupon`,
+    COUPON_ALREADY_USED: "You have already used this coupon.",
+    
 
 
     //order controller
@@ -85,7 +90,12 @@ const Messages = {
     RETURN_REQUEST_CANCELLED: "Return request cancelled",
     INVALID_PAYMENT_SIGNATURE: "Invalid payment signature",
     PAYMENT_SUCCESSFUL: "Payment successful",
-    PAYMENT_FAILED:'Payment failed'
+    PAYMENT_FAILED:'Payment failed',
+    RETURN_APPROVED_SUCCESSFULLY: "Return approved successfully",
+    RETURN_REQUEST_REJECTED:"return request rejected",
+    PAYMENT_SERVICE_UNAVAILABLE: "Payment service temporarily unavailable. Please try again later.",
+    INSUFFICIENT_STOCK: (name, qty) => `The product "${name}" has only ${qty} items in stock.`,
+    
 
 
   };

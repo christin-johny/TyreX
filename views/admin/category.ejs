@@ -402,40 +402,64 @@
   </div>
 
 
-    <div class="pagination-container d-flex justify-content-center mt-4">
-      <nav aria-label="Page navigation">
-        <ul class="pagination pagination-sm flex-wrap">
-          <% if (currentPage > 1) { %>
-          <li class="page-item">
-            <a
-              href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>"
-              class="page-link"
-              >&laquo; Previous</a
-            >
-          </li>
-          <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
-          currentPage) { %>
-          <li class="page-item active">
-            <span class="page-link"><%= i %></span>
-          </li>
-          <% } else { %>
-          <li class="page-item">
-            <a href="?page=<%= i %>&search=<%= searchQuery %>" class="page-link"
-              ><%= i %></a
-            >
-          </li>
-          <% } %> <% } %> <% if (currentPage < totalPages) { %>
-          <li class="page-item">
-            <a
-              href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>"
-              class="page-link"
-              >Next &raquo;</a
-            >
-          </li>
-          <% } %>
-        </ul>
-      </nav>
-    </div>
+    <div class="pagination-container d-flex justify-content-center mt-4 mb-4">
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm flex-wrap">
+      <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+      </li>
+      <% } %>
+      
+      <% /* Always show first page */ %>
+      <li class="page-item <%= currentPage === 1 ? 'active' : '' %>">
+        <a class="page-link" href="?page=1">1</a>
+      </li>
+      
+      <% /* Show ellipsis after page 1 if necessary */ %>
+      <% if (currentPage > 2 && totalPages > 3) { %>
+        <li class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+      <% } %>
+      
+      <% /* Show current page if it's not 1 and not the last page */ %>
+      <% if (currentPage !== 1 && currentPage !== totalPages) { %>
+        <li class="page-item active">
+          <span class="page-link"><%= currentPage %></span>
+        </li>
+      <% } else if (totalPages > 1 && currentPage !== 2) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=2">2</a>
+        </li>
+      <% } else if (totalPages > 1) { %>
+        <li class="page-item active">
+          <span class="page-link">2</span>
+        </li>
+      <% } %>
+      
+      <% /* Show ellipsis before last page if necessary */ %>
+      <% if (currentPage < totalPages - 1 && totalPages > 3) { %>
+        <li class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+      <% } %>
+      
+      <% /* Show last page if total pages > 1 */ %>
+      <% if (totalPages > 1) { %>
+        <li class="page-item <%= currentPage === totalPages ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= totalPages %>"><%= totalPages %></a>
+        </li>
+      <% } %>
+      
+      <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a href="?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
 
     <div
       class="modal fade"
@@ -525,7 +549,7 @@
   confirmButtonText: "Add Offer",
   cancelButtonText: "Cancel",
   inputValidator: (value) => {
-    if (!value || value < 1 || value > 100) {
+    if (!value || value < 1 || value > 99) {
       return "Please enter a valid percentage between 1 and 100";
     }
   },
@@ -545,7 +569,7 @@
     document.head.appendChild(style);
   }
 });
-      console.log("Sending Data:", { percentage, categoryId });
+
 
       if (percentage) {
         try {

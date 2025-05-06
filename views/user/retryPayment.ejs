@@ -260,7 +260,7 @@
 
       document.getElementById("razorpayPaymentBtn").addEventListener("click", async function () {
         const orderId = this.dataset.orderId;  
-      console.log("hiiiiiiiiiiiiiiiiiiii");
+   
       
         const response = await fetch('/retryPayment/online', {
     method: 'POST',

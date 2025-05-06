@@ -328,24 +328,24 @@ function addToWishlist(productId){
 				url:'/wishlist',
 				method:'POST',
 				data :{productId :productId},
-				success :(response)=>{
-					if(response.status){
-						Swal.fire({
-							title : "Added to wishlist",
-							text : "The product has been added to you wishlist",
-							icon : "success",
-              showConfirmButton:true,
-							timer : 2000,
-						})
-					} else {
-						Swal.fire({
-							title:response.message,
-							icon:"warning",
-							timer:2000,
-
-						})
-					}
-				},
+				success :(response) => {
+      if (response.status) {
+        Swal.fire({
+          title: "Added to wishlist",
+          text: "The product has been added to your wishlist",
+          icon: "success",
+          showConfirmButton: true,
+          timer: 2000,
+        });
+      } else {
+        Swal.fire({
+          title: "Warning",
+          text: response.message,
+          icon: "warning",
+          timer: 2000,
+        });
+      }
+    },
 				error:(error)=>{
 					Swal.fire({
 						title : "Error",

@@ -81,6 +81,9 @@ router.get('/cart',userAuth,cartController.loadCart);
 router.put('/cart',userAuth,cartController.changeQuantity)
 router.delete('/cart',userAuth,cartController.removeFromCart)
 
+router.get('/cart/validateCheckout',userAuth, cartController.validateCheckout);
+
+
 //checkout
 router.get('/checkout',userAuth,checkoutController.loadCheckoutPage)
 router.get('/checkoutAddress',userAuth,checkoutController.addAddressCheckout)
@@ -98,9 +101,8 @@ router.get('/downloadInvoice',userAuth,orderController.downloadInvoice);
 router.post("/return", userAuth,uploads.array('images', 3), orderController.requestReturn);
 router.post('/orderSearch',userAuth,orderController.orderSearch)
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest);
-router.get('/confirmation',userAuth,orderController.loadConfirmation),
-
-
+router.get('/confirmation',userAuth,orderController.loadConfirmation);
+router.put('/cancelProduct',userAuth,orderController.cancelProduct)
 
 
 //wallet

@@ -117,8 +117,8 @@ const addCategoryOffer = async (req, res,next) => {
       product.categoryOffer = percentage;
     }
       await product.save();
-    }
-
+    } 
+    
     return res.status(StatusCodes.SUCCESS).json({
       status: true,
       message: Messages.OFFER_ADDED_SUCCESSFULLY(percentage),

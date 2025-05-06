@@ -617,7 +617,7 @@ function updateOrderSummary() {
        })
        .then(response => response.json())
        .then(data => {
-           console.log("Response from server:", data);
+           
            if (data.success) {
                Swal.fire({
                    title: 'Order Placed Successfully!',
@@ -713,7 +713,14 @@ function updateOrderSummary() {
   });
 
   const order = await response.json();
-
+  if (!response.ok || order.success === false) {
+      Swal.fire({
+        icon: "error",
+        title: "Order Creation Failed",
+        text: order.message || "Something went wrong while creating your order. Please try again.",
+      });
+      return;
+    }
   const options = {
     key: "<%= process.env.RAZORPAY_KEY_ID %>",
     amount: order.amount,
@@ -825,7 +832,7 @@ function updateOrderSummary() {
        }
     });
 
-       // Update the place order button onclick handler
+       
        document.querySelector('.place-order-btn').onclick = placeOrder;
   </script>
   <script>

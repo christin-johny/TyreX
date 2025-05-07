@@ -79,12 +79,12 @@ router.get('/orders',adminAuth,orderController.loadOrders);
 router.get('/adminOrders/:id',adminAuth,orderController.viewOrderDetails);
 router.put('/updateStatus',adminAuth,orderController.updateStatus);
 router.put('/orderCancel',adminAuth,orderController.orderCancel);
-router.put('/handleReturn',adminAuth,orderController.handleReturn)
-router.put('/updateReturnStatus',adminAuth,orderController.updateReturnStatus)
+router.put('/handleReturn',adminAuth,orderController.handleReturn);
+router.put('/updateReturnStatus',adminAuth,orderController.updateReturnStatus);
 
 // Inventory management
 router.get('/inventory',adminAuth,productController.loadInventory);
-router.patch('/inventory',adminAuth,productController.updateInventory)
+router.patch('/inventory',adminAuth,productController.updateInventory);
 
 //Coupon Management
 router.get('/coupon',adminAuth,couponController.loadCoupon);

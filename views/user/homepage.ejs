@@ -7,72 +7,368 @@
   <link rel="icon" type="image/svg" sizes="20x20" href="/img/favicon.svg">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
-
-  <link
-  href="/vendor/fontawesome-free/css/all.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" />
   <link href="/css/style.css" rel="stylesheet" type="text/css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
     .no-style {
-  all: unset; 
-  cursor: pointer; 
-  display: inline-block; }
-    .custom-carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      width: 40px;
-      height: 40px;
-      background-color: rgba(87, 87, 87, 0.5);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      all: unset; 
+      cursor: pointer; 
+      display: inline-block;
     }
     
-    .custom-carousel-btn-prev {
+    
+    
+    .custom-img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3 / 1; 
+      object-fit: contain;
+    }
+    
+    .modal {
+      z-index: 1050 !important;
+    }
+    
+    .modal-backdrop {
+      z-index: 1040 !important;
+    }
+    
+    /* User controls container */
+    .user-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    
+    /* Mobile styles with improved right alignment */
+    @media (max-width: 991px) {
+      .container {
+        padding-right: 5px !important; /* Reduced container padding */
+      }
+      
+      .navbar-collapse {
+        padding-top: 1rem;
+        text-align: right;
+      }
+      
+      .navbar-nav {
+        text-align: right !important;
+        padding: 0.5rem 0;
+        padding-right: 60px !important; /* Much larger right padding */
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 0.5rem 0;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+        width: 100%;
+      }
+      
+      .navbar-nav .nav-item {
+        padding: 0.3rem 0;
+        text-align: right !important;
+        display: block;
+        width: 100%;
+      }
+      
+      .navbar-nav .nav-link {
+        padding-right: 0;
+        font-size: 1.1rem;
+        font-weight: 600; /* Making nav links bold */
+        transition: color 0.3s ease;
+        text-align: right !important;
+        display: block;
+        margin-right: 15px; /* Added explicit margin to nav links */
+      }
+      
+      .navbar-toggler {
+        border: none;
+        padding: 0.5rem;
+        margin-right: 20px; /* Increased right margin for toggle button */
+        transition: all 0.3s ease;
+        order: 2;
+      }
+      
+      .navbar-brand {
+        order: 1;
+      }
+      
+      /* User controls for mobile view */
+      .user-controls {
+        width: 100%;
+        justify-content: flex-end !important;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-right: 20px !important; /* Much larger right padding */
+        text-align: right !important;
+        display: flex !important;
+        flex-wrap: nowrap;
+      }
+      
+      /* Ensure items stay in one line */
+      .user-controls > * {
+        margin-left: 12px; /* Slightly increased spacing between items */
+        white-space: nowrap;
+        font-weight: 600; /* Making text bolder */
+      }
+    }
+
+  #carouselExample {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Container for proportional scaling */
+  .carousel-image-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .carousel-image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Side navigation buttons styling */
+  .carousel-control-prev-custom,
+  .carousel-control-next-custom {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+  }
+  
+  .carousel-control-prev-custom {
+    left: 15px; /* Moved inward from the left edge */
+  }
+  
+  .carousel-control-next-custom {
+    right: 15px; /* Moved inward from the right edge */
+  }
+  
+  .nav-button-circle {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .nav-button-circle i {
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .carousel-control-prev-custom:hover .nav-button-circle,
+  .carousel-control-next-custom:hover .nav-button-circle {
+    background-color: #fff;
+    transform: scale(1.1);
+  }
+  
+  /* Style for indicators */
+  .carousel-indicators {
+    margin-bottom: 0.5rem;
+  }
+  
+  .carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 0 5px;
+  }
+  
+  .carousel-indicators .active {
+    background-color: #000;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .nav-button-circle {
+      width: 35px;
+      height: 35px;
+    }
+    
+    .nav-button-circle i {
+      font-size: 16px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .carousel-control-prev-custom {
       left: 10px;
     }
     
-    .custom-carousel-btn-next {
+    .carousel-control-next-custom {
       right: 10px;
     }
-    
-
-    .custom-carousel-btn i {
-      color: white;
-      font-size: 18px;
+  }
+  
+  @media (max-width: 576px) {
+    .carousel-image-container {
+      padding-bottom: 75%; /* 4:3 aspect ratio for mobile */
     }
-    .custom-img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 1; 
+    
+    .nav-button-circle {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .nav-button-circle i {
+      font-size: 14px;
+    }
+    
+    /* Center the buttons on smaller screens as shown in your example */
+    .carousel-control-prev-custom,
+    .carousel-control-next-custom {
+      top: auto;
+      bottom: 15px;
+      transform: none;
+    }
+    
+    .carousel-control-prev-custom {
+      left: calc(50% - 40px);
+    }
+    
+    .carousel-control-next-custom {
+      right: calc(50% - 40px);
+    }
+  }
+
+  .brand-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .brand-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .brand-image-container {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .brand-image {
+    max-height: 100%;
+    max-width: 100%;
     object-fit: contain;
-}
-.modal {
-  z-index: 1050 !important;
-}
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .brand-image-container {
+      height: 150px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .brand-image-container {
+      height: 130px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .brand-image-container {
+      height: 120px;
+    }
+    
+    #bestSelling h2 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  /* Brands Footer Banner Styling */
+  .brands-banner {
+    /* Keep the original background class */
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .brands-wrapper {
+    padding: 0.5rem 0;
+  }
+  
+  .brand-pill {
+    display: block;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+  
+  .brand-pill:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .brand-pill {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .brands-wrapper {
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .brand-pill {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .brands-banner {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+  }
 
-.modal-backdrop {
-  z-index: 1040 !important;
-}
-
-
-
-  </style>
+  @media (max-width: 768px) {
+    .hero-section .row {
+      flex-direction: column-reverse;
+    }
+    
+    .text-content {
+      text-align: center;
+      padding-top: 2rem !important;
+      padding-bottom: 2rem !important;
+    }
+  }
+</style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 sticky-top">
-    <div class="container">
+    <div class="container position-relative"> <!-- Added position-relative -->
       
       <!-- Logo -->
       <a class="navbar-brand d-flex align-items-center" href="/">
@@ -80,45 +376,46 @@
       </a>
   
       <!-- Mobile Menu Button -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" style="margin-right: 15px;"> <!-- Added inline margin -->
         <i class="fas fa-bars"></i>
       </button>
   
       <!-- Navbar Content -->
       <div class="collapse navbar-collapse" id="navbarContent">
         
-        <!-- Centered Menu -->
+        <!-- Menu Items -->
         <ul class="navbar-nav mx-auto text-center">
           <li class="nav-item"><a class="nav-link" href="/shop">Shop Now</a></li>
           <li class="nav-item"><a class="nav-link" href="#carouselExample">Offers</a></li>
           <li class="nav-item"><a class="nav-link" href="#bestSelling">Brands</a></li>
-          
           <li class="nav-item"><a class="nav-link" href="#newArrival">New Arrival</a></li>
         </ul>
   
         <!-- User Login/Logout Section -->
-        <div class="d-flex align-items-center justify-content-center">
+        <div class="user-controls">
           <% if (user) { %>
             <a href="/profile" class="no-style">
-            <span class="me-2 fw-bold"><%= user.name %></span></a>
-            <button class="btn btn-danger btn-sm rounded-circle me-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
+              <span class="fw-bold"><%= user.name %></span>
+            </a>
+            <button class="btn btn-danger btn-sm rounded-circle ms-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
               <i class="fas fa-sign-out-alt"></i>
             </button>
-
-            <a href="/wishlist" class="text-decoration-none text-dark me-2">
+            <a href="/wishlist" class="text-decoration-none text-dark position-relative ms-2">
               <i class="far fa-heart fs-5"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.6rem;"><%=wishlistCount%></span>
             </a>
-    
-            <a href="/cart" class="text-decoration-none text-dark position-relative">
+            
+            <a href="/cart" class="text-decoration-none text-dark position-relative ms-4">
               <i class="fas fa-shopping-cart fs-5"></i>
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.6rem;">0</span>
+                style="font-size: 0.6rem;"><%=cartCount%></span>
             </a>
+            
           <% } else { %>
             <a href="/login" class="btn btn-secondary rounded-pill">LOGIN</a>
           <% } %>
         </div>
-  
       </div>
     </div>
   </nav>
@@ -140,145 +437,586 @@
       </div>
     </div>
   </div>
+
   
   
-   <div class="hero-section">
-      <div class="container-fluid">
-        <div class="row align-items-center">
-          
-
-          <div class="col-md-6 text-content p-10">
-            <h1 class="fw-bold">Grip the Road with TyreX</h1>
-            <h4 class="fw-semibold">Drive Safer. Ride Smoother. Buy Smarter.</h4>
-            <p>
-              Explore a wide range of premium tires from trusted brands, <br>ensuring safety, 
-              comfort, and reliability on every drive.
-            </p>
-            <a  href="/shop"  type="button" class="btn btn-danger fw-bold text-black rounded-pill px-4 py-2">
-              Shop Now
-            </a>
-          </div>
-    
-
-          <div class="col-md-6 image-container p-0">
-            <img src="/img/hero.webp" alt="TyreX Banner" class="img-fluid">
-          </div>
-    
+  <div class="hero-section">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-content p-md-5 p-3">
+          <h1 class="fw-bold">Grip the Road with TyreX</h1>
+          <h4 class="fw-semibold">Drive Safer. Ride Smoother. Buy Smarter.</h4>
+          <p>
+            Explore a wide range of premium tires from trusted brands, <br class="d-none d-lg-block">ensuring safety, 
+            comfort, and reliability on every drive.
+          </p>
+          <a href="/shop" type="button" class="btn btn-danger fw-bold text-black rounded-pill px-4 py-2">
+            Shop Now
+          </a>
+        </div>
+  
+        <div class="col-md-6 image-container p-0">
+          <img src="/img/hero.webp" alt="TyreX Banner" class="img-fluid w-100">
         </div>
       </div>
     </div>
+  </div>
+  
+ 
 
-    <div class="bg text-white py-3 mt-4">
-      <div class="container">
-        <div class="d-flex flex-wrap justify-content-between text-center text-md-start">
+<!-- Brands Footer Banner -->
+<div class="brands-banner bg text-white py-4 mt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="brands-wrapper row row-cols-2 row-cols-md-auto g-2 g-md-3 justify-content-center justify-content-md-between">
           <%for(let i=0;i<brand.length;i++){%>
-          <span class="brand"><%=brand[i].brandName%></span>
+            <div class="col text-center">
+              <span class="brand-pill d-block"><%=brand[i].brandName%></span>
+            </div>
           <%}%>
         </div>
       </div>
     </div>
-  </div>  
+  </div>
+</div>
 
+  <!-- HTML -->
+<div id="carouselExample" class="carousel slide rounded position-relative mt-4" data-bs-ride="carousel" data-bs-interval="5000">
+  <!-- Carousel Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  
+  <!-- Side Navigation Buttons -->
+  <button class="carousel-control-prev-custom position-absolute" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <div class="nav-button-circle">
+      <i class="fa-solid fa-angle-left"></i>
+    </div>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next-custom position-absolute" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <div class="nav-button-circle">
+      <i class="fa-solid fa-angle-right"></i>
+    </div>
+    <span class="visually-hidden">Next</span>
+  </button>
 
-    <div id="carouselExample" class="carousel slide  rounded p-3" data-bs-ride="carousel" data-bs-interval="5000">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  <!-- Carousel Items -->
+  <div class="carousel-inner rounded">
+    <%for(let i=0;i<banner.length;i++){%>
+    <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+      <div class="carousel-image-container">
+        <img src="/uploads/reImage/<%=banner[i].image%>" class="d-block w-100" alt="<%=banner[i].title%>">
       </div>
-      
+    </div>
+    <%}%>
+  </div>
+</div>
 
-      <div class="carousel-inner rounded">
-        <%for(let i=0;i<banner.length;i++){%>
-        <div class="carousel-item active py-4 px-3 bg-light">
-          <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
-            <img src="/uploads/reImage/<%=banner[i].image%>" class="img-fluid custom-img"   alt="<%=banner[i].title%>">
+
+    <!-- Best Selling Brands Section -->
+<div class="container my-5" id="bestSelling">
+  <header class="mb-4 d-flex justify-content-between align-items-center">
+    <h2 class="mb-0 fw-bold">Best Selling Brands</h2>
+
+  </header>
+  
+  <div class="row g-4">
+    <%for(let i=0;i<4;i++){%>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="brand-card h-100 bg-white rounded shadow-sm transition-all">
+          <div class="brand-image-container p-3 text-center">
+            <img 
+              src="/uploads/reImage/<%=brand[i].brandImage%>" 
+              alt="<%=brand[i].brandName%>" 
+              class="img-fluid brand-image" 
+            />
+          </div>
+          <div class="p-2 text-center">
+            <h6 class="brand-name fw-bold"><%=brand[i].brandName%></h6>
           </div>
         </div>
-        <%}%>
       </div>
-
-      <button class="custom-carousel-btn custom-carousel-btn-prev " type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-        <i class="fa-solid fa-angle-left"></i>
-        <span class="visually-hidden">Previous</span>
-      </button>
-
-
-        <button class="custom-carousel-btn custom-carousel-btn-next " type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-          <i class="fa-solid fa-angle-right"></i>
-          <span class="visually-hidden">Next</span>
-          </button>
-    </div>
-
-
-
-
-
-  
-
-    <div class="container my-5" id="bestSelling">
-      <header class="mb-4">
-          <h2>Best Selling Brands</h2>
-      </header>
-      
-      <div class="row justify-content-between p-0">
-        <%for(let i=0;i<4;i++){%>
-          <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
-              <div class="w-100 my-2 text-center">
-                  <img src="/uploads/reImage/<%=brand[i].brandImage%>" alt="<%=brand[i].brandName%>" class="p-3" style="aspect-ratio: 1 / 1; object-fit: contain; width: 100%;" />
-              </div>
-          </div>
-           <%}%>
-      </div>
-    </div>
+    <%}%>
   </div>
+</div>
+
   
   <section>
     <div class="container my-5" id="newArrival">
       <header class="mb-4">
         <h3>New Arrivals</h3>
       </header>
-      <div class="row">
-
-        <%for(let i=0;i<products.length;i++){%>
-
-          <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
-            <div class="card w-100 my-2 shadow-2-strong hover-shadow border-0 rounded-3 overflow-hidden">
-              <div class="bg-light text-center">
-                <a href="/details?id=<%=products[i]._id%>" class="d-block no-style">
-                <img src="/uploads/reImage/<%=products[i].productImage[0]%>" class="card-img-top p-2" style="aspect-ratio: 1 / 1; object-fit: contain;" alt="<%=products[i].productName%>">
+      <div class="container px-3 py-4">
+<!-- New Product Card Layout -->
+<div class="container py-4">
+  <div class="row g-4">
+    <% for(let i=0; i<products.length; i++) { %>
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="product-card" data-index="<%=i%>">
+          <!-- Card Inner Content -->
+          <div class="product-card-inner">
+            <!-- Front Side -->
+            <div class="product-front">
+              <!-- Image Container -->
+              <div class="product-image-container">
+                <img 
+                  src="/Uploads/reImage/<%=products[i].productImage[0]%>" 
+                  alt="<%=products[i].productName%>"
+                  class="product-image"
+                >
+                <div class="overlay-icons">
+                  <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%=products[i]._id%>')">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                </div>
+                <% if (products[i].salePrice != products[i].regularPrice) { %>
+                  <div class="discount-tag">
+                    <span><%=Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100)%>%</span>
+                  </div>
+                <% } %>
               </div>
-
-              <div class="card-body d-flex flex-column p-3">
-
-                <h5 class="card-title text-truncate fw-bold mb-1"><%=products[i].productName%></h5>
-              </a>
-                <h6 class="text-muted mb-2"><%=products[i].brandId.brandName%></h6>
-
-                <div class="d-flex align-items-center mb-3">
-                  <span class="text-success fw-bold fs-5">&#8377;<%=products[i].salePrice%></span>
-                  <%if(products[i].salePrice!=products[i].regularPrice){%>
-                    <del class="text-muted ms-2 small">&#8377;<%= products[i].regularPrice %></del>
-                    <%}%>
-                  
-                  <% if (products[i].salePrice!=products[i].regularPrice) { %>
-                    <span class="badge bg-success ms-auto"><%=Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100)%>% OFF</span>
+              
+              <!-- Product Info -->
+              <div class="product-info">
+                <div class="brand-badge"><%=products[i].brandId.brandName%></div>
+                <h3 class="product-title"><%=products[i].productName%></h3>
+                <div class="price-container">
+                  <span class="sale-price text-success">₹ <strong><%=products[i].salePrice%></strong></span>
+                  <% if(products[i].salePrice != products[i].regularPrice) { %>
+                    <span class="regular-price">₹<%=products[i].regularPrice%></span>
                   <% } %>
                 </div>
-
-                <div class="d-flex align-items-center mt-auto pt-2 border-top">
-                  <button class="btn btn-primary flex-grow-1 me-2 addToCartBtn" data-id="<%= products[i]._id %>">
-                    <i class="fas fa-shopping-cart me-2"></i>Add to cart
+                <button class="add-to-cart-btn addToCartBtn" data-id="<%=products[i]._id%>">
+                  <span class="btn-text">Add to Cart</span>
+                  <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
                 </button>
-                <span onclick="addToWishlist('<%= products[i]._id %>')">
-                  <i class="fas fa-heart"></i>
-                </span>
-                </div>
+                <!-- View Details Button -->
+                <a href="/details?id=<%=products[i]._id%>" class="view-details-btn">
+                  <span class="btn-text">View Details</span>
+                  <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                </a>
               </div>
             </div>
           </div>
-        <%}%>
+        </div>
       </div>
+    <% } %>
+  </div>
+</div>
+
+<style>
+  /* Modern Product Card Styling - Black, White & Blue Theme */
+  :root {
+    --primary-color: #0066cc;      /* Blue */
+    --primary-light: #e6f0ff;      /* Light Blue */
+    --secondary-color: #000000;    /* Black */
+    --light-bg: #f8f9fa;           /* Light background */
+    --dark-text: #000000;          /* Black text */
+    --light-text: #6c757d;         /* Light text */
+    --card-bg: #ffffff;            /* White */
+    --card-radius: 16px;
+    --transition-speed: 0.35s;
+  }
+
+  .product-card {
+    position: relative;
+    height: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  .product-card-inner {
+    position: relative;
+    height: 100%;
+    background-color: var(--card-bg);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-speed) ease;
+  }
+  
+  .product-card:hover .product-card-inner {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-6px);
+  }
+  
+  /* Image Container */
+  .product-image-container {
+    position: relative;
+    padding-top: 100%;
+    background-color: var(--light-bg);
+    overflow: hidden;
+  }
+  
+  .product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1.5rem;
+    transition: transform 0.6s ease;
+  }
+  
+  .product-card:hover .product-image {
+    transform: scale(1.08);
+  }
+  
+  /* Overlay Icons */
+  .overlay-icons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all var(--transition-speed) ease 0.1s;
+  }
+  
+  .product-card:hover .overlay-icons {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .icon-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: var(--dark-text);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .icon-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  /* Discount Tag */
+  .discount-tag {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: #28a745; /* Green badge for offers */
+    color: white;
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  /* Product Info */
+  .product-info {
+    padding: 1.25rem;
+  }
+  
+  .brand-badge {
+    display: inline-block;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s ease;
+  }
+  
+  .product-card:hover .product-title {
+    color: var(--primary-color);
+  }
+  
+  .price-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;  /* Increased since we removed rating */
+  }
+  
+  .sale-price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+  }
+  
+  .regular-price {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    text-decoration: line-through;
+  }
+  
+  /* Add to Cart Button */
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.75rem;
+  }
+
+  .add-to-cart-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.6s ease;
+  }
+  
+  .add-to-cart-btn:hover::before {
+    left: 100%;
+  }
+  
+  .add-to-cart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    background: #0055b3;  /* Slightly darker blue on hover */
+  }
+  
+  /* View Details Button */
+  .view-details-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--secondary-color);
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  
+  .product-card:hover .view-details-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .view-details-btn:hover {
+    background: #333333;  /* Slightly lighter black on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-text {
+    transition: all 0.3s ease;
+  }
+  
+  .btn-icon {
+    transition: all 0.3s ease;
+  }
+  
+  /* Animation for cards appearing */
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 767px) {
+    .product-image {
+      padding: 1rem;
+    }
+    
+    .product-info {
+      padding: 1rem;
+    }
+    
+    .icon-btn {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+    
+    .add-to-cart-btn, .view-details-btn {
+      padding: 0.6rem;
+    }
+    
+    /* Make view details button always visible on mobile */
+    .view-details-btn {
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: 0.5rem;
+    }
+  }
+  
+  @media (max-width: 575px) {
+    .product-card {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .product-title {
+      font-size: 0.9rem;
+    }
+    
+    .sale-price {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Animate cards on load with staggered delay
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.style.animation = 'fadeInUp 0.6s ease-out forwards';
+      }, index * 120);
+    });
+    
+    // Add to cart button effects
+    document.querySelectorAll('.addToCartBtn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Create ripple effect
+        const circle = document.createElement('span');
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${e.clientX - button.offsetLeft - diameter/2}px`;
+        circle.style.top = `${e.clientY - button.offsetTop - diameter/2}px`;
+        circle.classList.add('ripple');
+        
+        // Remove existing ripples
+        const ripple = button.getElementsByClassName('ripple')[0];
+        if (ripple) {
+          ripple.remove();
+        }
+        
+        button.appendChild(circle);
+        
+        // Add product to cart logic would go here
+        const productId = button.dataset.id;
+        
+        // Change button text temporarily
+        const btnText = button.querySelector('.btn-text');
+        const originalText = btnText.textContent;
+        btnText.textContent = 'Added!';
+        
+        setTimeout(() => {
+          btnText.textContent = originalText;
+          if (circle) circle.remove();
+        }, 1000);
+      });
+    });
+
+    // Hover effects for touch devices
+    if ('ontouchstart' in window) {
+      document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('touchstart', () => {
+          card.classList.add('touch-hover');
+        });
+        
+        document.addEventListener('touchstart', (e) => {
+          if (!card.contains(e.target)) {
+            card.classList.remove('touch-hover');
+          }
+        });
+      });
+    }
+    
+    // Optional: Quick view functionality
+    window.quickView = (productId) => {
+      // Implement quick view modal functionality
+      console.log(`Quick view for product: ${productId}`);
+      // You would typically fetch product details and show in a modal
+    };
+  });
+</script>
+
+<style>
+  /* Additional styles for animations and effects */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+  }
+  
+  @keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+  
+  /* Touch device hover simulation */
+  .product-card.touch-hover .product-card-inner {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-6px);
+  }
+  
+  .product-card.touch-hover .overlay-icons {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .product-card.touch-hover .view-details-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .product-card.touch-hover .product-image {
+    transform: scale(1.08);
+  }
+</style>
     </div>
   </section>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -1,117 +1,148 @@
 <%- include("../partials/user/profileHeader") %>
-    <style>
-      /* Additional styles for the profile edit page */
-      .edit-profile-content {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 1.5rem;
-      }
-      
-      .form-control {
-        border-radius: 6px;
-        padding: 0.75rem;
-        border: 1px solid #dee2e6;
-      }
-      
-      .form-control:focus {
-        box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
-        border-color: #3a86ff;
-      }
-      
-      .form-label {
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-      }
-      
-      .profile-image-section {
-        border-left: 1px solid #dee2e6;
-        padding-left: 2rem;
-      }
-      
-      @media (max-width: 767.98px) {
-        .profile-image-section {
-          border-left: none;
-          border-top: 1px solid #dee2e6;
-          padding-left: 0;
-          padding-top: 2rem;
-          margin-top: 1.5rem;
-        }
-      }
-      
-      .btn-change-password {
-        background-color: #3a86ff;
-        color: white;
-        border-radius: 6px;
-        padding: 0.5rem 1.25rem;
-        border: none;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      
-      .btn-change-password:hover {
-        background-color: #2563eb;
-        color: white;
-      }
-      
-      .btn-upload {
-        background-color: #6c757d;
-        color: white;
-        border-radius: 6px;
-        padding: 0.5rem 1.25rem;
-        border: none;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      
-      .btn-upload:hover {
-        background-color: #495057;
-        color: white;
-      }
-      
-      /* Fix the sidebar issues */
-      @media (max-width: 991.98px) {
-        .main-content {
-          width: 100%;
-          margin-left: 0;  /* Reset margin for mobile */
-        }
-        
-        .sidebar-expanded .main-content {
-          margin-left: 0;  /* Don't shift content when sidebar is open on mobile */
-        }
-        
-        /* Adjust sidebar positioning for mobile */
-        #sidebar {
-          position: fixed;
-          left: -280px;
-          transition: left 0.3s ease;
-          top: 110px;
-          height: calc(100vh - 110px);
-          overflow-y: auto;
-          z-index: 1020;
-        }
-        
-        .sidebar-expanded #sidebar {
-          left: 0;
-        }
-      }
-      
-      /* Make sure the overlay covers the entire screen */
-      .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0,0,0,0.5);
-        z-index: 1010;
-      }
-      
-      .sidebar-expanded .sidebar-overlay {
-        display: block;
-      }
-    </style>
+<style>
+  
+  .edit-profile-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+  }
+  
+  .form-control {
+    border-radius: 6px;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    width: 100%;
+    box-sizing: border-box; 
+  }
+  
+  .form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+    border-color: #3a86ff;
+  }
+  
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .profile-image-section {
+    border-left: 1px solid #dee2e6;
+    padding-left: 2rem;
+  }
+  
+  .btn-change-password {
+    background-color: #3a86ff;
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    border: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .btn-change-password:hover {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .btn-upload {
+    background-color: #6c757d;
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    border: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .btn-upload:hover {
+    background-color: #495057;
+    color: white;
+  }
+
+  @media (max-width: 767.98px) {
+    .container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .edit-profile-content {
+      padding: 1rem;
+    }
+
+    .form-control {
+      padding: 0.5rem; 
+      font-size: 0.9rem; 
+    }
+
+    .mb-3 {
+      margin-bottom: 0.75rem !important;
+    }
+    
+
+    .profile-image-section {
+      border-left: none;
+      border-top: 1px solid #dee2e6;
+      padding-left: 0;
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+    }
+ 
+    .btn-change-password,
+    .btn-upload {
+      padding: 0.4rem 1rem; 
+      font-size: 0.9rem; 
+      width: 100%; 
+      max-width: 200px; 
+    }
+
+    .text-end.mt-4 {
+      text-align: center !important;
+      margin-top: 1.5rem !important;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+    .main-content {
+      width: 100%;
+      margin-left: 0; 
+    }
+    
+    .sidebar-expanded .main-content {
+      margin-left: 0; 
+    }
+
+    #sidebar {
+      position: fixed;
+      left: -280px;
+      transition: left 0.3s ease;
+      top: 110px;
+      height: calc(100vh - 110px);
+      overflow-y: auto;
+      z-index: 1020;
+    }
+    
+    .sidebar-expanded #sidebar {
+      left: 0;
+    }
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1010;
+  }
+  
+  .sidebar-expanded .sidebar-overlay {
+    display: block;
+  }
+</style>
 
       
     <!-- Main Content -->
@@ -181,10 +212,10 @@
 
   
   <script>
-    // Form submission handling with SweetAlert2 (optional)
+
     $(document).ready(function() {
       $('form').on('submit', function() {
-        // Show loading indicator
+
         Swal.fire({
           title: 'Uploading...',
           text: 'Please wait while we upload your profile picture',

@@ -7,72 +7,368 @@
   <link rel="icon" type="image/svg" sizes="20x20" href="/img/favicon.svg">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
-
-  <link
-  href="/vendor/fontawesome-free/css/all.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" />
   <link href="/css/style.css" rel="stylesheet" type="text/css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
     .no-style {
-  all: unset; 
-  cursor: pointer; 
-  display: inline-block; }
-    .custom-carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      width: 40px;
-      height: 40px;
-      background-color: rgba(87, 87, 87, 0.5);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      all: unset; 
+      cursor: pointer; 
+      display: inline-block;
     }
     
-    .custom-carousel-btn-prev {
+    
+    
+    .custom-img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3 / 1; 
+      object-fit: contain;
+    }
+    
+    .modal {
+      z-index: 1050 !important;
+    }
+    
+    .modal-backdrop {
+      z-index: 1040 !important;
+    }
+    
+    /* User controls container */
+    .user-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    
+    /* Mobile styles with improved right alignment */
+    @media (max-width: 991px) {
+      .container {
+        padding-right: 5px !important; /* Reduced container padding */
+      }
+      
+      .navbar-collapse {
+        padding-top: 1rem;
+        text-align: right;
+      }
+      
+      .navbar-nav {
+        text-align: right !important;
+        padding: 0.5rem 0;
+        padding-right: 60px !important; /* Much larger right padding */
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 0.5rem 0;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+        width: 100%;
+      }
+      
+      .navbar-nav .nav-item {
+        padding: 0.3rem 0;
+        text-align: right !important;
+        display: block;
+        width: 100%;
+      }
+      
+      .navbar-nav .nav-link {
+        padding-right: 0;
+        font-size: 1.1rem;
+        font-weight: 600; /* Making nav links bold */
+        transition: color 0.3s ease;
+        text-align: right !important;
+        display: block;
+        margin-right: 15px; /* Added explicit margin to nav links */
+      }
+      
+      .navbar-toggler {
+        border: none;
+        padding: 0.5rem;
+        margin-right: 20px; /* Increased right margin for toggle button */
+        transition: all 0.3s ease;
+        order: 2;
+      }
+      
+      .navbar-brand {
+        order: 1;
+      }
+      
+      /* User controls for mobile view */
+      .user-controls {
+        width: 100%;
+        justify-content: flex-end !important;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-right: 20px !important; /* Much larger right padding */
+        text-align: right !important;
+        display: flex !important;
+        flex-wrap: nowrap;
+      }
+      
+      /* Ensure items stay in one line */
+      .user-controls > * {
+        margin-left: 12px; /* Slightly increased spacing between items */
+        white-space: nowrap;
+        font-weight: 600; /* Making text bolder */
+      }
+    }
+
+  #carouselExample {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Container for proportional scaling */
+  .carousel-image-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .carousel-image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Side navigation buttons styling */
+  .carousel-control-prev-custom,
+  .carousel-control-next-custom {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+  }
+  
+  .carousel-control-prev-custom {
+    left: 15px; /* Moved inward from the left edge */
+  }
+  
+  .carousel-control-next-custom {
+    right: 15px; /* Moved inward from the right edge */
+  }
+  
+  .nav-button-circle {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .nav-button-circle i {
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .carousel-control-prev-custom:hover .nav-button-circle,
+  .carousel-control-next-custom:hover .nav-button-circle {
+    background-color: #fff;
+    transform: scale(1.1);
+  }
+  
+  /* Style for indicators */
+  .carousel-indicators {
+    margin-bottom: 0.5rem;
+  }
+  
+  .carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 0 5px;
+  }
+  
+  .carousel-indicators .active {
+    background-color: #000;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .nav-button-circle {
+      width: 35px;
+      height: 35px;
+    }
+    
+    .nav-button-circle i {
+      font-size: 16px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .carousel-control-prev-custom {
       left: 10px;
     }
     
-    .custom-carousel-btn-next {
+    .carousel-control-next-custom {
       right: 10px;
     }
-    
-
-    .custom-carousel-btn i {
-      color: white;
-      font-size: 18px;
+  }
+  
+  @media (max-width: 576px) {
+    .carousel-image-container {
+      padding-bottom: 75%; /* 4:3 aspect ratio for mobile */
     }
-    .custom-img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 1; 
+    
+    .nav-button-circle {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .nav-button-circle i {
+      font-size: 14px;
+    }
+    
+    /* Center the buttons on smaller screens as shown in your example */
+    .carousel-control-prev-custom,
+    .carousel-control-next-custom {
+      top: auto;
+      bottom: 15px;
+      transform: none;
+    }
+    
+    .carousel-control-prev-custom {
+      left: calc(50% - 40px);
+    }
+    
+    .carousel-control-next-custom {
+      right: calc(50% - 40px);
+    }
+  }
+
+  .brand-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .brand-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .brand-image-container {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .brand-image {
+    max-height: 100%;
+    max-width: 100%;
     object-fit: contain;
-}
-.modal {
-  z-index: 1050 !important;
-}
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .brand-image-container {
+      height: 150px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .brand-image-container {
+      height: 130px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .brand-image-container {
+      height: 120px;
+    }
+    
+    #bestSelling h2 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  /* Brands Footer Banner Styling */
+  .brands-banner {
+    /* Keep the original background class */
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .brands-wrapper {
+    padding: 0.5rem 0;
+  }
+  
+  .brand-pill {
+    display: block;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+  
+  .brand-pill:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .brand-pill {
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .brands-wrapper {
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .brand-pill {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .brands-banner {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+  }
 
-.modal-backdrop {
-  z-index: 1040 !important;
-}
-
-
-
-  </style>
+  @media (max-width: 768px) {
+    .hero-section .row {
+      flex-direction: column-reverse;
+    }
+    
+    .text-content {
+      text-align: center;
+      padding-top: 2rem !important;
+      padding-bottom: 2rem !important;
+    }
+  }
+</style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 sticky-top">
-    <div class="container">
+    <div class="container position-relative"> <!-- Added position-relative -->
       
       <!-- Logo -->
       <a class="navbar-brand d-flex align-items-center" href="/">
@@ -80,45 +376,46 @@
       </a>
   
       <!-- Mobile Menu Button -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" style="margin-right: 15px;"> <!-- Added inline margin -->
         <i class="fas fa-bars"></i>
       </button>
   
       <!-- Navbar Content -->
       <div class="collapse navbar-collapse" id="navbarContent">
         
-        <!-- Centered Menu -->
+        <!-- Menu Items -->
         <ul class="navbar-nav mx-auto text-center">
           <li class="nav-item"><a class="nav-link" href="/shop">Shop Now</a></li>
           <li class="nav-item"><a class="nav-link" href="#carouselExample">Offers</a></li>
           <li class="nav-item"><a class="nav-link" href="#bestSelling">Brands</a></li>
-          
           <li class="nav-item"><a class="nav-link" href="#newArrival">New Arrival</a></li>
         </ul>
   
         <!-- User Login/Logout Section -->
-        <div class="d-flex align-items-center justify-content-center">
+        <div class="user-controls">
           <% if (user) { %>
             <a href="/profile" class="no-style">
-            <span class="me-2 fw-bold"><%= user.name %></span></a>
-            <button class="btn btn-danger btn-sm rounded-circle me-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
+              <span class="fw-bold"><%= user.name %></span>
+            </a>
+            <button class="btn btn-danger btn-sm rounded-circle ms-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
               <i class="fas fa-sign-out-alt"></i>
             </button>
-
-            <a href="/wishlist" class="text-decoration-none text-dark me-2">
+            <a href="/wishlist" class="text-decoration-none text-dark position-relative ms-2">
               <i class="far fa-heart fs-5"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.6rem;"><%=wishlistCount%></span>
             </a>
-    
-            <a href="/cart" class="text-decoration-none text-dark position-relative">
+            
+            <a href="/cart" class="text-decoration-none text-dark position-relative ms-4">
               <i class="fas fa-shopping-cart fs-5"></i>
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.6rem;">0</span>
+                style="font-size: 0.6rem;"><%=cartCount%></span>
             </a>
+            
           <% } else { %>
             <a href="/login" class="btn btn-secondary rounded-pill">LOGIN</a>
           <% } %>
         </div>
-  
       </div>
     </div>
   </nav>
@@ -140,145 +437,659 @@
       </div>
     </div>
   </div>
+
   
   
-   <div class="hero-section">
-      <div class="container-fluid">
-        <div class="row align-items-center">
-          
-
-          <div class="col-md-6 text-content p-10">
-            <h1 class="fw-bold">Grip the Road with TyreX</h1>
-            <h4 class="fw-semibold">Drive Safer. Ride Smoother. Buy Smarter.</h4>
-            <p>
-              Explore a wide range of premium tires from trusted brands, <br>ensuring safety, 
-              comfort, and reliability on every drive.
-            </p>
-            <a  href="/shop"  type="button" class="btn btn-danger fw-bold text-black rounded-pill px-4 py-2">
-              Shop Now
-            </a>
-          </div>
-    
-
-          <div class="col-md-6 image-container p-0">
-            <img src="/img/hero.webp" alt="TyreX Banner" class="img-fluid">
-          </div>
-    
+  <div class="hero-section">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-content p-md-5 p-3">
+          <h1 class="fw-bold">Grip the Road with TyreX</h1>
+          <h4 class="fw-semibold">Drive Safer. Ride Smoother. Buy Smarter.</h4>
+          <p>
+            Explore a wide range of premium tires from trusted brands, <br class="d-none d-lg-block">ensuring safety, 
+            comfort, and reliability on every drive.
+          </p>
+          <a href="/shop" type="button" class="btn btn-danger fw-bold text-black rounded-pill px-4 py-2">
+            Shop Now
+          </a>
+        </div>
+  
+        <div class="col-md-6 image-container p-0">
+          <img src="/img/hero.webp" alt="TyreX Banner" class="img-fluid w-100">
         </div>
       </div>
     </div>
+  </div>
+  
+ 
 
-    <div class="bg text-white py-3 mt-4">
-      <div class="container">
-        <div class="d-flex flex-wrap justify-content-between text-center text-md-start">
+<!-- Brands Footer Banner -->
+<div class="brands-banner bg text-white py-4 mt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="brands-wrapper row row-cols-2 row-cols-md-auto g-2 g-md-3 justify-content-center justify-content-md-between">
           <%for(let i=0;i<brand.length;i++){%>
-          <span class="brand"><%=brand[i].brandName%></span>
+            <div class="col text-center">
+              <span class="brand-pill d-block"><%=brand[i].brandName%></span>
+            </div>
           <%}%>
         </div>
       </div>
     </div>
-  </div>  
+  </div>
+</div>
 
+  <!-- HTML -->
+<div id="carouselExample" class="carousel slide rounded position-relative mt-4" data-bs-ride="carousel" data-bs-interval="5000">
+  <!-- Carousel Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  
+  <!-- Side Navigation Buttons -->
+  <button class="carousel-control-prev-custom position-absolute" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <div class="nav-button-circle">
+      <i class="fa-solid fa-angle-left"></i>
+    </div>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next-custom position-absolute" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <div class="nav-button-circle">
+      <i class="fa-solid fa-angle-right"></i>
+    </div>
+    <span class="visually-hidden">Next</span>
+  </button>
 
-    <div id="carouselExample" class="carousel slide  rounded p-3" data-bs-ride="carousel" data-bs-interval="5000">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  <!-- Carousel Items -->
+  <div class="carousel-inner rounded">
+    <%for(let i=0;i<banner.length;i++){%>
+    <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+      <div class="carousel-image-container">
+        <img src="/uploads/reImage/<%=banner[i].image%>" class="d-block w-100" alt="<%=banner[i].title%>">
       </div>
-      
+    </div>
+    <%}%>
+  </div>
+</div>
 
-      <div class="carousel-inner rounded">
-        <%for(let i=0;i<banner.length;i++){%>
-        <div class="carousel-item active py-4 px-3 bg-light">
-          <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
-            <img src="/uploads/reImage/<%=banner[i].image%>" class="img-fluid custom-img"   alt="<%=banner[i].title%>">
+
+    <!-- Best Selling Brands Section -->
+<div class="container my-5" id="bestSelling">
+  <header class="mb-4 d-flex justify-content-between align-items-center">
+    <h2 class="mb-0 fw-bold">Best Selling Brands</h2>
+
+  </header>
+  
+  <div class="row g-4">
+    <%for(let i=0;i<4;i++){%>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="brand-card h-100 bg-white rounded shadow-sm transition-all">
+          <div class="brand-image-container p-3 text-center">
+            <img 
+              src="/uploads/reImage/<%=brand[i].brandImage%>" 
+              alt="<%=brand[i].brandName%>" 
+              class="img-fluid brand-image" 
+            />
+          </div>
+          <div class="p-2 text-center">
+            <h6 class="brand-name fw-bold"><%=brand[i].brandName%></h6>
           </div>
         </div>
-        <%}%>
       </div>
-
-      <button class="custom-carousel-btn custom-carousel-btn-prev " type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-        <i class="fa-solid fa-angle-left"></i>
-        <span class="visually-hidden">Previous</span>
-      </button>
-
-
-        <button class="custom-carousel-btn custom-carousel-btn-next " type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-          <i class="fa-solid fa-angle-right"></i>
-          <span class="visually-hidden">Next</span>
-          </button>
-    </div>
-
-
-
-
-
-  
-
-    <div class="container my-5" id="bestSelling">
-      <header class="mb-4">
-          <h2>Best Selling Brands</h2>
-      </header>
-      
-      <div class="row justify-content-between p-0">
-        <%for(let i=0;i<4;i++){%>
-          <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
-              <div class="w-100 my-2 text-center">
-                  <img src="/uploads/reImage/<%=brand[i].brandImage%>" alt="<%=brand[i].brandName%>" class="p-3" style="aspect-ratio: 1 / 1; object-fit: contain; width: 100%;" />
-              </div>
-          </div>
-           <%}%>
-      </div>
-    </div>
+    <%}%>
   </div>
+</div>
+
   
   <section>
     <div class="container my-5" id="newArrival">
       <header class="mb-4">
         <h3>New Arrivals</h3>
       </header>
-      <div class="row">
+      <section>
+  <div class="container-fluid my-5 px-3 px-md-4" id="newArrival">
+    <header class="mb-4">
+      <h3>New Arrivals</h3>
+    </header>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
+      <%for(let i=0;i<products.length;i++){%>
+        <div class="col">
+          <div class="product-card" style="--animation-order: <%= i % 12 %>;">
+            <!-- Quick action buttons -->
+            <div class="quick-actions">
+              <button class="action-btn wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                <i class="fas fa-heart"></i>
+              </button>
+            </div>
 
-        <%for(let i=0;i<products.length;i++){%>
+            <!-- Discount tag -->
+            <% if (products[i].salePrice != products[i].regularPrice) { %>
+            <div class="discount-tag">
+              <span><%= Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100) %>% OFF</span>
+            </div>
+            <% } %>
 
-          <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
-            <div class="card w-100 my-2 shadow-2-strong hover-shadow border-0 rounded-3 overflow-hidden">
-              <div class="bg-light text-center">
-                <a href="/details?id=<%=products[i]._id%>" class="d-block no-style">
-                <img src="/uploads/reImage/<%=products[i].productImage[0]%>" class="card-img-top p-2" style="aspect-ratio: 1 / 1; object-fit: contain;" alt="<%=products[i].productName%>">
-              </div>
+            <!-- Product image -->
+            <a href="/details?id=<%=products[i]._id%>" class="product-img-wrapper">
+              <img src="/Uploads/reImage/<%=products[i].productImage[0]%>" class="product-img" alt="<%=products[i].productName%>">
+              <% if (products[i].productImage.length > 1) { %>
+              <img src="/Uploads/reImage/<%=products[i].productImage[1]%>" class="product-img-hover" alt="<%=products[i].productName%>">
+              <% } else { %>
+              <img src="/Uploads/reImage/<%=products[i].productImage[0]%>" class="product-img-hover" alt="<%=products[i].productName%>">
+              <% } %>
+              <div class="img-overlay"></div>
+            </a>
 
-              <div class="card-body d-flex flex-column p-3">
+            <!-- Add to cart button (floating) -->
+            <button class="floating-cart-btn addToCartBtn" data-id="<%= products[i]._id %>">
+              <i class="fas fa-shopping-cart"></i>
+            </button>
 
-                <h5 class="card-title text-truncate fw-bold mb-1"><%=products[i].productName%></h5>
+            <!-- Product details -->
+            <div class="product-info">
+              <!-- Brand -->
+              <div class="product-brand"><%=products[i].brandId.brandName%></div>
+
+              <!-- Product name -->
+              <a href="/details?id=<%=products[i]._id%>" class="product-name">
+                <%=products[i].productName%>
               </a>
-                <h6 class="text-muted mb-2"><%=products[i].brandId.brandName%></h6>
 
-                <div class="d-flex align-items-center mb-3">
-                  <span class="text-success fw-bold fs-5">&#8377;<%=products[i].salePrice%></span>
-                  <%if(products[i].salePrice!=products[i].regularPrice){%>
-                    <del class="text-muted ms-2 small">&#8377;<%= products[i].regularPrice %></del>
-                    <%}%>
-                  
-                  <% if (products[i].salePrice!=products[i].regularPrice) { %>
-                    <span class="badge bg-success ms-auto"><%=Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100)%>% OFF</span>
-                  <% } %>
-                </div>
-
-                <div class="d-flex align-items-center mt-auto pt-2 border-top">
-                  <button class="btn btn-primary flex-grow-1 me-2 addToCartBtn" data-id="<%= products[i]._id %>">
-                    <i class="fas fa-shopping-cart me-2"></i>Add to cart
-                </button>
-                <span onclick="addToWishlist('<%= products[i]._id %>')">
-                  <i class="fas fa-heart"></i>
-                </span>
-                </div>
+              <!-- Price section -->
+              <div class="product-price">
+                <div class="current-price">₹<%=products[i].salePrice%></div>
+                <% if (products[i].salePrice != products[i].regularPrice) { %>
+                <div class="original-price">₹<%= products[i].regularPrice %></div>
+                <% } %>
               </div>
             </div>
           </div>
-        <%}%>
-      </div>
+        </div>
+      <%}%>
+    </div>
+
+    <style>
+      /* Root variables for consistent theming */
+      :root {
+        --primary-color: #2874f0;
+        --accent-color: #ff3e6c;
+        --text-color: #212121;
+        --muted-text: #666;
+        --background-color: #f9fafb;
+        --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        --price-green: #28a745;
+      }
+
+      /* Overall card styling */
+      .product-card {
+        position: relative;
+        background: linear-gradient(145deg, #ffffff, #f1f5f9);
+        border-radius: 12px;
+        overflow: hidden;
+        min-height: 280px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeInUp 0.6s ease-out forwards;
+        animation-delay: calc(var(--animation-order, 0) * 0.1s);
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+
+      .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--hover-shadow);
+      }
+
+      /* Quick action buttons */
+      .quick-actions {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 3;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      .product-card:hover .quick-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .action-btn:hover {
+        transform: scale(1.15);
+        background: var(--accent-color);
+      }
+
+      .action-btn i {
+        font-size: 16px;
+        color: var(--muted-text);
+        transition: color 0.2s ease;
+      }
+
+      .action-btn:hover i {
+        color: white;
+      }
+
+      /* Discount tag */
+      .discount-tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: var(--accent-color);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 6px;
+        z-index: 2;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 62, 108, 0.5);
+        }
+        70% {
+          box-shadow: 0 0 0 8px rgba(255, 62, 108, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 62, 108, 0);
+        }
+      }
+
+      /* Product image styling */
+      .product-img-wrapper {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        display: block;
+        background: #f5f5f5;
+        overflow: hidden;
+      }
+
+      /* Fallback for browsers without aspect-ratio support */
+      @supports not (aspect-ratio: 1 / 1) {
+        .product-img-wrapper {
+          padding-top: 100%;
+        }
+      }
+
+      .product-img, .product-img-hover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 15px;
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        will-change: opacity, transform;
+      }
+
+      .product-img-hover {
+        opacity: 0;
+        transform: scale(1.1);
+      }
+
+      .product-card:hover .product-img {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      .product-card:hover .product-img-hover {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .img-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.05));
+        transition: background 0.3s ease;
+      }
+
+      .product-card:hover .img-overlay {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.1));
+      }
+
+      /* Floating cart button */
+      .floating-cart-btn {
+        position: absolute;
+        bottom: 140px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(40, 116, 240, 0.3);
+        z-index: 2;
+        transform: scale(0);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+        will-change: transform, opacity;
+      }
+
+      .product-card:hover .floating-cart-btn {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      .floating-cart-btn:hover {
+        background: #1a5ac2;
+        transform: scale(1.2) rotate(10deg);
+      }
+
+      .floating-cart-btn i {
+        font-size: 20px;
+      }
+
+      /* Product info section */
+      .product-info {
+        padding: 16px;
+        background: white;
+        transition: transform 0.3s ease;
+      }
+
+      .product-card:hover .product-info {
+        transform: translateY(-4px);
+      }
+
+      /* Brand name */
+      .product-brand {
+        color: var(--muted-text);
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+        transition: color 0.3s ease;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .product-card:hover .product-brand {
+        color: var(--text-color);
+      }
+
+      /* Product name */
+      .product-name {
+        color: var(--text-color);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        height: 42px;
+        max-width: 100%;
+      }
+
+      .product-name:hover {
+        color: var(--primary-color);
+      }
+
+      /* Price section */
+      .product-price {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .current-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--price-green);
+      }
+
+      .original-price {
+        font-size: 14px;
+        color: var(--muted-text);
+        text-decoration: line-through;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 1200px) {
+        .floating-cart-btn {
+          bottom: 130px;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .product-info {
+          padding: 14px;
+        }
+        .current-price {
+          font-size: 16px;
+        }
+        .floating-cart-btn {
+          width: 44px;
+          height: 44px;
+          bottom: 120px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .product-card {
+          border-radius: 10px;
+          min-height: 260px;
+        }
+        .product-name {
+          font-size: 13px;
+          height: 38px;
+        }
+        .product-brand {
+          font-size: 11px;
+        }
+        .current-price {
+          font-size: 15px;
+        }
+        .original-price {
+          font-size: 12px;
+        }
+        .floating-cart-btn {
+          width: 40px;
+          height: 40px;
+          bottom: 110px;
+          right: 16px;
+        }
+        .floating-cart-btn i {
+          font-size: 18px;
+        }
+        .action-btn {
+          width: 36px;
+          height: 36px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .product-card {
+          min-height: 240px;
+        }
+        .product-name {
+          font-size: 12px;
+          height: 36px;
+        }
+        .current-price {
+          font-size: 14px;
+        }
+        .product-info {
+          padding: 12px;
+        }
+        .floating-cart-btn {
+          width: 36px;
+          height: 36px;
+          bottom: 100px;
+          opacity: 1;
+          transform: scale(1);
+          background: var(--primary-color);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        .floating-cart-btn i {
+          font-size: 16px;
+        }
+        .quick-actions {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .action-btn {
+          width: 32px;
+          height: 32px;
+          background: white;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        .action-btn i {
+          font-size: 14px;
+        }
+        .discount-tag {
+          font-size: 11px;
+          padding: 4px 8px;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .product-card {
+          min-height: 220px;
+        }
+        .product-info {
+          padding: 10px;
+        }
+        .product-name {
+          font-size: 11px;
+          height: 34px;
+        }
+        .product-brand {
+          font-size: 10px;
+        }
+        .current-price {
+          font-size: 13px;
+        }
+        .original-price {
+          font-size: 11px;
+        }
+        .floating-cart-btn {
+          width: 32px;
+          height: 32px;
+          bottom: 90px;
+          right: 12px;
+          opacity: 1;
+          transform: scale(1);
+        }
+        .floating-cart-btn i {
+          font-size: 14px;
+        }
+        .action-btn {
+          width: 30px;
+          height: 30px;
+        }
+        .action-btn i {
+          font-size: 12px;
+        }
+        .discount-tag {
+          font-size: 10px;
+          padding: 3px 6px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .product-card {
+          min-height: 200px;
+        }
+        .product-info {
+          padding: 8px;
+        }
+        .product-name {
+          font-size: 10px;
+          height: 32px;
+        }
+        .product-brand {
+          font-size: 9px;
+        }
+        .current-price {
+          font-size: 12px;
+        }
+        .original-price {
+          font-size: 10px;
+        }
+        .floating-cart-btn {
+          width: 30px;
+          height: 30px;
+          bottom: 85px;
+          right: 10px;
+          opacity: 1;
+          transform: scale(1);
+        }
+        .floating-cart-btn i {
+          font-size: 13px;
+        }
+        .action-btn {
+          width: 28px;
+          height: 28px;
+        }
+        .action-btn i {
+          font-size: 11px;
+        }
+        .discount-tag {
+          font-size: 9px;
+          padding: 2px 5px;
+        }
+      }
+
+      /* Entrance animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach((card, index) => {
+          card.style.setProperty('--animation-order', index % 12);
+        });
+      });
+    </script>
+  </div>
+</section>
     </div>
   </section>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

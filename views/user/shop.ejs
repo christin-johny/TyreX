@@ -299,65 +299,64 @@
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 sticky-top">
-    <div class="container">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 sticky-top">
+  <div class="container">
+    
+    <!-- Logo -->
+    <a class="navbar-brand me-0 me-lg-3" href="/">
+      <img src="/img/logo.svg" height="40" alt="TyreX Logo">
+    </a>
+
+    <!-- Mobile Menu Button - Improved positioning and styling -->
+    <button class="navbar-toggler ms-auto me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Removed cart from here -->
+    <div class="d-flex d-lg-none align-items-center">
+      <% if (user) { %>
+        <!-- Cart icon removed from here -->
+      <% } %>
+    </div>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
       
-      <!-- Logo -->
-      <a class="navbar-brand me-0 me-lg-3" href="/">
-        <img src="/img/logo.svg" height="40" alt="TyreX Logo">
-      </a>
-  
-      <!-- Mobile Menu Button - Improved positioning and styling -->
-      <button class="navbar-toggler ms-auto me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-      </button>
-      
-      <!-- User controls that stay visible on small screens -->
-      <div class="d-flex d-lg-none align-items-center">
+      <!-- Centered Menu -->
+      <ul class="navbar-nav mx-auto text-center">
+        <li class="nav-item"><a class="nav-link fw-medium" href="/shop">Shop Now</a></li>
+        <li class="nav-item"><a class="nav-link fw-medium" href="/">Home</a></li>
+      </ul>
+
+      <!-- User Login/Logout Section -->
+      <div class="d-flex align-items-center justify-content-center">
         <% if (user) { %>
-          <a href="/cart" class="text-decoration-none text-dark position-relative ms-2">
+          <a href="/profile" class="no-style">
+            <span class="me-2 fw-bold"><%= user.name %></span>
+          </a>
+          <button class="btn btn-danger btn-sm rounded-circle me-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+
+          <a href="/wishlist" class="text-decoration-none text-dark position-relative ms-2">
+            <i class="far fa-heart fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 0.6rem;"><%=wishlistCount%></span>
+          </a>
+          
+          <a href="/cart" class="text-decoration-none text-dark position-relative ms-4">
             <i class="fas fa-shopping-cart fs-5"></i>
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-              style="font-size: 0.6rem;">0</span>
+              style="font-size: 0.6rem;"><%=cartCount%></span>
           </a>
+        <% } else { %>
+          <a href="/login" class="btn btn-danger rounded-pill px-4">LOGIN</a>
         <% } %>
       </div>
-  
-      <!-- Navbar Content -->
-      <div class="collapse navbar-collapse" id="navbarContent">
-        
-        <!-- Centered Menu -->
-        <ul class="navbar-nav mx-auto text-center">
-          <li class="nav-item"><a class="nav-link fw-medium" href="/shop">Shop Now</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/">Home</a></li>
-        </ul>
-  
-        <!-- User Login/Logout Section -->
-        <div class="d-flex align-items-center justify-content-center">
-          <% if (user) { %>
-            <a href="/profile" class="no-style">
-              <span class="me-2 fw-bold"><%= user.name %></span>
-            </a>
-            <button class="btn btn-danger btn-sm rounded-circle me-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
-              <i class="fas fa-sign-out-alt"></i>
-            </button>
-
-            <a href="/wishlist" class="text-decoration-none text-dark me-2">
-              <i class="far fa-heart fs-5"></i>
-            </a>
-    
-            <a href="/cart" class="text-decoration-none text-dark position-relative d-none d-lg-block">
-              <i class="fas fa-shopping-cart fs-5"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.6rem;">0</span>
-            </a>
-          <% } else { %>
-            <a href="/login" class="btn btn-danger rounded-pill px-4">LOGIN</a>
-          <% } %>
-        </div>
-      </div>
     </div>
-  </nav>
+  </div>
+</nav>
   
   <!-- Logout Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">

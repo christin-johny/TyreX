@@ -54,7 +54,7 @@ const loadHome = async (req, res) => {
         banner: banners,
       });
     } else {
-      return res.render("homePage", {
+      return res.render("homepage", {
         user: null,
         products: productData,
         brand: brand,

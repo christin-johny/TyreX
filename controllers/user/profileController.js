@@ -268,7 +268,7 @@ const loadAddAddressPage = async (req, res) => {
   try {
     const user = req.session.user;
 
-    res.render("addAddress", { user: user });
+    res.render("addaddress", { user: user });
   } catch (error) {
     res.redirect("/pageNotFound");
   }

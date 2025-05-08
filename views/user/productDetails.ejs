@@ -564,13 +564,28 @@
         <input type="number" id="quantity" class="qty-input" value="1" min="1" max="<%= Math.min(product.quantity, 5) %>" readonly>
         <button class="qty-btn increase">+</button>
         </div>
-          <div class="mt-3">
-            <button type="submit" class="btn btn-warning px-4 addToCartBtn main" data-id="<%= product._id %>">
-              ADD TO CART
+        <div class="mt-3 d-flex align-items-center gap-2">
+          <button type="submit"
+                  class="btn btn-warning px-4 addToCartBtn main"
+                  data-id="<%= product._id %>">
+            ADD TO CART
           </button>
-            <a aria-label="Add To Wishlist" class="btn btn-outline-secondary ms-2"onclick="addToWishlist('<%= product._id %>')"><i class="fi-rs-heart" ></i></a>
-          </div>
+        
+          <% if (user && !user.wishlist.includes(product._id)) { %>
+            <button class="icon-btn wishlist-btn d-flex align-items-center justify-content-center"
+                    style="width: 60px; height: 60px; background: transparent; border: none;"
+                    onclick="addToWishlist('<%= product._id %>')">
+              <i class="far fa-heart" style="width: 30px; height: 30px;"></i> 
+            </button>
+          <% } else { %>
+            <button class="icon-btn wishlist-btn d-flex align-items-center justify-content-center"
+                    style="width: 60px; height: 60px; background: transparent; border: none;"
+                    onclick="addToWishlist('<%= product._id %>')">
+              <i class="fas fa-heart text-danger" style="width: 30px; height: 30px;"></i> 
+            </button>
+          <% } %>
         </div>
+        
       </div>
     </section>
     
@@ -592,9 +607,15 @@
                 </a>
                 
                 <div class="overlay-icons">
-                  <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%=products[i]._id%>')">
-                    <i class="fas fa-heart"></i>
-                  </button>
+                  <% if (user && !user.wishlist.includes(products[i]._id)) { %>
+                    <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                      <i class="far fa-heart" style="width: 20px; height: 20px;"></i> 
+                    </button>
+                  <% } else { %>
+                    <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                      <i class="fas fa-heart text-danger" style="width: 20px; height: 20px;"></i> 
+                    </button>
+                  <% } %>
                 </div>
                 
                 <% if (products[i].salePrice!=products[i].regularPrice) { %>

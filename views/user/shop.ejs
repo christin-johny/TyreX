@@ -786,9 +786,15 @@
                         class="product-image"
                       >
                       <div class="overlay-icons">
-                        <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%=products[i]._id%>')">
-                          <i class="fas fa-heart"></i>
-                        </button>
+                        <% if (user && !user.wishlist.includes(products[i]._id)) { %>
+                          <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                            <i class="far fa-heart" style="width: 20px; height: 20px;"></i> 
+                          </button>
+                        <% } else { %>
+                          <button class="icon-btn wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                            <i class="fas fa-heart text-danger" style="width: 20px; height: 20px;"></i> 
+                          </button>
+                        <% } %>  
                       </div>
                       <% if (products[i].salePrice != products[i].regularPrice) { %>
                         <div class="discount-tag">
@@ -796,8 +802,7 @@
                         </div>
                       <% } %>
                     </div>
-                    
-                    <!-- Product Info -->
+
                     <div class="product-info">
                       <h3 class="product-title"><%=products[i].productName%></h3>
                       <div class="brand-badge"><%=products[i].brandId.brandName%></div>
@@ -811,7 +816,6 @@
                         <span class="btn-text">Add to Cart</span>
                         <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
                       </button>
-                      <!-- View Details Button -->
                       <a href="/details?id=<%=products[i]._id%>" class="view-details-btn">
                         <span class="btn-text">View Details</span>
                         <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>

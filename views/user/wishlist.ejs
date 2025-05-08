@@ -107,14 +107,19 @@
                         <span class="fw-bold text-primary">₹<%=product.salePrice%></span>
                       </td>
                       <td class="text-center">
-                        <button class="btn btn-primary addToCartBtn" data-id="<%= product._id %>">
-                          <i class="fas fa-shopping-cart me-2"></i>Add to cart
+                        
+                        <button class="btn btn-primary rounded-circle align-items-center justify-content-center" style="width: 40px; height: 40px;" data-id="<%= product._id %>">
+                          <i class="fas fa-shopping-cart text-white"></i>
                         </button>
+                        
+                        
                       </td>
                       <td class="text-center">
-                        <button class="btn btn-outline-danger btn-sm" onclick="confirmToRemove('<%=product._id%>')">
-                          <i class="fas fa-trash"></i>
+                        <button class="btn rounded-circle  align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="confirmToRemove('<%= product._id %>')">
+                          <i class="fas fa-trash text-danger"></i>
                         </button>
+                        
+                        
                       </td>
                     </tr>
                   <%}%>

@@ -658,8 +658,7 @@ function showEmptyCart() {
     
     $('.checkout-btn').hide();
 }
-    </script>
-    <script>
+
   document.getElementById("proceedCheckoutBtn").addEventListener("click", async () => {
     try {
       const response = await fetch("/cart/validateCheckout", {

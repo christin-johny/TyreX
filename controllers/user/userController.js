@@ -334,7 +334,8 @@ const resendOtp = async (req, res) => {
 
 const shop = async (req, res) => {
   try {
-    const user = req.session.user;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId)
     if (req.session.filteredProducts) {
       req.session.filteredProducts = null;
     }
@@ -472,7 +473,8 @@ const filter = async (req, res) => {
 
 const filterByPrice = async (req, res) => {
   try {
-    const user = req.session.user;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId)
     const brands = await Brand.find({}).lean();
     const categories = await Category.find({ isListed: true }).lean();
 
@@ -511,7 +513,8 @@ const filterByPrice = async (req, res) => {
 
 const search = async (req, res) => {
   try {
-    const user = req.session.user;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId)
     let search = req.body.query;
     const brands = await Brand.find({}).lean();
     const categories = await Category.find({ isListed: true }).lean();
@@ -584,7 +587,8 @@ const search = async (req, res) => {
 
 const clear = async (req, res) => {
   try {
-    const user = req.session.user;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId)
     if (req.session.filteredProducts) {
       req.session.filteredProducts = null;
     }
@@ -641,7 +645,8 @@ const sort = async (req, res) => {
   try {
     const sort = req.query.sort;
 
-    const user = req.session.user;
+    const userId = req.session.user._id;
+    const user = await User.findById(userId)
 
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id.toString());
@@ -719,7 +724,8 @@ const sort = async (req, res) => {
 
 const details = async (req, res) => {
   try {
-    const userData = req.session.user;
+    const userId = req.session.user._id;
+    const userData = await User.findById(userId)
     const productId = req.query.id;
     const product = await Product.findById(productId)
       .populate("categoryId")

@@ -582,8 +582,8 @@
               
               <!-- Product Info -->
               <div class="product-info">
-                <div class="brand-badge"><%=products[i].brandId.brandName%></div>
                 <h3 class="product-title"><%=products[i].productName%></h3>
+                <div class="brand-badge"><%=products[i].brandId.brandName%></div>
                 <div class="price-container">
                   <span class="sale-price text-success">₹ <strong><%=products[i].salePrice%></strong></span>
                   <% if(products[i].salePrice != products[i].regularPrice) { %>
@@ -733,26 +733,24 @@
   }
   
   .brand-badge {
-    display: inline-block;
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .product-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--dark-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: color 0.2s ease;
-  }
+          display: inline-block; 
+          color: var(--primary-color);
+          font-size: 1rem;
+          font-weight: 600;
+          border-radius: 20px;
+          margin-bottom: 0.5rem;
+        }
+        
+        .product-title {
+          font-size: 1.4rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          color: var(--dark-text);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          transition: color 0.2s ease;
+        }
   
   .product-card:hover .product-title {
     color: var(--primary-color);
@@ -779,6 +777,10 @@
   
   /* Add to Cart Button */
   .add-to-cart-btn {
+    height: 40px;
+    max-height: 40px;
+    min-height: 40px;
+    overflow: hidden;
     width: 100%;
     padding: 0.75rem;
     border: none;

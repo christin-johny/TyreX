@@ -676,87 +676,280 @@
     </div>
   </div>
 
-  <!-- Shop Page Content -->
-  <div class="page-header breadcrumb-wrap">
-    <div class="container">
-      <!-- Top Row with Breadcrumb and Sorting -->
-      <div class="row mb-3 align-items-center">
-        <div class="col-md-6 col-12 mb-2 mb-md-0">
-          <div class="breadcrumb">
-            <a href="/home" rel="nofollow">Home&nbsp;>&nbsp;</a>
-            <a href="/shop" class="active">Shop</a>
-          </div>
-        </div>
-        <div class="col-md-6 col-12 d-flex justify-content-md-end justify-content-center">
-          <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortingDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              Sorting
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="sortingDropdown">
-              <li><a class="dropdown-item" href="/sort?sort=a-z" onclick="updateSortingText(this)">A-Z</a></li>
-              <li><a class="dropdown-item" href="/sort?sort=z-a" onclick="updateSortingText(this)">Z-A</a></li>
-              <li><a class="dropdown-item" href="/sort?sort=low-high" onclick="updateSortingText(this)">Low-High</a></li>
-              <li><a class="dropdown-item" href="/sort?sort=high-low" onclick="updateSortingText(this)">High-Low</a></li>
-            </ul>
-          </div>
+<!-- Shop Page Content with Updated Professional Search Bar -->
+<!-- Shop Page Content with Updated Professional Search Bar -->
+<div class="page-header breadcrumb-wrap">
+  <div class="container py-3">
+    <!-- Breadcrumbs Row - Simplified to match design -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="breadcrumb-simple">
+          <span><a href="/home" rel="nofollow">Home</a></span>
+          <span class="separator">/</span>
+          <span class="current-page">Shop</span>
         </div>
       </div>
-      
-      <!-- Center Row with Search -->
-      <div class="row justify-content-center mb-3">
-        <div class="col-lg-6 col-md-8 col-sm-10">
-          <form action="/search" method="POST" class="search-form w-100">
-            <input type="text" name="query" placeholder="Search items..." class="search-input" />
-            <button type="submit" class="search-button btn-secondary">Search</button>
-          </form>
+    </div>
+  
+    <!-- Search, Sort, and Filters Row -->
+    <div class="row align-items-center">
+      <div class="col-12">
+        <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+          <!-- Enhanced Professional Search Bar -->
+          <div class="search-wrapper flex-grow-1 w-100 w-md-auto">
+            <form action="/search" method="POST" class="search-form">
+              <input type="text" name="query" placeholder="Search for products, brands and more..." class="form-control search-input" />
+              <button type="submit" class="btn search-submit-btn">
+                SEARCH
+              </button>
+            </form>
+          </div>
+  
+          <!-- Sort and Filters Wrapper -->
+          <div class="sort-filter-wrapper d-flex flex-wrap align-items-center gap-3 w-100 w-md-auto">
+            <!-- Sort Dropdown -->
+            <div class="sort-dropdown">
+              <button class="btn sort-btn dropdown-toggle" type="button" id="sortingDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                SORT BY
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="sortingDropdown">
+                <li><a class="dropdown-item" href="/sort?sort=a-z" onclick="updateSortingText(this)">A-Z</a></li>
+                <li><a class="dropdown-item" href="/sort?sort=z-a" onclick="updateSortingText(this)">Z-A</a></li>
+                <li><a class="dropdown-item" href="/sort?sort=low-high" onclick="updateSortingText(this)">Price: Low to High</a></li>
+                <li><a class="dropdown-item" href="/sort?sort=high-low" onclick="updateSortingText(this)">Price: High to Low</a></li>
+              </ul>
+            </div>
+  
+            <!-- Filters Button (Toggle for Dropdowns) -->
+            <button class="btn filter-btn" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+              FILTERS
+            </button>
+          </div>
+        </div>
+  
+        <!-- Collapsible Filters Section -->
+        <div class="collapse mt-3" id="filterCollapse">
+          <div class="d-flex flex-wrap gap-2 align-items-center p-3 bg-light rounded">
+            <!-- Categories Dropdown -->
+            <div class="filter-dropdown">
+              <button class="btn btn-outline-dark dropdown-toggle rounded-pill px-4" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Categories
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                <%for(let i=0;i<category.length;i++){%>
+                  <li><a class="dropdown-item" href="/filter?category=<%=category[i]._id%>"><%=category[i].name%></a></li>
+                <%}%>
+              </ul>
+            </div>
+  
+            <!-- Brands Dropdown -->
+            <div class="filter-dropdown">
+              <button class="btn btn-outline-dark dropdown-toggle rounded-pill px-4" type="button" id="brandDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Brands
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="brandDropdown">
+                <%for(let i=0;i<brand.length;i++){%>
+                  <li><a class="dropdown-item" href="/filter?brand=<%=brand[i]._id%>"><%=brand[i].brandName%></a></li>
+                <%}%>
+              </ul>
+            </div>
+  
+            <!-- Price Filter Dropdown -->
+            <div class="filter-dropdown">
+              <button class="btn btn-outline-dark dropdown-toggle rounded-pill px-4" type="button" id="priceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Price Range
+              </button>
+              <div class="dropdown-menu p-3" aria-labelledby="priceDropdown">
+                <a href="/filterPrice?gt=0&lt=5000" class="dropdown-item mb-2">Under ₹5,000</a>
+                <a href="/filterPrice?gt=5000&lt=10000" class="dropdown-item mb-2">₹5,000 - ₹10,000</a>
+                <a href="/filterPrice?gt=10000&lt=15000" class="dropdown-item mb-2">₹10,000 - ₹15,000</a>
+                <a href="/filterPrice?gt=15000&lt=99999" class="dropdown-item">Above ₹15,000</a>
+              </div>
+            </div>
+  
+            <!-- Clear Filters Button -->
+            <a href="/shop" class="btn btn-outline-danger rounded-pill px-4">Clear Filters</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="container product-list-container">
-    <!-- Filter Bar - Replaced Sidebar with Horizontal Filter Bar -->
-    <div class="filter-bar d-flex align-items-center flex-wrap">
-      <!-- Categories Dropdown -->
-      <div class="filter-dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          Categories
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
-          <%for(let i=0;i<category.length;i++){%>
-            <li><a class="dropdown-item" href="/filter?category=<%=category[i]._id%>"><%=category[i].name%></a></li>
-          <%}%>
-        </ul>
-      </div>
-      
-      <!-- Brands Dropdown -->
-      <div class="filter-dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="brandDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          Brands
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="brandDropdown">
-          <%for(let i=0;i<brand.length;i++){%>
-            <li><a class="dropdown-item" href="/filter?brand=<%=brand[i]._id%>"><%=brand[i].brandName%></a></li>
-          <%}%>
-        </ul>
-      </div>
-      
-      <!-- Price Filter Dropdown -->
-      <div class="filter-dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="priceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          Price Range
-        </button>
-        <div class="dropdown-menu p-3" aria-labelledby="priceDropdown">
-          <a href="/filterPrice?gt=0&lt=5000" class="price-button mb-2">Under ₹5,000</a>
-          <a href="/filterPrice?gt=5000&lt=10000" class="price-button mb-2">₹5,000 - ₹10,000</a>
-          <a href="/filterPrice?gt=10000&lt=15000" class="price-button mb-2">₹10,000 - ₹15,000</a>
-          <a href="/filterPrice?gt=15000&lt=99999" class="price-button">Above ₹15,000</a>
-        </div>
-      </div>
-      
-      <!-- Clear Filters Button -->
-      <a href="/shop" class="btn filter-clear-btn">Clear Filters</a>
-    </div>
+  
+  <style>
+  /* Breadcrumb styling */
+  .breadcrumb-simple {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    margin-bottom: 1rem;
+  }
+  
+  .breadcrumb-simple a {
+    color: #000;
+    text-decoration: none;
+  }
+  
+  .breadcrumb-simple a:hover {
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-simple .separator {
+    margin: 0 10px;
+    color: #666;
+  }
+  
+  .breadcrumb-simple .current-page {
+    color: #666;
+  }
+  
+  /* UPDATED: Professional Search bar styling */
+  .search-form {
+    position: relative;
+    border-radius: 4px;
+    overflow: visible;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .search-icon-prepend {
+    background-color: white;
+    border: none;
+    border-right: none;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    color: #495057;
+    padding-left: 15px;
+  }
+  
+  .search-input {
+    height: 48px;
+    border: 1px solid #e2e2e2;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    font-size: 15px;
+    padding-left: 5px;
+  }
+  
+  .search-input:focus {
+    box-shadow: none;
+    border-color: #e2e2e2;
+  }
+  
+  .search-submit-btn {
+    background-color: #3d63d2;
+    color: white;
+    font-weight: 500;
+    border: none;
+    height: 48px;
+    padding: 0 20px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-submit-btn:hover {
+    background-color: #2a4db3;
+    color: white;
+  }
+  
+  /* Sort button styling */
+  .sort-btn {
+    border: 1px solid #212529;
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-weight: 500;
+    background-color: transparent;
+    color: #212529;
+    min-width: 110px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  
+  .sort-btn:hover, .sort-btn:focus {
+    background-color: #f8f9fa;
+  }
+  
+  .sort-btn::after {
+    margin-left: 8px;
+  }
+  
+  /* Filters button styling */
+  .filter-btn {
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-weight: 500;
+    background-color: #212529;
+    color: white;
+    min-width: 110px;
+    height: 44px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .filter-btn:hover, .filter-btn:focus {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  /* Filter dropdowns */
+  .filter-dropdown .btn {
+    border: 1px solid #212529;
+    border-radius: 30px;
+    padding: 8px 20px;
+    background-color: transparent;
+    color: #212529;
+  }
+  
+  .filter-dropdown .btn:hover {
+    background-color: #f8f9fa;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 767.98px) {
+    .d-flex.flex-column {
+      gap: 1rem !important;
+    }
+  
+    .sort-filter-wrapper {
+      justify-content: space-between;
+      width: 100%;
+    }
+    
+    .sort-btn, .filter-btn {
+      flex: 1;
+    }
+    
+    .search-form {
+      max-width: 100%;
+    }
+    
+    .search-submit-btn {
+      padding: 0 15px;
+      min-width: 90px;
+      font-size: 13px;
+    }
+    
+    .search-input {
+      font-size: 14px;
+      padding-left: 18px;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .search-wrapper {
+      max-width: 400px;
+    }
+  
+    .sort-filter-wrapper {
+      justify-content: flex-end;
+    }
+  }
+  </style>
 
     <!-- Empty Products Notice -->
     <% if (products.length === 0) { %>

@@ -285,7 +285,7 @@
                             <% } else if (!['cancelled', 'returned', 'return requested', 'returning', 'delivered'].includes(order.status)) { %>
                                 <div class="mb-4">
                                     <h6>Order Status Actions</h6>
-                                    <%if(order.status != 'Pending'){%>
+                                    <%if(order.paymentStatus ==='Success'){%>
                                     <button onclick="updateStatus('<%= order._id %>')" 
                                             class="btn me-2" 
                                             style="background-color: #4169E1; color: white; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: none; border-radius: 4px;">

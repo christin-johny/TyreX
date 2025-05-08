@@ -478,7 +478,7 @@ const cancelReturnRequest = async (req, res,next) => {
       });      
     }
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(StatusCodes.SUCCESS).json({
       success: true,
       message: Messages.RETURN_REQUEST_CANCELLED,
     });
@@ -572,7 +572,9 @@ const createOrder = async (req, res, next) => {
       invoiceDate: invoiceDate,
       paymentMethod: paymentMethod,
       discount:cart.discount,
-      razorpayOrderId:order.id
+      razorpayOrderId:order.id,
+      paymentStatus: "Failed"
+
     });
     await orderSchema.save();
     if(couponCode){

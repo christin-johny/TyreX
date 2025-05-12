@@ -96,8 +96,11 @@ const Messages = {
     PAYMENT_SERVICE_UNAVAILABLE: "Payment service temporarily unavailable. Please try again later.",
     INSUFFICIENT_STOCK: (name, qty) => `The product "${name}" has only ${qty} items in stock.`,
     
-
-
+    //wishlist
+    PRODUCT_ALREADY_IN_CART: "Product already in cart!",
+    PRODUCT_ALREADY_IN_WISHLIST: "Product already in wishlist!",
+    PRODUCT_ADDED_TO_WISHLIST: "Product added to wishlist",
+    PRODUCT_REMOVED_SUCCESSFULLY: "Product removed successfully!"
   };
   
   module.exports = Messages;

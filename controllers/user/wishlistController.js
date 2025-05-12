@@ -1,8 +1,10 @@
 const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
+const StatusCodes = require("../../helpers/stausCodes");
+const Messages = require("../../helpers/messages");
 
-const loadWishlist = async (req, res) => {
+const loadWishlist = async (req, res, next) => {
   try {
     const userId = req.session.user._id;
     const user = await User.findById(userId);
@@ -35,12 +37,11 @@ const loadWishlist = async (req, res) => {
       totalPages: totalPages,
     });
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error);
   }
 };
 
-const addToWishlist = async (req, res) => {
+const addToWishlist = async (req, res, next) => {
   try {
     const productId = req.body.productId;
 
@@ -59,25 +60,25 @@ const addToWishlist = async (req, res) => {
         item.productId && item.productId._id.toString() === productId.toString()
     );
 
-
     if (specificItem) {
       return res
-        .status(200)
-        .json({ status: false, message: "Product already in cart!" });
+        .status(StatusCodes.SUCCESS)
+        .json({ status: false, message: Messages.PRODUCT_ALREADY_IN_CART });
     } else if (user.wishlist.includes(productId)) {
       return res
-        .status(200)
-        .json({ status: false, message: "Product already in wishlist!" });
+  .status(StatusCodes.SUCCESS)
+  .json({ status: false, message: Messages.PRODUCT_ALREADY_IN_WISHLIST });
+
     }
     user.wishlist.push(productId);
     await user.save();
 
     return res
-      .status(200)
-      .json({ status: true, message: "Product added to wishlist" });
+  .status(StatusCodes.SUCCESS)
+  .json({ status: true, message: Messages.PRODUCT_ADDED_TO_WISHLIST });
+
   } catch (error) {
-    console.error(error);
-    res.redirect("/pageNotFound");
+    next(error);
   }
 };
 
@@ -94,10 +95,10 @@ const removeFromWishlist = async (req, res, next) => {
 
     await user.save();
     return res
-      .status(200)
-      .json({ success: true, message: "Product removed successfully!" });
+  .status(StatusCodes.SUCCESS)
+  .json({ success: true, message: Messages.PRODUCT_REMOVED_SUCCESSFULLY });
+
   } catch (error) {
-    console.error("Error deleting product from wishlist", error);
     next(error);
   }
 };

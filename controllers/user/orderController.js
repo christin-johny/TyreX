@@ -90,7 +90,6 @@ if(finalAmount>15000){
       status: status,
       paymentMethod: paymentMethod,
       discount:cart.discount,
-      paymentStatus:'Pending'
     });
     await orderSchema.save();
 

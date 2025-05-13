@@ -162,7 +162,7 @@ const handleReturn = async (req, res,next) => {
         { new: true }
       );
       if (order) {
-        return res.status(StatusCodes.OK).json({
+        return res.status(StatusCodes.SUCCESS).json({
           success: true,
           message: Messages.RETURN_APPROVED_SUCCESSFULLY,
         });

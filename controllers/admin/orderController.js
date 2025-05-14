@@ -7,7 +7,7 @@ const Wallet = require("../../models/walletSchema");
 const StatusCodes = require("../../helpers/stausCodes");
 const Messages = require("../../helpers/messages");
 
-const loadOrders = async (req, res,next) => {
+const loadOrders = async (req, res, next) => {
   try {
     let search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
@@ -48,16 +48,15 @@ const loadOrders = async (req, res,next) => {
       status: req.query.status || "all",
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-const viewOrderDetails = async (req, res ,next) => {
+const viewOrderDetails = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    const order = await Order.findById(id)
-      .lean();
+    const order = await Order.findById(id).lean();
 
     if (order) {
       res.render("adminOrderDetails", { order: order });
@@ -66,14 +65,13 @@ const viewOrderDetails = async (req, res ,next) => {
         success: false,
         message: Messages.ORDER_NOT_FOUND,
       });
-      
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-const updateStatus = async (req, res,next) => {
+const updateStatus = async (req, res, next) => {
   try {
     const { orderId, status } = req.body;
 
@@ -87,41 +85,42 @@ const updateStatus = async (req, res,next) => {
         success: true,
         message: Messages.ORDER_UPDATED_SUCCESSFULLY,
       });
-      
     } else {
       return res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: Messages.ORDER_NOT_FOUND,
       });
-      
     }
   } catch (error) {
-  next(error)
+    next(error);
   }
 };
 
-const orderCancel = async (req, res,next) => {
+const orderCancel = async (req, res, next) => {
   try {
     const { orderId } = req.body;
 
     const order = await Order.findById(orderId);
-        if(order.paymentMethod!='cod' && order.paymentStatus != 'Failed'){
-          let wallet = await Wallet.findOne({ userId: order.userId });
-    
-          if (!wallet) {
-            wallet = new Wallet({ userId:order.userId, balance: 0, transactions: [] });
-          }
-    
-          wallet.balance += parseInt(order.finalAmount);
-        wallet.transactions.push({
-          amount:order.finalAmount,
-          type: "credit",
-          description: "Order cancellation Refund",
-          orderId:order._id,
+    if (order.paymentMethod != "cod" && order.paymentStatus != "Failed") {
+      let wallet = await Wallet.findOne({ userId: order.userId });
+
+      if (!wallet) {
+        wallet = new Wallet({
+          userId: order.userId,
+          balance: 0,
+          transactions: [],
         });
-        await wallet.save();
-    
-        }
+      }
+
+      wallet.balance += parseInt(order.finalAmount);
+      wallet.transactions.push({
+        amount: order.finalAmount,
+        type: "credit",
+        description: "Order cancellation Refund",
+        orderId: order._id,
+      });
+      await wallet.save();
+    }
 
     await Order.findOneAndUpdate(
       { _id: orderId },
@@ -144,13 +143,12 @@ const orderCancel = async (req, res,next) => {
       success: true,
       message: Messages.ORDER_CANCELLED_SUCCESSFULLY,
     });
-    
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-const handleReturn = async (req, res,next) => {
+const handleReturn = async (req, res, next) => {
   try {
     const { action } = req.body;
     if (action === "approved") {
@@ -166,12 +164,11 @@ const handleReturn = async (req, res,next) => {
           success: true,
           message: Messages.RETURN_APPROVED_SUCCESSFULLY,
         });
-        
       } else {
         return res.status(StatusCodes.NOT_FOUND).json({
           success: false,
           message: Messages.ORDER_NOT_FOUND,
-        });        
+        });
       }
     } else if (action === "rejected") {
       const { orderId, category, message } = req.body;
@@ -192,21 +189,19 @@ const handleReturn = async (req, res,next) => {
           success: true,
           message: Messages.RETURN_REQUEST_REJECTED,
         });
-        
       } else {
         return res.status(StatusCodes.NOT_FOUND).json({
           success: false,
           message: Messages.ORDER_NOT_FOUND,
         });
-        
       }
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-const updateReturnStatus = async (req, res,next) => {
+const updateReturnStatus = async (req, res, next) => {
   try {
     const { orderId, status } = req.body;
     if (status === "returning") {
@@ -220,13 +215,11 @@ const updateReturnStatus = async (req, res,next) => {
           success: true,
           message: Messages.RETURN_SUCCESSFUL,
         });
-        
       } else {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: Messages.ORDER_NOT_FOUND,
         });
-        
       }
     } else if (status === "returned") {
       const order = await Order.findByIdAndUpdate(
@@ -240,31 +233,39 @@ const updateReturnStatus = async (req, res,next) => {
       const orderData = await Order.findById(orderId);
       const userId = orderData.userId;
 
+      const items = orderData.orderedItems;
+
+      let refundAmount = items
+        .filter((item) => item.productStatus != "cancelled")
+        .reduce((acc, curr) => acc + curr.price, 0);
+
       let wallet = await Wallet.findOne({ userId: userId });
       if (!wallet) {
         wallet = new Wallet({ userId, balance: 0, transactions: [] });
       }
 
-      wallet.balance += parseInt(orderData.finalAmount);
+      wallet.balance += parseInt(refundAmount);
 
       wallet.transactions.push({
-        amount:orderData.finalAmount,
+        amount: refundAmount,
         type: "credit",
         description: "Order return Refund",
-        orderId:orderData._id
+        orderId: orderData._id,
       });
 
       await wallet.save();
-  
+
       const orderedItems = order.orderedItems.map((item) => ({
         product: item.product,
         quantity: item.quantity,
       }));
-  
-      for (let i = 0; i < orderedItems.length; i++) {
-        await Product.findByIdAndUpdate(orderedItems[i].product._id, {
-          $inc: { quantity: orderedItems[i].quantity },
-        });
+
+      for (const item of order.orderedItems) {
+        if (item.productStatus !== "cancelled") {
+          await Product.findByIdAndUpdate(item.product._id, {
+            $inc: { quantity: item.quantity },
+          });
+        }
       }
 
       if (order) {
@@ -272,16 +273,15 @@ const updateReturnStatus = async (req, res,next) => {
           success: true,
           message: Messages.RETURNED_SUCCESSFULLY,
         });
-        
       } else {
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: Messages.ORDER_NOT_FOUND,
-        });        
+        });
       }
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 

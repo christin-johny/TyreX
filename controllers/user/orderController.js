@@ -358,7 +358,7 @@ const cancelOrder = async (req, res,next) => {
       { $set: { status: "cancelled", cancelReason: reason } },
       { new: true }
     );
-
+    if(order.paymentStatus != 'Failed'){
     const orderedItems = order.orderedItems.map((item) => ({
       product: item.product,
       quantity: item.quantity,
@@ -371,6 +371,7 @@ const cancelOrder = async (req, res,next) => {
       });
     }
     }
+  }
 
     return res.status(StatusCodes.SUCCESS).json({
       success: true,

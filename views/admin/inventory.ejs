@@ -323,9 +323,8 @@
       data: JSON.stringify({ quantity: value }),
       success: function (data) {
         if (data.success) {
-          Swal.fire("Success", `Quantity updated to ${value}`, "success").then(() => {
-            location.reload();
-          });
+          button.closest("tr").querySelector(".current-quantity").textContent = value;
+          Swal.fire("Success", `Quantity updated to ${value}`, "success");
         } else {
           Swal.fire("Error", data.error || "Failed to update quantity", "error");
         }

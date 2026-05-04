@@ -29,7 +29,7 @@
               <tbody>
                 <% if (locals.data) { %>
                   <% data.reverse().forEach((banner) => { %>
-                    <tr>
+                    <tr id="banner-row-<%= banner._id %>">
                       <td>
                         <div class="d-flex align-items-center justify-content-center"
                           style="width: 80px; height: 80px; overflow: hidden;">
@@ -70,7 +70,7 @@
             <% if (locals.data && data.length > 0) { %>
               <div class="banner-cards">
                 <% data.reverse().forEach((banner) => { %>
-                  <div class="banner-card mb-4">
+                  <div class="banner-card mb-4" id="banner-card-<%= banner._id %>">
                     <div class="card shadow-sm">
                       <div class="card-header d-flex justify-content-between align-items-center bg-light">
                         <h5 class="card-title mb-0 text-truncate"><%= banner.title %></h5>
@@ -194,7 +194,12 @@
                             text: "Banner successfully deleted.",
                             timer: 1500,
                             showConfirmButton: false
-                        }).then(() => location.reload());
+                        }).then(() => {
+                            const row = document.getElementById('banner-row-' + bannerId);
+                            if(row) row.remove();
+                            const card = document.getElementById('banner-card-' + bannerId);
+                            if(card) card.remove();
+                        });
                     } else {
                         Swal.fire({
                             icon: "error",

@@ -392,6 +392,24 @@
 
 
 <script>
+  async function softReload() {
+      try {
+          const response = await fetch(window.location.href);
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          
+          const container = doc.querySelector('.card.shadow-sm.border-0');
+          if (container) {
+              document.querySelector('.card.shadow-sm.border-0').innerHTML = container.innerHTML;
+          } else {
+              location.reload();
+          }
+      } catch(e) {
+          location.reload();
+      }
+  }
+
   function validateForm() {
     let isValid = true;
 
@@ -458,7 +476,8 @@
             showConfirmButton: false,
             text: result.message,
           }).then(() => {
-            window.location.href = "/admin/brands";
+            bootstrap.Modal.getInstance(document.getElementById('addBrandModal')).hide();
+            softReload();
           });
         } else {
           Swal.fire({
@@ -504,9 +523,10 @@
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, block it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        window.location.href = `/admin/blockBrand?id=${id}`;
+        await fetch(`/admin/blockBrand?id=${id}`);
+        softReload();
       }
     });
   }
@@ -520,9 +540,10 @@
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, unblock it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        window.location.href = `/admin/unblockBrand?id=${id}`;
+        await fetch(`/admin/unblockBrand?id=${id}`);
+        softReload();
       }
     });
   }
@@ -536,9 +557,10 @@
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        window.location.href = `/admin/deleteBrand?id=${id}`;
+        await fetch(`/admin/deleteBrand?id=${id}`);
+        softReload();
       }
     });
   }
@@ -625,7 +647,8 @@ async function submitEditBrandForm() {
         title: "Success",
         text: "Brand updated successfully!",
       }).then(() => {
-        location.reload(); 
+        bootstrap.Modal.getInstance(document.getElementById('editBrandModal')).hide();
+        softReload(); 
       });
     } else {
       Swal.fire({

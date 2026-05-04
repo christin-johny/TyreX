@@ -411,7 +411,13 @@ async function cancelOrder(orderId) {
                 text: 'Order cancelled successfully',
                 timer: 1500
             });
-            location.reload();
+            document.querySelector('.order-actions').style.display = 'none';
+            document.querySelectorAll('.badge.px-2.py-1').forEach(badge => {
+                badge.className = 'badge px-2 py-1 text-uppercase fw-semibold bg-danger text-white';
+                badge.innerText = 'cancelled';
+            });
+            const statusTimeline = document.querySelector('.status-timeline');
+            if(statusTimeline) statusTimeline.style.opacity = '0.5';
         } else {
             throw new Error(data.message);
         }
@@ -484,7 +490,16 @@ async function submitReturn() {
                 text: 'Return request submitted successfully!',
                 confirmButtonText: 'OK'
             }).then(() => {
-                location.reload();
+                const returnModalEl = document.getElementById('returnModal');
+                if (returnModalEl) {
+                    const returnModal = bootstrap.Modal.getInstance(returnModalEl);
+                    if (returnModal) returnModal.hide();
+                }
+                document.querySelector('.order-actions').style.display = 'none';
+                document.querySelectorAll('.badge.px-2.py-1').forEach(badge => {
+                    badge.className = 'badge px-2 py-1 text-uppercase fw-semibold bg-warning text-dark';
+                    badge.innerText = 'return requested';
+                });
             });
         } else {
             throw new Error(data.message);
@@ -529,7 +544,11 @@ async function cancelReturn(orderId) {
                     text: 'Return request cancelled successfully',
                     timer: 1500
                 });
-                location.reload();
+                document.querySelector('.order-actions').style.display = 'none';
+                document.querySelectorAll('.badge.px-2.py-1').forEach(badge => {
+                    badge.className = 'badge px-2 py-1 text-uppercase fw-semibold bg-success text-white';
+                    badge.innerText = 'delivered';
+                });
             } else {
                 throw new Error(data.message);
             }

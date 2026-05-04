@@ -535,6 +535,50 @@
 
 
   <script>
+    async function softReload() {
+        try {
+            const response = await fetch(window.location.href);
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            const tableContainer = doc.querySelector('.col-12.mb-3');
+            if (tableContainer) {
+                document.querySelector('.col-12.mb-3').innerHTML = tableContainer.innerHTML;
+                rebindCategoryActions();
+            } else {
+                location.reload();
+            }
+        } catch(e) {
+            location.reload();
+        }
+    }
+
+    function rebindCategoryActions() {
+        const actionButtons = document.querySelectorAll('a[href*="/admin/listCategory"], a[href*="/admin/unlistCategory"]');
+        actionButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('href');
+                const isBlock = url.includes('listCategory');
+                
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: isBlock ? "You are about to block this category." : "You are about to unblock this category.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: isBlock ? "#d33" : "#28a745",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: isBlock ? "Yes, Block!" : "Yes, Unblock!"
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await fetch(url);
+                        softReload();
+                    }
+                });
+            });
+        });
+    }
     async function addOffer(categoryId) {
       const { value: percentage } = await Swal.fire({
   title: "Add Offer Percentage",
@@ -592,7 +636,7 @@
               `The offer of ${percentage}% has been added successfully.`,
               "success"
             ).then(() => {
-              location.reload();
+              softReload();
             });
           } else {
             Swal.fire(
@@ -632,7 +676,7 @@
             "The offer has been removed successfully.",
             "success"
           ).then(() => {
-            location.reload();
+            softReload();
           });
         } else {
           Swal.fire(
@@ -707,7 +751,7 @@
         document.getElementById(modalId)
       );
       modal.hide();
-      location.reload();
+      softReload();
     }
 
 
@@ -844,6 +888,8 @@
         event.preventDefault(); 
         window.location.href = "/admin/category";
       });
+
+      rebindCategoryActions();
     });
   </script>
 </body>

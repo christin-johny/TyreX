@@ -376,7 +376,7 @@
         <!-- Orders List -->
         <% if (orders && orders.length > 0) { %>
           <% orders.forEach(order => { %>
-            <div class="order-card">
+            <div class="order-card" id="order-card-<%= order._id %>">
               <div class="order-header">
                 <div class="row g-2">
                   <div class="col-6 col-md-2">
@@ -452,7 +452,7 @@
               </div>
               
               <% for(let i=0; i < order.orderedItems.length; i++) { %>
-              <div class="order-body">
+              <div class="order-body" id="product-row-<%= order._id %>-<%= i %>">
                 <div class="row align-items-center">
                   <div class="col-4 col-md-2 text-center">
                     <img src="/uploads/reImage/<%= order.orderedItems[i].product.productImage[0] %>" 
@@ -643,7 +643,23 @@ async function submitReturn() {
         text: 'Return request submitted successfully!',
         confirmButtonText: 'OK'
       }).then(() => {
-        location.reload();
+        const returnModalEl = document.getElementById('returnModal');
+        if (returnModalEl) {
+            const returnModal = bootstrap.Modal.getInstance(returnModalEl);
+            if (returnModal) returnModal.hide();
+        }
+        const card = document.getElementById('order-card-' + currentOrderId);
+        if (card) {
+            const actions = card.querySelector('.col-12.col-md-2.mt-2.mt-md-0');
+            if (actions) {
+               Array.from(actions.querySelectorAll('button')).forEach(btn => btn.style.display = 'none');
+            }
+            const badge = card.querySelector('.badge.px-2.py-1');
+            if (badge) {
+               badge.className = 'badge px-2 py-1 text-uppercase fw-semibold bg-warning text-dark';
+               badge.innerText = 'return requested';
+            }
+        }
       });
     } else {
       throw new Error(data.message);
@@ -688,7 +704,18 @@ async function cancelReturn(orderId) {
           text: 'Return request cancelled successfully',
           timer: 1500
         });
-        location.reload();
+        const card = document.getElementById('order-card-' + orderId);
+        if (card) {
+            const actions = card.querySelector('.col-12.col-md-2.mt-2.mt-md-0');
+            if (actions) {
+               Array.from(actions.querySelectorAll('button')).forEach(btn => btn.style.display = 'none');
+            }
+            const badge = card.querySelector('.badge.px-2.py-1');
+            if (badge) {
+               badge.className = 'badge px-2 py-1 text-uppercase fw-semibold bg-success text-white';
+               badge.innerText = 'delivered';
+            }
+        }
       } else {
         throw new Error(data.message);
       }
@@ -760,7 +787,18 @@ async function cancelOrder(orderId) {
         text: 'Order cancelled successfully',
         timer: 1500
       });
-      location.reload();
+      const card = document.getElementById('order-card-' + orderId);
+      if (card) {
+          const actions = card.querySelector('.col-12.col-md-2.mt-2.mt-md-0');
+          if (actions) {
+             Array.from(actions.querySelectorAll('button')).forEach(btn => btn.style.display = 'none');
+          }
+          const badge = card.querySelector('.badge.px-2.py-1');
+          if (badge) {
+             badge.className = 'badge px-2 py-1 text-uppercase fw-semibold bg-danger text-white';
+             badge.innerText = 'cancelled';
+          }
+      }
     } else {
       throw new Error(data.message);
     }
@@ -834,7 +872,15 @@ async function cancelProduct(orderId,index){
         text: 'Product cancelled successfully',
         timer: 1500
       });
-      location.reload();
+      const pRow = document.getElementById('product-row-' + orderId + '-' + index);
+      if (pRow) {
+          const btn = pRow.querySelector('button');
+          if (btn) btn.style.display = 'none';
+          const span = document.createElement('span');
+          span.className = 'badge bg-danger text-white mt-2 d-block w-50';
+          span.innerText = 'PRODUCT CANCELLED';
+          pRow.querySelector('.col-8.col-md-10').appendChild(span);
+      }
     } else {
       throw new Error(data.message);
     }

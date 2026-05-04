@@ -111,7 +111,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Order #<%= order.orderId %></h5>
                                             
-                        <span class="badge badge-lg text-uppercase fw-semibold 
+                        <span id="main-order-status" class="badge badge-lg text-uppercase fw-semibold 
                             <%= order.status === 'delivered' ? 'bg-success text-white' :
                                  order.status === 'cancelled' ? 'bg-danger text-white' :
                                  order.status === 'shipped' ? 'bg-info text-dark' :
@@ -435,6 +435,20 @@
 <script>
 let currentOrderId = null;
 
+function updateOrderUI(newStatus) {
+    const badge = document.getElementById('main-order-status');
+    if (badge) {
+        let badgeClass = 'bg-warning text-dark';
+        if(newStatus === 'delivered' || newStatus === 'approved') badgeClass = 'bg-success text-white';
+        else if(newStatus === 'cancelled' || newStatus === 'rejected') badgeClass = 'bg-danger text-white';
+        else if(newStatus === 'shipped' || newStatus === 'returning') badgeClass = 'bg-info text-dark';
+        else if(newStatus === 'returned') badgeClass = 'bg-secondary text-white';
+        
+        badge.className = `badge badge-lg text-uppercase fw-semibold ${badgeClass}`;
+        badge.innerText = newStatus;
+    }
+}
+
 async function updateStatus(orderId) {
     const { value: status } = await Swal.fire({
         title: 'Update Order Status',
@@ -473,7 +487,7 @@ async function updateStatus(orderId) {
                     text: 'Order status updated successfully',
                     timer: 1500
                 });
-                location.reload();
+                updateOrderUI(status);
             } else {
                 throw new Error(data.message);
             }
@@ -518,7 +532,7 @@ async function cancelOrder(orderId) {
                     text: 'Order cancelled successfully',
                     timer: 1500
                 });
-                location.reload();
+                updateOrderUI('cancelled');
             } else {
                 throw new Error(data.message);
             }
@@ -573,7 +587,7 @@ async function handleReturn(action, orderId) {
                             'Return request has been approved.',
                             'success'
                         ).then(() => {
-                            location.reload();
+                            updateOrderUI(action);
                         });
                     } else {
                         throw new Error(data.message);
@@ -624,7 +638,7 @@ async function submitRejection() {
                 'Return request has been rejected.',
                 'success'
             ).then(() => {
-                location.reload();
+                updateOrderUI('rejected');
             });
         } else {
             throw new Error(data.message);
@@ -675,7 +689,7 @@ async function updateReturnStatus(orderId) {
                     text: 'Return status updated successfully',
                     timer: 1500
                 });
-                location.reload();
+                updateOrderUI(status);
             } else {
                 throw new Error(data.message);
             }

@@ -207,7 +207,7 @@
                   <input type="hidden" value="<%= product.productImage[i] %>" class="imageDatas">
                   <img class="rounded img-fluid" style="max-width: 100px; max-height: 100px;" 
                       src="/uploads/reImage/<%= product.productImage[i] %>" alt="">
-                  <i onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>')" 
+                  <i onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>', this)" 
                       class="fa fa-times text-danger position-absolute top-0 end-0 p-1" 
                       style="cursor: pointer;"></i>
                   </div>
@@ -501,14 +501,17 @@ saveButton.addEventListener('click', async function () {
         const errorMessage = document.getElementById('errorMessage');
     }
 
-    function deleteSingleImage(imageId, productId) {
+function deleteSingleImage(imageId, productId, iconElement) {
     $.ajax({
         url: '/admin/deleteImage',
         method: 'DELETE', 
         data: { imageNameToServer: imageId, productIdToServer: productId },
         success: function(response) {
             if (response.status === true) {
-                location.reload(); 
+                if (iconElement) {
+                    const container = iconElement.closest('.col-md-3');
+                    if (container) container.remove();
+                }
             } else {
                 console.error("Failed to delete image:", response.message);
                 alert("Error deleting image: " + (response.message || "Unknown error"));

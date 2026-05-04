@@ -11,7 +11,7 @@
         <div class="row g-4">
           <% if (userAddress && userAddress.address.length > 0) { %>
             <% userAddress.address.forEach((addr) => { %>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6" id="address-container-<%= addr._id %>">
                 <div class="address-card">
                   <div class="address-card-header bg-secondary" >
                     <%= addr.addressType %> Address
@@ -27,7 +27,7 @@
                       <div class="col-4 text-muted">Building:</div>
                       <div class="col-8"><%= addr.building %></div>
                       
-                      <div class="col-4 text-muted">Street:</div>
+                      <div class="col-4 text-muted ">Street:</div>
                       <div class="col-8"><%= addr.street %></div>
                       
                       <div class="col-4 text-muted">City:</div>
@@ -120,9 +120,24 @@
                     title: "Success", 
                     text: data.message, 
                     icon: "success",
-                    confirmButtonColor: "#3a86ff"
+                    confirmButtonColor: "#3a86ff",
+                    timer: 1500
                   }).then(() => {
-                    location.reload();
+                    const card = document.getElementById(`address-container-${addressId}`);
+                    if (card) {
+                      card.remove();
+                    }
+                    
+                    if (document.querySelectorAll('.address-card').length === 0) {
+                      document.querySelector('.row.g-4').innerHTML = `
+                        <div class="col-12">
+                          <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No addresses found. Please add one using the button above.
+                          </div>
+                        </div>
+                      `;
+                    }
                   });
                 } else {
                   Swal.fire({

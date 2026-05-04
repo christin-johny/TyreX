@@ -92,7 +92,7 @@
               <tbody>
                 <%if(wishlist.length>0){%>
                   <%for(let product of wishlist){%>
-                    <tr class="border-bottom">
+                    <tr class="border-bottom" id="wishlist-row-<%=product._id%>">
                       <td class="py-3">
                         <img src="/uploads/reImage/<%=product.productImage[0]%>" class="img-fluid rounded" style="width: 90px; height: 90px; object-fit: cover;" alt="<%=product.productName%>"/>
                       </td>
@@ -209,8 +209,31 @@
             text: data.message,
             timer: 1500,
             showConfirmButton: false
-          }).then(()=>{
-            location.reload();
+          }).then(() => {
+            const row = document.getElementById(`wishlist-row-${productId}`);
+            if (row) row.remove();
+            
+            const wishlistBadge = document.querySelector('a[href="/wishlist"] .badge');
+            if (wishlistBadge) {
+              let currentCount = parseInt(wishlistBadge.innerText) || 0;
+              wishlistBadge.innerText = Math.max(0, currentCount - 1);
+            }
+
+            if (document.querySelectorAll('tbody tr.border-bottom').length === 0) {
+                document.querySelector('tbody').innerHTML = `
+                  <tr>
+                    <td colspan="5" class="text-center py-5">
+                      <div class="py-4">
+                        <i class="fas fa-heart-broken text-muted" style="font-size: 3rem;"></i>
+                        <p class="lead mt-3 mb-3">Your wishlist is empty</p>
+                        <a href="/shop" class="btn btn-primary px-4">Continue Shopping</a>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+                const pagination = document.querySelector('nav[aria-label="Wishlist pagination"]');
+                if (pagination) pagination.style.display = 'none';
+            }
           })
           
         } else {
@@ -255,9 +278,42 @@
             text: "Product successfully added to your cart",
             showConfirmButton: false,
             timer: 1500
-          }).then(()=>{
-            location.reload();
-          })
+          }).then(() => {
+            // Remove the row from the DOM
+            const row = document.getElementById(`wishlist-row-${productId}`);
+            if (row) row.remove();
+            
+            // Decrement the wishlist badge
+            const wishlistBadge = document.querySelector('a[href="/wishlist"] .badge');
+            if (wishlistBadge) {
+              let currentCount = parseInt(wishlistBadge.innerText) || 0;
+              wishlistBadge.innerText = Math.max(0, currentCount - 1);
+            }
+
+            // Increment the cart badge
+            const cartBadge = document.querySelector('a[href="/cart"] .badge');
+            if (cartBadge) {
+              let currentCount = parseInt(cartBadge.innerText) || 0;
+              cartBadge.innerText = currentCount + 1;
+            }
+
+            // Show empty UI if wishlist is now empty
+            if (document.querySelectorAll('tbody tr.border-bottom').length === 0) {
+                document.querySelector('tbody').innerHTML = `
+                  <tr>
+                    <td colspan="5" class="text-center py-5">
+                      <div class="py-4">
+                        <i class="fas fa-heart-broken text-muted" style="font-size: 3rem;"></i>
+                        <p class="lead mt-3 mb-3">Your wishlist is empty</p>
+                        <a href="/shop" class="btn btn-primary px-4">Continue Shopping</a>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+                const pagination = document.querySelector('nav[aria-label="Wishlist pagination"]');
+                if (pagination) pagination.style.display = 'none';
+            }
+          });
           
         } else {
           Swal.fire({

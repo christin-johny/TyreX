@@ -73,11 +73,11 @@
                   <td>
                     <div class="d-flex gap-2">
                       <% if(user.isBlocked === false) { %>
-                      <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-sm btn-danger">
+                      <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-sm btn-danger block-user">
                         <i class="fas fa-ban"></i> Block
                       </a>
                       <% } else { %>
-                      <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-sm btn-success">
+                      <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-sm btn-success unblock-user">
                         <i class="fas fa-check"></i> Unblock
                       </a>
                       <% } %>
@@ -118,11 +118,11 @@
                 </div>
                 <div class="d-grid mt-3">
                   <% if(user.isBlocked === false) { %>
-                  <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-sm btn-danger">
+                  <a href="/admin/blockCustomer?id=<%= user._id %>" class="btn btn-sm btn-danger block-user">
                     <i class="fas fa-ban me-1"></i> Block Customer
                   </a>
                   <% } else { %>
-                  <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-sm btn-success">
+                  <a href="/admin/unblockCustomer?id=<%= user._id %>" class="btn btn-sm btn-success unblock-user">
                     <i class="fas fa-check me-1"></i> Unblock Customer
                   </a>
                   <% } %>
@@ -171,24 +171,26 @@
 
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("searchInput");
-    const clearButton = document.getElementById("clearButton");
-
-    searchInput.addEventListener("input", function () {
-      if (searchInput.value.trim() !== "") {
-        clearButton.classList.remove("d-none");
+  async function softReload() {
+    try {
+      const response = await fetch(window.location.href);
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      
+      const container = doc.querySelector('.row');
+      if (container) {
+        document.querySelector('.row').innerHTML = container.innerHTML;
+        rebindActionButtons();
       } else {
-        clearButton.classList.add("d-none");
+        location.reload();
       }
-    });
-
-    if (new URLSearchParams(window.location.search).has("search")) {
-      clearButton.classList.remove("d-none");
+    } catch(e) {
+      location.reload();
     }
-  });
+  }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function rebindActionButtons() {
     const blockButtons = document.querySelectorAll(".block-user");
     const unblockButtons = document.querySelectorAll(".unblock-user");
 
@@ -206,9 +208,10 @@
           cancelButtonColor: "#3085d6",
           confirmButtonText: "Yes, Block!",
           cancelButtonText: "Cancel",
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
-            window.location.href = url;
+            await fetch(url);
+            softReload();
           }
         });
       });
@@ -228,13 +231,32 @@
           cancelButtonColor: "#6c757d",
           confirmButtonText: "Yes, Unblock!",
           cancelButtonText: "Cancel",
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
-            window.location.href = url;
+            await fetch(url);
+            softReload();
           }
         });
       });
     });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const clearButton = document.getElementById("clearButton");
+
+    searchInput.addEventListener("input", function () {
+      if (searchInput.value.trim() !== "") {
+        clearButton.classList.remove("d-none");
+      } else {
+        clearButton.classList.add("d-none");
+      }
+    });
+
+    if (new URLSearchParams(window.location.search).has("search")) {
+      clearButton.classList.remove("d-none");
+    }
+    rebindActionButtons();
   });
 </script>
 <%- include("../partials/admin/footer") %>

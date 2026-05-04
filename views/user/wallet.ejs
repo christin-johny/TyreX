@@ -560,9 +560,36 @@
           title: "Success!",
           text: "Wallet Recharged Successfully!",
           icon: "success",
-          confirmButtonText: "OK",
         }).then(() => {
-          location.reload(); 
+          const balanceEl = document.getElementById("availableBalance");
+          const currentBalance = parseFloat(balanceEl.innerText) || 0;
+          const addedAmount = parseFloat(amount);
+          balanceEl.innerText = (currentBalance + addedAmount).toFixed(2);
+          
+          const addModalEl = document.getElementById('addMoneyModal');
+          if (addModalEl) {
+            const addModal = bootstrap.Modal.getInstance(addModalEl) || new bootstrap.Modal(addModalEl);
+            addModal.hide();
+          }
+
+          const tbody = document.querySelector('.unique-transaction-table tbody');
+          if (tbody) {
+            const noTransactions = tbody.querySelector('td[colspan="4"]');
+            if (noTransactions && noTransactions.parentElement) {
+              noTransactions.parentElement.remove();
+            }
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                  <td>₹${addedAmount.toFixed(2)}</td>
+                  <td>Wallet Recharge</td>
+                  <td>${new Date().toLocaleDateString('en-GB')}</td>
+                  <td>
+                    <span class="transaction-status status-credit">Credit</span>
+                  </td>
+            `;
+            tbody.prepend(tr);
+          }
         });
       } else {
         Swal.fire({
@@ -632,9 +659,38 @@
             timer:5000,
             timerProgressBar: true,
           }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.reload();
+            const balanceEl = document.getElementById("availableBalance");
+            const currentBalance = parseFloat(balanceEl.innerText) || 0;
+            const withdrawnAmount = parseFloat(amount);
+            balanceEl.innerText = (currentBalance - withdrawnAmount).toFixed(2);
+            
+            const withdrawModalEl = document.getElementById('withdrawModal');
+            if (withdrawModalEl) {
+              const withdrawModal = bootstrap.Modal.getInstance(withdrawModalEl) || new bootstrap.Modal(withdrawModalEl);
+              withdrawModal.hide();
             }
+            
+            const tbody = document.querySelector('.unique-transaction-table tbody');
+            if (tbody) {
+              const noTransactions = tbody.querySelector('td[colspan="4"]');
+              if (noTransactions && noTransactions.parentElement) {
+                noTransactions.parentElement.remove();
+              }
+              
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                    <td>₹${withdrawnAmount.toFixed(2)}</td>
+                    <td>Wallet Withdrawal</td>
+                    <td>${new Date().toLocaleDateString('en-GB')}</td>
+                    <td>
+                      <span class="transaction-status status-debit">Debit</span>
+                    </td>
+              `;
+              tbody.prepend(tr);
+            }
+            
+            // clear input
+            document.getElementById("withdrawAmount").value = "";
           });
         } else {
           Swal.fire({
